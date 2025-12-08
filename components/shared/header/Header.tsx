@@ -1,8 +1,12 @@
+"use client";
+
 import Image from "next/image";
 import Link from "next/link";
 import CategoryToggleButton from "./CategoryToggleButton";
 import NavLinks from "./NavLinks";
 import ThemeToggle from "@/lib/ThemeToggle";
+import { useThemeStore } from "@/zustand/store";
+import Input from "@/components/ui/Input";
 
 export default function Header() {
   return (
@@ -11,17 +15,22 @@ export default function Header() {
         <div className="flex items-center justify-between gap-4 py-4">
           <Link href="/">
             <Image
-              src="/logo/logo-color.png"
+              src={
+                useThemeStore().theme === "dark"
+                  ? "/logo/logo-dark.png"
+                  : "/logo/logo-color.png"
+              }
               alt="Logo"
               width={400}
               height={400}
               className="w-48 h-10"
+              loading="eager"
             />
           </Link>
-          <input
-            type="text"
+          <Input
+            type="search"
             placeholder="Search games, brands and more..."
-            className="grow border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="grow"
           />
           <div className="flex items-center gap-4">
             <Link href="/login" className="text-gray-600 hover:text-gray-800">
