@@ -1,3 +1,5 @@
+import Header from "@/components/shared/header/Header";
+
 export default function GroupLayout({
   children,
 }: {
@@ -5,6 +7,7 @@ export default function GroupLayout({
 }) {
   return (
     <div>
+      <Header />
       <main>{children}</main>
     </div>
   );

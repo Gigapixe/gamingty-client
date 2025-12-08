@@ -1,26 +1,118 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+/* Specify content sources for Tailwind to scan */
+@source "./src/**/*.{html,js,jsx,ts,tsx}";
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
+/* Define dark mode variant using Tailwind's dark mode class strategy */
+@custom-variant dark (&:where(.dark, .dark *));
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+/* Define custom theme values (colors, fonts, spacing, breakpoints) */
+@theme {
+  /* Custom colors for primary, secondary, and warning */
+  --color-primary: #12b47e; /* Blue for primary buttons (light mode) */
+  --color-secondary: #2b4bb2; /* Gray for secondary buttons (light mode) */
+  --color-primary-dark: #059669;
+  --color-secondary-dark: #4b6cb7;
+  --color-warning: #f59e0b; /* Amber for warning buttons (light mode) */
+  --color-warning-dark: #d97706; /* Darker amber for dark mode contrast */
+  --color-background: #ffffff; /* Light mode background */
+  --color-background-dark: #1f2937; /* Softer dark mode background */
+  --color-background-dark-2: #11182780; /* make this color 50% opacity of --color-background-dark-2 */
+  --color-background-light: #f8f8f8; /* Light gray for light mode secondary background */
+  --color-text: #111827; /* Light mode text */
+  /* --color-text-dark: #e5e7eb;  */
+  --color-text-light: #ffffff; /* Light gray for light mode text */
+  --color-text-gray: #14141680;
+  --color-text-dark: #0e0e0e; /* Light gray for dark mode text */
+
+  --color-border-light: #d8d8d8; /* Light gray for light mode borders */
+  --color-border-dark: #4b5563; /* Dark gray for dark mode borders */
+  --color-shadow-light: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --color-shadow-dark: 0 1px 2px rgba(0, 0, 0, 0.2);
+
+  /* Custom font families */
+  --font-sans: "Inter", system-ui, sans-serif;
+  --font-serif: "Georgia", serif;
+  --font-mono: "Fira Code", monospace;
+
+  /* Custom breakpoints */
+  --breakpoint-sm: 420px;
+  --breakpoint-md: 768px;
+  --breakpoint-lg: 1280px;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  @apply bg-[var(--color-background)] text-[var(--color-text-dark)];
+  font-family: "Neue Montreal", var(--font-sans);
+}
+/* Specific adjustments for body in dark mode */
+.dark body {
+  @apply bg-[var(--color-background-dark)] text-[var(--color-text-light)];
+}
+
+/* Extend Tailwind utilities for custom variables */
+@layer utilities {
+  .container {
+    width: 100%;
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: 1rem;
+    padding-right: 1rem;
+    max-width: 100%;
+  }
+  @media (min-width: 420px) {
+    .container {
+      max-width: 420px;
+    }
+  }
+  @media (min-width: 768px) {
+    .container {
+      max-width: 768px;
+    }
+  }
+  @media (min-width: 1280px) {
+    .container {
+      max-width: 1280px;
+    }
+  }
+  .bg-primary {
+    background-color: var(--color-primary);
+  }
+  .bg-primary-dark {
+    @apply dark:bg-[var(--color-primary-dark)];
+  }
+  .bg-secondary {
+    background-color: var(--color-secondary);
+  }
+  .bg-secondary-dark {
+    @apply dark:bg-[var(--color-secondary-dark)];
+  }
+
+  .bg-warning {
+    background-color: var(--color-warning);
+  }
+  .bg-warning-dark {
+    @apply dark:bg-[var(--color-warning-dark)];
+  }
+  .text-primary {
+    color: var(--color-primary);
+  }
+  .text-primary-dark {
+    @apply dark:text-[var(--color-primary-dark)];
+  }
+  .text-secondary {
+    color: var(--color-secondary);
+  }
+  .text-secondary-dark {
+    @apply dark:text-[var(--color-secondary-dark)];
+  }
+  .text-warning {
+    color: var(--color-warning);
+  }
+  .text-warning-dark {
+    @apply dark:text-[var(--color-warning-dark)];
+  }
+}
+button {
+  cursor: pointer;
 }
