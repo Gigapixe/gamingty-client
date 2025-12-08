@@ -1,32 +1,17 @@
-"use client";
-
-import Image from "next/image";
 import Link from "next/link";
 import CategoryToggleButton from "./CategoryToggleButton";
 import NavLinks from "./NavLinks";
 import ThemeToggle from "@/lib/ThemeToggle";
-import { useThemeStore } from "@/zustand/store";
+
 import Input from "@/components/ui/Input";
+import FullLogo from "@/components/ui/FullLogo";
 
 export default function Header() {
   return (
     <nav className="sticky">
       <div className="container mx-auto">
         <div className="flex items-center justify-between gap-4 py-4">
-          <Link href="/">
-            <Image
-              src={
-                useThemeStore().theme === "dark"
-                  ? "/logo/logo-dark.png"
-                  : "/logo/logo-color.png"
-              }
-              alt="Logo"
-              width={400}
-              height={400}
-              className="w-48 h-10"
-              loading="eager"
-            />
-          </Link>
+          <FullLogo />
           <Input
             type="search"
             placeholder="Search games, brands and more..."
