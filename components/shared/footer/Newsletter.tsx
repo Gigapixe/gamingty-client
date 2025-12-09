@@ -74,7 +74,7 @@ export default function Newsletter() {
   };
   return (
     <div className="py-10 container mx-auto">
-      <div className="bg-secondary text-white p-6 rounded-lg flex flex-col md:flex-row justify-between items-center gap-4 ">
+      <div className="bg-primary text-white p-6 rounded-lg flex flex-col md:flex-row justify-between items-center gap-4 ">
         <div>
           <h1 className="text-xl lg:text-3xl font-medium">
             Subscribe to our Newsletter
