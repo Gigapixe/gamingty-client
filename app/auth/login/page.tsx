@@ -83,9 +83,10 @@ export default function LoginPage() {
                   </Link>
                 </div>
 
-                {/* Sign In / Sign Up toggle (UI only) */}
+                {/* Sign In / Sign Up toggle (UI only) — Sign In selected on this page */}
                 <div className="relative flex items-center justify-center bg-white dark:bg-[#1F1F1F] rounded-full p-1 mb-6">
-                  <div className="absolute top-0 bottom-0 m-1 w-1/2 rounded-full bg-emerald-500" />
+                  {/* Selected (left) */}
+                  <div className="absolute top-0 bottom-0 m-1 w-1/2 left-0 rounded-full bg-emerald-500" />
                   <Link
                     href="/auth/login"
                     className="relative z-10 w-full text-center px-4 py-2 rounded-full font-semibold text-white"
@@ -94,7 +95,7 @@ export default function LoginPage() {
                   </Link>
                   <Link
                     href="/auth/register"
-                    className="relative z-10 w-full text-center px-4 py-2 rounded-full font-semibold text-gray-600 dark:text-white"
+                    className="relative z-10 w-full text-center px-4 py-2 rounded-full font-semibold text-gray-600 dark:text-gray-300"
                   >
                     Sign Up
                   </Link>
