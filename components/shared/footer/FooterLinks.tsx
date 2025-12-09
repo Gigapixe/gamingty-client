@@ -20,55 +20,40 @@ interface FooterSection {
   links: FooterLink[];
 }
 
-// Centralized link data
+// Centralized link data (labels are human-readable to match the design)
 const footerSections: FooterSection[] = [
   {
-    titleKey: "company",
+    titleKey: "Company",
     links: [
-      { labelKey: "aboutUs", href: "/about-us" },
-      { labelKey: "support", href: "/support" },
-      { labelKey: "blog", href: "/blog" },
-      { labelKey: "affiliate", href: "/fleximart-affiliate-program" },
+      { label: "About Us", href: "/about-us" },
+      { label: "Security Tips", href: "/security-tips" },
+      { label: "Contact Us", href: "/contact-us" },
     ],
   },
   {
-    titleKey: "legal",
+    titleKey: "Legal",
     links: [
-      { labelKey: "privacyPolicy", href: "/privacy-policy" },
-      { labelKey: "refundReturns", href: "/refund_returns" },
-      { labelKey: "termsAndConditions", href: "/terms-and-conditions" },
-      // partnership page coming soon
-      { labelKey: "partnership", href: "/partnership" },
+      { label: "Privacy Policy", href: "/privacy-policy" },
+      { label: "Terms and Conditions", href: "/terms-and-conditions" },
+      { label: "Refund and Returns Policy", href: "/refund_returns" },
     ],
   },
   {
-    titleKey: "help",
+    titleKey: "Important Links",
     links: [
-      { labelKey: "contact", href: "/contact-us" },
-      { labelKey: "securityTips", href: "/security-tips" },
-      { labelKey: "kycAml", href: "/kyc-aml-policy" },
-      { labelKey: "faq", href: "/faq" },
+      { label: "KYC & AML Policy", href: "/kyc-aml-policy" },
+      { label: "Support", href: "/support" },
+      { label: "Partnership", href: "/partnership" },
     ],
   },
   {
-    titleKey: "contact",
+    titleKey: "Quick Links",
     links: [
+      { label: "Blog", href: "/blog" },
+      { label: "FAQ", href: "/faq" },
       {
-        labelKey: "contactEmail",
-        href: "mailto:support@fleximart.com",
-        external: true,
-        icon: EmailSupportIcon,
-      },
-      {
-        labelKey: "contactPhone",
-        href: "https://wa.me/971568346414",
-        external: true,
-        icon: WhatsappIcon,
-      },
-      {
-        labelKey: "contactAddress",
-        href: "#",
-        icon: LocationIcon,
+        label: "Gamingty Affiliate Program",
+        href: "/gamingty-affiliate-program",
       },
     ],
   },
@@ -81,7 +66,7 @@ const LinkItem: React.FC<{ link: FooterLink }> = ({ link }) => {
     <div className="hover:text-primary-dark flex items-center gap-2 lg:max-w-60">
       {Icon && (
         <div className="bg-primary p-2 rounded-full">
-          <Icon className="w-4 h-4 text-white" />
+          <Icon className="w-4 h-4 text-text dark:text-text-light" />
         </div>
       )}
       {link.labelKey ? <span>{link.labelKey}</span> : link.label}
@@ -99,31 +84,29 @@ const LinkItem: React.FC<{ link: FooterLink }> = ({ link }) => {
 
 const FooterLinks: React.FC = () => {
   return (
-    <div className="container mx-auto pb-10">
-      <div>
-        <FullLogo />
-        <p className="text-sm text-left mt-4 capitalize">
-          This website is owned and operated by Flexitech LLC FZ
-        </p>
-      </div>
-      <hr className="border-border-light dark:border-border-dark my-4" />
-      <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
+    <div className="container mx-auto pb-10 text-text dark:text-text-light">
+      <div className="border-border-light dark:border-border-dark my-4" />
+
+      <div className="grid grid-cols-1 lg:grid-cols-5 gap-8 items-start">
+        {/* Left column: logo + description */}
+        <div>
+          <FullLogo />
+          <p className="text-sm text-left mt-4 leading-relaxed max-w-[320px] text-text dark:text-text-light">
+            Fuel your gaming sessions and app downloads with massive savings on
+            iTunes, Google Play, Xbox, Steam, Amazon & more. Limited-time
+            offers, global cards, instant delivery.
+          </p>
+        </div>
+
+        {/* Link columns */}
         {footerSections.map((section) => (
           <div key={section.titleKey}>
-            <h3 className="font-bold mb-2 lg:mb-4 text-xl">
+            <h3 className="font-semibold mb-3 lg:mb-5 text-lg text-text dark:text-text-light">
               {section.titleKey}
             </h3>
-            <ul className="space-y-2 text-sm">
+            <ul className="space-y-2 text-sm text-text dark:text-text-light">
               {section.links.map((link, index) => (
-                <li
-                  key={index}
-                  className={
-                    (link.label && link.label.includes("Meydan")) ||
-                    link.labelKey === "contactAddress"
-                      ? "w-full md:w-52 lg:w-60"
-                      : ""
-                  }
-                >
+                <li key={index}>
                   <LinkItem link={link} />
                 </li>
               ))}
