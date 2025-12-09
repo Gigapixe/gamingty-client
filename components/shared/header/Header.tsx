@@ -10,18 +10,26 @@ export default function Header() {
   return (
     <nav className="sticky">
       <div className="container mx-auto">
-        <div className="flex items-center justify-between gap-4 py-4">
+        <div className="flex items-center justify-between gap-10 py-4">
           <FullLogo />
-          <Input
-            type="search"
-            placeholder="Search games, brands and more..."
-            className="grow"
-          />
+          <div className="flex-1">
+            <Input
+              type="search"
+              placeholder="Search games, brands and more..."
+              className="grow"
+            />
+          </div>
           <div className="flex items-center gap-4">
-            <Link href="/login" className="text-gray-600 hover:text-gray-800">
+            <Link
+              href="/auth/login"
+              className="text-gray-600 hover:text-gray-800"
+            >
               Login
             </Link>
-            <Link href="/signup" className="text-gray-600 hover:text-gray-800">
+            <Link
+              href="/auth/register"
+              className="text-gray-600 hover:text-gray-800"
+            >
               Sign Up
             </Link>
           </div>

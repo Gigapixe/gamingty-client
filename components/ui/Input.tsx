@@ -1,6 +1,6 @@
 "use client";
-import SearchIcon from "@/public/icons/SearchIcon";
 import React, { useState } from "react";
+import SearchIcon from "@/public/icons/SearchIcon";
 
 interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   id?: string;
@@ -71,7 +71,7 @@ const Input: React.FC<InputProps> = ({
           {...(id ? { id } : {})}
           type={inputType}
           className={`
-            w-full px-3 py-2 border rounded-full
+            w-full px-3 py-2 border rounded-full 
             ${type === "search" ? "pl-10" : ""}
             border-border-light dark:border-border-dark
             bg-background dark:bg-background-dark
