@@ -260,18 +260,20 @@ const CountryPhoneInput: React.FC<CountryPhoneInputProps> = ({
         </div>
 
         {/* Phone Number Input (using shared Input component) */}
-        <Input
-          {...(id ? { id } : {})}
-          {...(name ? { name } : {})}
-          type="tel"
-          value={phoneNumber}
-          onChange={handlePhoneChange}
-          placeholder={placeholder}
-          disabled={disabled}
-          required={required}
-          error={error}
-          className={`flex-1 py-2.5 rounded-lg ${className}`}
-        />
+        <div className="flex-1">
+          <Input
+            {...(id ? { id } : {})}
+            {...(name ? { name } : {})}
+            type="tel"
+            value={phoneNumber}
+            onChange={handlePhoneChange}
+            placeholder={placeholder}
+            disabled={disabled}
+            required={required}
+            error={error}
+            className={`py-2.5 rounded-lg ${className}`}
+          />
+        </div>
       </div>
 
       {error && <p className="text-red-500 text-sm">{error}</p>}

@@ -1,3 +1,5 @@
+"use client";
+import { useState } from "react";
 import Head from "next/head";
 import Link from "next/link";
 import backgroundImage from "@/public/images/form-bg.webp";
@@ -8,8 +10,114 @@ import CountryPhoneInput from "@/components/ui/CountryPhoneInput";
 import AuthFooterLinks from "@/components/auth/AuthFooterLinks";
 import AuthToggle from "@/components/auth/AuthToggle";
 import TermsText from "@/components/auth/TermsText";
+import { parsePhoneNumber } from "libphonenumber-js";
 
 export default function RegisterPage() {
+  function PasswordHint({ label, test }: { label: string; test: boolean }) {
+    return (
+      <div
+        className={`flex items-center ${
+          test
+            ? "text-green-600 dark:text-green-400"
+            : "text-red-500 dark:text-red-400"
+        }`}
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          className="w-4 h-4 mr-2"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="1.5"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        >
+          {test ? (
+            <path d="M20 6L9 17l-5-5" />
+          ) : (
+            <path d="M18 6L6 18M6 6l12 12" />
+          )}
+        </svg>
+        {label}
+      </div>
+    );
+  }
+
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
+  const [phoneCountry, setPhoneCountry] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+
+  const [errors, setErrors] = useState<{ [k: string]: string | undefined }>({});
+  const [submitSuccess, setSubmitSuccess] = useState(false);
+
+  const validateEmail = (value: string) => {
+    const re =
+      /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(".+"))@(([^<>()[\]\\.,;:\s@\"]+\.)+[^<>()[\]\\.,;:\s@\"]{2,})$/i;
+    return re.test(String(value).toLowerCase());
+  };
+
+  const validatePhone = (fullNumber: string) => {
+    try {
+      const parsed = parsePhoneNumber(fullNumber);
+      return parsed && parsed.isValid();
+    } catch {
+      return false;
+    }
+  };
+
+  const validatePassword = (pwd: string) => {
+    return (
+      pwd.length >= 8 &&
+      /[A-Z]/.test(pwd) &&
+      /[0-9]/.test(pwd) &&
+      /[!@#$%^&*\-\_\+]/.test(pwd)
+    );
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    setSubmitSuccess(false);
+
+    const newErrors: { [k: string]: string } = {};
+
+    if (!name.trim()) newErrors.name = "Full name is required";
+    if (!email.trim()) newErrors.email = "Email is required";
+    else if (!validateEmail(email))
+      newErrors.email = "Please enter a valid email";
+
+    if (!phone.trim()) newErrors.phone = "Phone number is required";
+    else if (!validatePhone(phone))
+      newErrors.phone = "Please enter a valid phone number";
+
+    if (!password) newErrors.password = "Password is required";
+    else if (!validatePassword(password))
+      newErrors.password = "Password does not meet the requirements";
+
+    if (!confirmPassword)
+      newErrors.confirmPassword = "Please confirm your password";
+    else if (password !== confirmPassword)
+      newErrors.confirmPassword = "Passwords do not match";
+
+    setErrors(newErrors);
+
+    if (Object.keys(newErrors).length === 0) {
+      setSubmitSuccess(true);
+      // In a real app, submit data here
+      console.log({ name, email, phone, phoneCountry, password });
+    }
+  };
+
+  const isFormValid =
+    name.trim() !== "" &&
+    validateEmail(email) &&
+    phone.trim() !== "" &&
+    validatePhone(phone) &&
+    validatePassword(password) &&
+    confirmPassword === password;
+
   return (
     <>
       <Head>
@@ -46,17 +154,17 @@ export default function RegisterPage() {
 
                 <AuthToggle activeTab="signup" />
 
-                {/* Static Sign Up form (UI only) */}
-                <form
-                  className="space-y-4"
-                  // onSubmit={(e) => e.preventDefault()}
-                >
+                {/* Sign Up form with validation */}
+                <form className="space-y-4" onSubmit={(e) => handleSubmit(e)}>
                   <Input
                     id="name"
                     name="name"
                     type="text"
                     label="Full Name"
                     placeholder="e.g. John Doe"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    error={errors.name}
                     className="px-4 py-3 bg-white dark:bg-[#1F1F1F] border-gray-200 dark:border-gray-700 rounded-lg text-sm"
                   />
 
@@ -66,6 +174,9 @@ export default function RegisterPage() {
                     type="email"
                     label="Email"
                     placeholder="example@mail.com"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    error={errors.email}
                     className="px-4 py-3 bg-white dark:bg-[#1F1F1F] border-gray-200 dark:border-gray-700 rounded-lg text-sm"
                   />
 
@@ -74,6 +185,12 @@ export default function RegisterPage() {
                     name="phone"
                     label="Phone Number"
                     placeholder="555 123 4567"
+                    onChange={(fullNumber, country) => {
+                      setPhone(fullNumber);
+                      setPhoneCountry(country);
+                      setErrors((s) => ({ ...s, phone: undefined }));
+                    }}
+                    error={errors.phone}
                   />
 
                   <Input
@@ -82,6 +199,9 @@ export default function RegisterPage() {
                     type="password"
                     label="Password"
                     placeholder="••••••••"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    error={errors.password}
                     className="px-4 py-3 bg-white dark:bg-[#1F1F1F] border-gray-200 dark:border-gray-700 rounded-lg text-sm"
                   />
 
@@ -91,71 +211,30 @@ export default function RegisterPage() {
                     type="password"
                     label="Confirm Password"
                     placeholder="••••••••"
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                    error={errors.confirmPassword}
                     className="px-4 py-3 bg-white dark:bg-[#1F1F1F] border-gray-200 dark:border-gray-700 rounded-lg text-sm"
                   />
 
-                  {/* Password hints (static) */}
+                  {/* Password hints (dynamic) */}
                   <div className="mt-2 space-y-1 text-xs">
-                    <div className="flex items-center text-green-600 dark:text-green-400">
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        className="w-4 h-4 mr-2"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="1.5"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                      >
-                        <path d="M20 6L9 17l-5-5" />
-                      </svg>
-                      At least 8 characters long
-                    </div>
-                    <div className="flex items-center text-green-600 dark:text-green-400">
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        className="w-4 h-4 mr-2"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="1.5"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                      >
-                        <path d="M20 6L9 17l-5-5" />
-                      </svg>
-                      Contains an uppercase letter
-                    </div>
-                    <div className="flex items-center text-green-600 dark:text-green-400">
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        className="w-4 h-4 mr-2"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="1.5"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                      >
-                        <path d="M20 6L9 17l-5-5" />
-                      </svg>
-                      Contains a number
-                    </div>
-                    <div className="flex items-center text-red-500 dark:text-red-400">
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        className="w-4 h-4 mr-2"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="1.5"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                      >
-                        <path d="M18 6L6 18M6 6l12 12" />
-                      </svg>
-                      Contains a special character (!@#$%^&*-_+)
-                    </div>
+                    <PasswordHint
+                      label="At least 8 characters long"
+                      test={password.length >= 8}
+                    />
+                    <PasswordHint
+                      label="Contains an uppercase letter"
+                      test={/[A-Z]/.test(password)}
+                    />
+                    <PasswordHint
+                      label="Contains a number"
+                      test={/[0-9]/.test(password)}
+                    />
+                    <PasswordHint
+                      label="Contains a special character (!@#$%^&*\-_+)"
+                      test={/[!@#$%^&*\-\_\+]/.test(password)}
+                    />
                   </div>
 
                   {/* <div className="mt-4 flex justify-center">
@@ -167,28 +246,20 @@ export default function RegisterPage() {
                   <Button
                     type="submit"
                     btnType="primary"
+                    disabled={!isFormValid}
                     className="w-full py-3 px-5"
                   >
                     <span>Register</span>
-                    {/* <div className="absolute right-3 rounded-full text-emerald-500 bg-white p-1.5">
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        className="h-5 w-5"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="1.5"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                      >
-                        <path d="M5 12h14" />
-                        <path d="M12 5l7 7-7 7" />
-                      </svg>
-                    </div> */}
                   </Button>
                 </form>
 
                 <TermsText />
+
+                {submitSuccess && (
+                  <p className="text-sm text-green-600 text-center mt-4">
+                    Registration data is valid (demo).
+                  </p>
+                )}
 
                 {/* <div className="relative my-6">
                   <div className="absolute inset-0 flex items-center">
