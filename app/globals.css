@@ -116,3 +116,36 @@ body {
 button {
   cursor: pointer;
 }
+
+/* Hero swiper pagination custom styles */
+.hero-swiper .swiper-pagination {
+  bottom: 5px !important;
+}
+.hero-swiper .swiper-pagination-bullet,
+.hero-swiper .swiper-pagination-bullet-active {
+  width: 14px !important;
+  height: 14px !important;
+  margin: 0 6px !important;
+  background: var(--color-primary) !important;
+  background-color: var(--color-primary) !important;
+  background-image: none !important;
+  opacity: 0.35 !important;
+  transition: all 200ms ease !important;
+  border-radius: 9999px !important;
+  box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.06) inset !important;
+  border: 0 !important;
+}
+.hero-swiper .swiper-pagination-bullet-active {
+  opacity: 1 !important;
+  transform: scale(1.05) !important;
+  background: var(--color-primary) !important;
+  background-color: var(--color-primary) !important;
+  box-shadow: 0 0 0 6px rgba(18, 180, 126, 0.12) !important;
+}
+@media (min-width: 768px) {
+  .hero-swiper .swiper-pagination-bullet {
+    width: 16px !important;
+    height: 16px !important;
+    margin: 0 8px !important;
+  }
+}

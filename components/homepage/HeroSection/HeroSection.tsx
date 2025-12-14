@@ -51,6 +51,7 @@ export default function HeroSection({ banners = [] }: SliderCarouselProps) {
   return (
     <div className="w-full container mx-auto py-8 relative">
       <Swiper
+        className="hero-swiper"
         modules={[Autoplay, Pagination, Navigation]}
         spaceBetween={30}
         slidesPerView={1}
@@ -59,7 +60,6 @@ export default function HeroSection({ banners = [] }: SliderCarouselProps) {
         onSwiper={handleSwiperInit}
         pagination={{
           clickable: true,
-          el: ".swiper-pagination",
         }}
       >
         {banners.map((banner) => (
@@ -68,7 +68,7 @@ export default function HeroSection({ banners = [] }: SliderCarouselProps) {
               href={
                 banner.slug.startsWith("/") ? banner.slug : `/${banner.slug}`
               }
-              className="glance-effect block w-full h-[365px] group relative overflow-hidden rounded-lg"
+              className="glance-effect block w-full h-[171px] md:h-[365px] group relative overflow-hidden rounded-lg"
             >
               <Image
                 src={banner.image}
@@ -83,7 +83,6 @@ export default function HeroSection({ banners = [] }: SliderCarouselProps) {
           </SwiperSlide>
         ))}
       </Swiper>
-      <div className="swiper-pagination"></div>
       {banners.length > 1 && (
         <>
           <button
