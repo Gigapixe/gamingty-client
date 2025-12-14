@@ -1,13 +1,12 @@
 import Head from "next/head";
-import Image from "next/image";
 import Link from "next/link";
 import backgroundImage from "@/public/images/form-bg.webp";
 import Input from "@/components/ui/Input";
 import Button from "@/components/ui/Button";
 import FullLogo from "@/components/ui/FullLogo";
+import CountryPhoneInput from "@/components/ui/CountryPhoneInput";
 import AuthFooterLinks from "@/components/auth/AuthFooterLinks";
 import AuthToggle from "@/components/auth/AuthToggle";
-import SocialLoginButtons from "@/components/auth/SocialLoginButtons";
 import TermsText from "@/components/auth/TermsText";
 
 export default function RegisterPage() {
@@ -70,13 +69,11 @@ export default function RegisterPage() {
                     className="px-4 py-3 bg-white dark:bg-[#1F1F1F] border-gray-200 dark:border-gray-700 rounded-lg text-sm"
                   />
 
-                  <Input
+                  <CountryPhoneInput
                     id="phone"
                     name="phone"
-                    type="tel"
                     label="Phone Number"
-                    placeholder="+1 555 123 4567"
-                    className="px-4 py-3 bg-white dark:bg-[#1F1F1F] border-gray-200 dark:border-gray-700 rounded-lg text-sm"
+                    placeholder="555 123 4567"
                   />
 
                   <Input

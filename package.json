@@ -12,6 +12,7 @@
     "country-state-city": "^3.2.1",
     "js-cookie": "^3.0.5",
     "jwt-decode": "^4.0.0",
+    "libphonenumber-js": "^1.12.31",
     "next": "16.0.7",
     "next-intl": "^4.5.8",
     "react": "19.2.0",
