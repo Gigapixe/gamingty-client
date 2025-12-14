@@ -216,6 +216,9 @@ export default function RegisterPage() {
                   </Link>
                 </p>
               </div>
+              <p className="text-center text-gray-200 text-sm mt-8">
+                © 2025 Gamingty. All rights reserved.
+              </p>
             </div>
           </div>
         </div>

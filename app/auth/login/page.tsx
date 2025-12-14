@@ -115,11 +115,10 @@ export default function LoginPage() {
                     </span>
                   </div>
                 </div>
-
-                <p className="text-center text-gray-200 text-sm mt-8">
-                  © 2025 Gamingty. All rights reserved.
-                </p>
               </div>
+              <p className="text-center text-gray-200 text-sm mt-8">
+                © 2025 Gamingty. All rights reserved.
+              </p>
             </div>
           </div>
         </div>
