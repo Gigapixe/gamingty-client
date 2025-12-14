@@ -18,10 +18,10 @@ export default function RegisterPage() {
       </Head>
 
       <div
-        className="flex min-h-screen bg-white dark:bg-[#161616] bg-cover bg-center z-0 overflow-x-hidden"
+        className="relative flex min-h-screen bg-white dark:bg-[#161616] bg-cover bg-center z-0 overflow-x-hidden"
         style={{ backgroundImage: `url(${backgroundImage.src})` }}
       >
-        <div className="absolute inset-0 bg-black opacity-50"></div>
+        <div className="absolute inset-0 bg-black/50 pointer-events-none z-0" />
 
         <div className="container mx-auto relative lg:flex">
           {/* Left hero */}
@@ -41,7 +41,7 @@ export default function RegisterPage() {
           <div className="w-full lg:w-1/2 flex items-center justify-end py-12 z-10 mb-40 lg:mb-0">
             <div className="w-full lg:max-w-md">
               <div className="bg-[#F8F8F8] dark:bg-[#141414] p-8 rounded-2xl dark:border dark:border-[#303030]">
-                <div className="text-center mb-10">
+                <div className="text-center mb-10 flex flex-col justify-center items-center">
                   <FullLogo />
                 </div>
 
