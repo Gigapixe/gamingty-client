@@ -28,7 +28,7 @@ export default function LoginPage() {
           <div className="z-10 w-full lg:w-1/2 flex flex-col text-white">
             <div className="flex flex-col items-start mt-10 lg:mt-48 relative">
               <p className="text-xl lg:text-2xl font-medium">Hello There</p>
-              <h1 className="text-6xl lg:text-7xl font-extrabold mt-2 relative z-10">
+              <h1 className="text-4xl lg:text-6xl font-extrabold mt-2 relative z-10">
                 Welcome Back!
               </h1>
               <div className="bg-emerald-500 h-2 lg:h-4 w-1/3 -mt-2 lg:-mt-4 z-0" />
@@ -49,7 +49,7 @@ export default function LoginPage() {
 
                 {/* Static sign-in form (UI only) */}
                 <form
-                  className="space-y-6"
+                  className="space-y-4"
                   // onSubmit={(e) => e.preventDefault()}
                 >
                   <Input
@@ -70,7 +70,7 @@ export default function LoginPage() {
                     className="px-4 py-3 bg-white dark:bg-[#1F1F1F] border-gray-200 dark:border-gray-700 rounded-lg text-sm"
                   />
 
-                  <div className="text-left mt-4!">
+                  <div className="text-left">
                     <Link
                       href="/auth/forgot-password"
                       className="text-sm underline font-medium text-gray-500 hover:text-emerald-600 dark:text-gray-400 dark:hover:text-emerald-400"
@@ -105,7 +105,7 @@ export default function LoginPage() {
 
                 <TermsText />
 
-                <div className="relative my-6">
+                {/* <div className="relative my-6">
                   <div className="absolute inset-0 flex items-center">
                     <div className="w-full border-t border-gray-300 dark:border-gray-700"></div>
                   </div>
@@ -114,7 +114,7 @@ export default function LoginPage() {
                       Or Continue With
                     </span>
                   </div>
-                </div>
+                </div> */}
               </div>
               <p className="text-center text-gray-200 text-sm mt-8">
                 © 2025 Gamingty. All rights reserved.

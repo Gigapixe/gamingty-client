@@ -28,7 +28,7 @@ export default function RegisterPage() {
           <div className="z-10 w-full lg:w-1/2 flex flex-col text-white">
             <div className="flex flex-col items-start mt-10 lg:mt-48 relative">
               <p className="text-xl lg:text-2xl font-medium">Hello There</p>
-              <h1 className="text-5xl lg:text-7xl font-extrabold mt-2 relative z-10">
+              <h1 className="text-4xl lg:text-6xl font-extrabold mt-2 relative z-10">
                 Create an account to get started
               </h1>
               <div className="bg-primary h-2 lg:h-4 w-1/3 -mt-2 lg:-mt-4 z-0" />
@@ -49,7 +49,7 @@ export default function RegisterPage() {
 
                 {/* Static Sign Up form (UI only) */}
                 <form
-                  className="space-y-6"
+                  className="space-y-4"
                   // onSubmit={(e) => e.preventDefault()}
                 >
                   <Input
