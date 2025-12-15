@@ -2,6 +2,7 @@ import Features from "@/components/homepage/Features";
 import HeroSection from "@/components/homepage/HeroSection/HeroSection";
 import PopularProducts from "@/components/homepage/PopularProducts";
 import ProductSection from "@/components/homepage/ProductSection";
+import TrendingProducts from "@/components/homepage/TrendingProducts";
 import { getAllBanners } from "@/services/bannerService";
 import Head from "next/head";
 
@@ -20,6 +21,7 @@ export default async function Home() {
       <ProductSection />
       <Features />
       <PopularProducts />
+      <TrendingProducts />
     </div>
   );
 }

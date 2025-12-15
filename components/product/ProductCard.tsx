@@ -81,9 +81,9 @@ export default function ProductCard({
             </span>
           )}
         </div>
-        {discountPercent > 0 && (
+        {/* {discountPercent > 0 && (
           <span className="text-xs text-green-700">{discountPercent}% off</span>
-        )}
+        )} */}
       </div>
     </Link>
   );
