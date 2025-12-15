@@ -128,6 +128,7 @@ export default function Newsletter() {
           </div>
           <Button
             type="submit"
+            btnType="outline"
             disabled={loading}
             loading={loading}
             loadingText="Submitting..."
