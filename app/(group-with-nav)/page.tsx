@@ -1,5 +1,6 @@
 import Features from "@/components/homepage/Features";
 import HeroSection from "@/components/homepage/HeroSection/HeroSection";
+import PopularProducts from "@/components/homepage/PopularProducts";
 import ProductSection from "@/components/homepage/ProductSection";
 import { getAllBanners } from "@/services/bannerService";
 import Head from "next/head";
@@ -18,6 +19,7 @@ export default async function Home() {
       <HeroSection banners={data} />
       <ProductSection />
       <Features />
+      <PopularProducts />
     </div>
   );
 }
