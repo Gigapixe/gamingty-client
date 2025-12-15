@@ -4,7 +4,8 @@ import Image from "next/image";
 import Link from "next/link";
 
 type Product = {
-  title: string;
+  // title may be a localized object from API or a simple string
+  title: string | { en?: string; zh?: string };
   // support API `prices` shape and legacy `DigitalPrice`
   prices?: {
     price: number;
@@ -49,6 +50,10 @@ export default function ProductCard({
   }
   const outOfStock =
     typeof product.stock === "number" ? product.stock <= 0 : false;
+  const titleText =
+    typeof product.title === "string"
+      ? product.title
+      : product.title?.en ?? product.title?.zh ?? "";
   return (
     <Link
       className={`group relative hover:-translate-y-1 w-40 bg-background-light dark:bg-background-dark border border-border-light dark:border-border-dark rounded-xl flex flex-col justify-between hover:shadow-lg transition-all duration-200 ${className}`}
@@ -69,7 +74,7 @@ export default function ProductCard({
       )}
       <div className="p-2">
         <h2 className="font-semibold mt-2 text-center text-sm line-clamp-2 group-hover:text-primary transition-colors duration-150">
-          {product.title}
+          {titleText}
         </h2>
       </div>
       <div className="text-lg font-semibold bg-gray-200 dark:bg-gray-700 rounded-b-xl p-2 text-center flex flex-col items-center">

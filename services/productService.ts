@@ -14,3 +14,9 @@ export async function getTrendingProducts() {
     cache: "no-store",
   });
 }
+export async function getBestSellerProducts() {
+  const response = `${API_BASE}/products/best-sale`;
+  return await apiFetch<any>(response, {
+    cache: "no-store",
+  });
+}
