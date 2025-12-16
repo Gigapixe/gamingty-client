@@ -1,9 +1,30 @@
 export interface User {
   _id: string;
+  userId: number;
   email: string;
-  name?: string;
-  phone?: string;
-  // Add other user fields as needed
+  name: string;
+  phone: string;
+  address?: string;
+  country?: string;
+  state?: string | null;
+  city?: string;
+  zip?: string;
+  image?: string;
+  balance: number;
+  kycStatus: string;
+  isPhoneVerified: boolean;
+  isEmailVerified: boolean;
+  isTwoFactorEnabled: boolean;
+  membershipTier: string;
+  provider: string;
+  otpByPass: boolean;
+  referralCode: string;
+  referralEarning: number;
+  totalSpent: number;
+  providerId?: string;
+  dob?: string | null;
+  createdAt: string;
+  updatedAt: string;
 }
 
 export interface LoginResponse {
@@ -11,14 +32,11 @@ export interface LoginResponse {
   message: string;
   token: string;
   requiredOTP: boolean;
-  user?: User;
 }
 
-export interface VerifyOTPResponse {
+export interface VerifyOTPResponse extends User {
   status: string;
-  message: string;
   token: string;
-  user?: User;
 }
 
 export interface AuthState {

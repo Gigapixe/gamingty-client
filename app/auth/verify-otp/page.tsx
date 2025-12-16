@@ -8,13 +8,17 @@ import Button from "@/components/ui/Button";
 import FullLogo from "@/components/ui/FullLogo";
 import AuthFooterLinks from "@/components/auth/AuthFooterLinks";
 import { useAuthStore } from "@/zustand/authStore";
+import { resendOTP, verifyOTP } from "@/services/customerService";
 
 export default function VerifyOtpPage() {
   const router = useRouter();
-  const { tempToken, tempEmail, setAuth, clearTempAuth } = useAuthStore();
+  const { tempToken, tempEmail, setAuth, clearTempAuth, setTempAuth } =
+    useAuthStore();
   const [otp, setOtp] = useState(["", "", "", "", "", ""]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [resendCountdown, setResendCountdown] = useState(0);
+  const [resendLoading, setResendLoading] = useState(false);
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
 
   useEffect(() => {
@@ -23,6 +27,17 @@ export default function VerifyOtpPage() {
       router.push("/auth/login");
     }
   }, [tempToken, tempEmail, router]);
+
+  useEffect(() => {
+    // Countdown timer for resend button
+    if (resendCountdown > 0) {
+      const timer = setTimeout(
+        () => setResendCountdown(resendCountdown - 1),
+        1000
+      );
+      return () => clearTimeout(timer);
+    }
+  }, [resendCountdown]);
 
   const handleChange = (index: number, value: string) => {
     if (!/^\d*$/.test(value)) return; // Only digits
@@ -62,37 +77,51 @@ export default function VerifyOtpPage() {
     inputRefs.current[nextIndex]?.focus();
   };
 
+  const handleResendOTP = async () => {
+    if (resendCountdown > 0 || !tempToken) return;
+
+    setError(null);
+    setResendLoading(true);
+
+    try {
+      const res: any = await resendOTP(tempToken);
+
+      if (res?.status === "success" && res?.token) {
+        // Update tempToken with the new token from response
+        if (tempEmail) {
+          setTempAuth(tempEmail, res.token);
+        }
+        setResendCountdown(30);
+        setOtp(["", "", "", "", "", ""]);
+        inputRefs.current[0]?.focus();
+      } else {
+        setError(res?.message || "Failed to resend OTP");
+      }
+    } catch (err: any) {
+      setError(err?.message || "Failed to resend OTP");
+    } finally {
+      setResendLoading(false);
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
 
     const otpCode = otp.join("");
+
     if (otpCode.length !== 6) {
       return setError("Please enter all 6 digits");
     }
 
     try {
       setLoading(true);
-      // Call verify OTP API
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_BASE_URL}/customer/verify-otp`,
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            token: tempToken,
-            otp: otpCode,
-          }),
-        }
-      );
-
-      const res = await response.json();
+      const res = (await verifyOTP(tempToken as string, otpCode)) as any;
 
       if (res?.status === "success" && res?.token) {
-        // Store auth and redirect
-        if (res.user) {
-          setAuth(res.user, res.token);
-        }
+        // Response contains user data directly, not nested
+        const { token, status, ...userData } = res;
+        setAuth(userData, token);
         clearTempAuth();
         router.push("/");
       } else {
@@ -188,13 +217,19 @@ export default function VerifyOtpPage() {
                   Didn't receive code?{" "}
                   <button
                     type="button"
-                    className="font-semibold text-emerald-600 hover:text-emerald-800 dark:text-emerald-400 dark:hover:text-emerald-300"
-                    onClick={() => {
-                      // Add resend OTP logic here
-                      console.log("Resend OTP");
-                    }}
+                    className={`font-semibold ${
+                      resendCountdown > 0 || resendLoading
+                        ? "text-gray-400 cursor-not-allowed"
+                        : "text-emerald-600 hover:text-emerald-800 dark:text-emerald-400 dark:hover:text-emerald-300"
+                    }`}
+                    onClick={handleResendOTP}
+                    disabled={resendCountdown > 0 || resendLoading}
                   >
-                    Resend
+                    {resendLoading
+                      ? "Sending..."
+                      : resendCountdown > 0
+                      ? `Resend (${resendCountdown}s)`
+                      : "Resend"}
                   </button>
                 </p>
 

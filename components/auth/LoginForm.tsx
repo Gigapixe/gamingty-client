@@ -31,17 +31,15 @@ export default function LoginForm() {
 
     try {
       setLoading(true);
-      const res = (await customerLogin(email, password)) as LoginResponse;
+      const res = (await customerLogin(email, password)) as any;
 
       if (res?.status === "success" && res?.requiredOTP) {
-        // Store temp token and email for OTP verification
         setTempAuth(email, res.token);
         router.push("/auth/verify-otp");
       } else if (res?.status === "success" && res?.token) {
-        // Direct login without OTP
-        if (res.user) {
-          setAuth(res.user, res.token);
-        }
+        // Response contains user data directly, not nested
+        const { token, status, ...userData } = res;
+        setAuth(userData, token);
         router.push("/");
       } else {
         setError(res?.message || "Login failed");
