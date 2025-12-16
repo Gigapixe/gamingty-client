@@ -1,4 +1,5 @@
 import Head from "next/head";
+import LoginForm from "@/components/auth/LoginForm";
 
 import Link from "next/link";
 import backgroundImage from "@/public/images/bg-login.webp";
@@ -47,61 +48,8 @@ export default function LoginPage() {
 
                 <AuthToggle activeTab="signin" />
 
-                {/* Static sign-in form (UI only) */}
-                <form
-                  className="space-y-4"
-                  // onSubmit={(e) => e.preventDefault()}
-                >
-                  <Input
-                    id="loginEmail"
-                    name="loginEmail"
-                    type="email"
-                    label="Email"
-                    placeholder="example@mail.com"
-                    className="px-4 py-3 bg-white dark:bg-[#1F1F1F] border-gray-200 dark:border-gray-700 rounded-lg text-sm"
-                  />
-
-                  <Input
-                    id="password"
-                    name="password"
-                    type="password"
-                    label="Password"
-                    placeholder="••••••••"
-                    className="px-4 py-3 bg-white dark:bg-[#1F1F1F] border-gray-200 dark:border-gray-700 rounded-lg text-sm"
-                  />
-
-                  <div className="text-left">
-                    <Link
-                      href="/auth/forgot-password"
-                      className="text-sm underline font-medium text-gray-500 hover:text-emerald-600 dark:text-gray-400 dark:hover:text-emerald-400"
-                    >
-                      Forgot Password?
-                    </Link>
-                  </div>
-
-                  <Button
-                    type="submit"
-                    btnType="primary"
-                    className="w-full py-3 px-5"
-                  >
-                    <span>Sign In</span>
-                    {/* <div className="absolute right-3 rounded-full text-emerald-500 bg-white p-1.5">
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        className="h-5 w-5"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="1.5"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                      >
-                        <path d="M5 12h14" />
-                        <path d="M12 5l7 7-7 7" />
-                      </svg>
-                    </div> */}
-                  </Button>
-                </form>
+                {/* Login form */}
+                <LoginForm />
 
                 <TermsText />
 
