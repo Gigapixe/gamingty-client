@@ -107,19 +107,18 @@ export default function ProductCard({
 
   return (
     <div
-      className={`group rounded-xl bg-background-light  dark:bg-white/5   ${className}`}
+      className={`group rounded-xl bg-background-light dark:bg-white/5 max-w-50.5 ${className}`}
     >
       <Link href={`/product/${product.slug}`}>
         <div className="relative pt-[100%]">
-          <div className="absolute top-0 left-0 w-full h-full cursor-pointer">
-            <Image
-              src={imageSrc}
-              alt={titleText}
-              fill
-              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-              className="object-cover object-center rounded-t-xl"
-            />
-          </div>
+          <Image
+            src={imageSrc}
+            alt={titleText}
+            fill
+            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+            className="object-cover object-center rounded-t-xl"
+            loading="eager"
+          />
         </div>
       </Link>
 
@@ -128,7 +127,7 @@ export default function ProductCard({
           <div
             className={`text-xs font-medium px-2.5 py-1 rounded-full ${
               outOfStock
-                ? "bg-primary text-primary dark:bg-primary dark:text-primary text-xs font-medium px-2.5 py-1 rounded-full"
+                ? "bg-primary/20 text-primary dark:bg-primary/20 dark:text-primary"
                 : "bg-primary/20 text-primary dark:bg-primary/20 dark:text-primary"
             }`}
           >

@@ -7,7 +7,6 @@ import { useRef, useState, useEffect } from "react";
 
 export default function ProductsCarousel({ products }: { products: any[] }) {
   const [isReady, setIsReady] = useState(false);
-  console.log(products);
 
   // Transform the products data to match ProductCard's expected Product type
   const formattedProducts = products?.map((product) => ({
