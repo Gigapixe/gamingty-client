@@ -7,6 +7,7 @@ import backgroundImage from "@/public/images/form-bg.png";
 import Button from "@/components/ui/Button";
 import FullLogo from "@/components/ui/FullLogo";
 import AuthFooterLinks from "@/components/auth/AuthFooterLinks";
+import OtpInput, { OtpInputHandle } from "@/components/ui/OtpInput";
 import { useAuthStore } from "@/zustand/authStore";
 import { resendOTP, verifyOTP } from "@/services/customerService";
 
@@ -14,12 +15,12 @@ export default function VerifyOtpPage() {
   const router = useRouter();
   const { tempToken, tempEmail, setAuth, clearTempAuth, setTempAuth } =
     useAuthStore();
-  const [otp, setOtp] = useState(["", "", "", "", "", ""]);
+  const [otp, setOtp] = useState<string>("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [resendCountdown, setResendCountdown] = useState(0);
   const [resendLoading, setResendLoading] = useState(false);
-  const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
+  const otpRef = useRef<OtpInputHandle | null>(null);
 
   const maskEmail = (email?: string | null) => {
     if (!email) return "";
@@ -57,43 +58,7 @@ export default function VerifyOtpPage() {
     }
   }, [resendCountdown]);
 
-  const handleChange = (index: number, value: string) => {
-    if (!/^\d*$/.test(value)) return; // Only digits
-
-    const newOtp = [...otp];
-    newOtp[index] = value.slice(-1); // Take only last digit
-    setOtp(newOtp);
-
-    // Auto-focus next input
-    if (value && index < 5) {
-      inputRefs.current[index + 1]?.focus();
-    }
-  };
-
-  const handleKeyDown = (
-    index: number,
-    e: React.KeyboardEvent<HTMLInputElement>
-  ) => {
-    if (e.key === "Backspace" && !otp[index] && index > 0) {
-      inputRefs.current[index - 1]?.focus();
-    }
-  };
-
-  const handlePaste = (e: React.ClipboardEvent) => {
-    e.preventDefault();
-    const pastedData = e.clipboardData.getData("text").slice(0, 6);
-    if (!/^\d+$/.test(pastedData)) return;
-
-    const newOtp = [...otp];
-    pastedData.split("").forEach((char, i) => {
-      if (i < 6) newOtp[i] = char;
-    });
-    setOtp(newOtp);
-
-    // Focus last filled input or next empty
-    const nextIndex = Math.min(pastedData.length, 5);
-    inputRefs.current[nextIndex]?.focus();
-  };
+  // OTP input is handled by the reusable <OtpInput /> component
 
   const handleResendOTP = async () => {
     if (resendCountdown > 0 || !tempToken) return;
@@ -110,8 +75,8 @@ export default function VerifyOtpPage() {
           setTempAuth(tempEmail, res.token);
         }
         setResendCountdown(30);
-        setOtp(["", "", "", "", "", ""]);
-        inputRefs.current[0]?.focus();
+        setOtp("");
+        otpRef.current?.focus();
       } else {
         setError(res?.message || "Failed to resend OTP");
       }
@@ -126,7 +91,7 @@ export default function VerifyOtpPage() {
     e.preventDefault();
     setError(null);
 
-    const otpCode = otp.join("");
+    const otpCode = otp;
 
     if (otpCode.length !== 6) {
       return setError("Please enter all 6 digits");
@@ -152,7 +117,7 @@ export default function VerifyOtpPage() {
     }
   };
 
-  const isFormValid = otp.every((digit) => digit !== "");
+  const isFormValid = otp.length === 6;
 
   return (
     <>
@@ -166,7 +131,7 @@ export default function VerifyOtpPage() {
       >
         <div className="absolute inset-0 bg-black/50 pointer-events-none z-0" />
 
-        <div className="container mx-auto relative md:flex">
+        <div className="container mx-auto relative md:flex gap-4">
           {/* Left hero */}
           <div className="z-10 w-full md:w-1/2 flex flex-col text-white">
             <div className="flex flex-col items-start mt-10 md:mt-48 relative">
@@ -181,9 +146,9 @@ export default function VerifyOtpPage() {
           </div>
 
           {/* Right form column */}
-          <div className="w-full md:w-1/2 flex items-center justify-end py-12 z-10 mb-40 md:mb-0">
-            <div className="w-full md:max-w-[404px]">
-              <div className="bg-[#F8F8F8] dark:bg-[#141414] p-8 rounded-2xl dark:border dark:border-[#303030]">
+          <div className="w-full md:w-1/2 flex items-center justify-end pb-20 pt-12 md:py-12 z-10 mb-40 md:mb-0">
+            <div className="w-full md:min-w-[395px] lg:max-w-[404px]">
+              <div className="bg-[#F8F8F8] dark:bg-[#141414] p-4 md:p-8 rounded-2xl dark:border dark:border-[#303030]">
                 <div className="text-center mb-10 flex flex-col justify-center items-center">
                   <FullLogo />
                 </div>
@@ -199,23 +164,16 @@ export default function VerifyOtpPage() {
                 </div>
 
                 <form className="" onSubmit={handleSubmit}>
-                  <div className="flex justify-center gap-2">
-                    {otp.map((digit, index) => (
-                      <input
-                        key={index}
-                        ref={(el) => {
-                          inputRefs.current[index] = el;
-                        }}
-                        type="text"
-                        inputMode="numeric"
-                        maxLength={1}
-                        value={digit}
-                        onChange={(e) => handleChange(index, e.target.value)}
-                        onKeyDown={(e) => handleKeyDown(index, e)}
-                        onPaste={index === 0 ? handlePaste : undefined}
-                        className="w-12 h-14 text-center text-xl font-semibold bg-white dark:bg-[#1F1F1F] border-2 border-gray-200 dark:border-gray-700 rounded-lg focus:border-emerald-500 focus:outline-none transition-colors"
-                      />
-                    ))}
+                  <div>
+                    <OtpInput
+                      ref={otpRef}
+                      value={otp}
+                      onChange={setOtp}
+                      length={6}
+                      autoFocus
+                      label="Enter Your Verification Code"
+                      labelClassName="text-sm font-bold"
+                    />
                   </div>
 
                   {error && (
