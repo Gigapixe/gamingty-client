@@ -37,7 +37,9 @@ export default function CategoryDrawer({ initialTree }: CategoryDrawerProps) {
   const [direction, setDirection] = useState<"forward" | "back">("forward");
   const [prevPanel, setPrevPanel] = useState<Category[] | null>(null);
   const [nextPanel, setNextPanel] = useState<Category[] | null>(null);
-  const ANIM_MS = 280;
+  const [prevPanelRef, setPrevPanelRef] = useState<HTMLDivElement | null>(null);
+  const [nextPanelRef, setNextPanelRef] = useState<HTMLDivElement | null>(null);
+  const ANIM_MS = 300; // match drawer transition
 
   const fetchCategories = useCallback(async () => {
     setLoading(true);
@@ -92,18 +94,26 @@ export default function CategoryDrawer({ initialTree }: CategoryDrawerProps) {
     setDirection("forward");
     setPrevPanel(nodes);
     setNextPanel(newNodes);
-    // wait a tick then animate
+
+    // push current nodes to stack immediately for predictability
+    setStack((s) => [...s, nodes]);
+
+    // reset scroll positions if refs exist
+    if (nextPanelRef) nextPanelRef.scrollTop = 0;
+    if (prevPanelRef) prevPanelRef.scrollTop = 0;
+
+    // wait a tick then animate (double rAF for reliability)
     requestAnimationFrame(() =>
       requestAnimationFrame(() => setAnimateOn(true))
     );
+
     setTimeout(() => {
-      setStack((s) => [...s, nodes]);
       setNodes(newNodes);
       setPrevPanel(null);
       setNextPanel(null);
       setAnimateOn(false);
       setAnimating(false);
-    }, ANIM_MS + 20);
+    }, ANIM_MS + 10);
   };
 
   const startBackAnim = (prevNodes: Category[]) => {
@@ -112,17 +122,23 @@ export default function CategoryDrawer({ initialTree }: CategoryDrawerProps) {
     setDirection("back");
     setPrevPanel(nodes);
     setNextPanel(prevNodes);
-    // wait a tick then animate
+
+    // reset scroll positions if refs exist
+    if (nextPanelRef) nextPanelRef.scrollTop = 0;
+    if (prevPanelRef) prevPanelRef.scrollTop = 0;
+
+    // wait a tick then animate (double rAF for reliability)
     requestAnimationFrame(() =>
       requestAnimationFrame(() => setAnimateOn(true))
     );
+
     setTimeout(() => {
       setNodes(prevNodes);
       setPrevPanel(null);
       setNextPanel(null);
       setAnimateOn(false);
       setAnimating(false);
-    }, ANIM_MS + 20);
+    }, ANIM_MS + 10);
   };
 
   const handleCategoryClick = (node: Category) => {
@@ -140,17 +156,13 @@ export default function CategoryDrawer({ initialTree }: CategoryDrawerProps) {
   };
 
   const handleBack = () => {
-    if (animating) return;
-    setStack((s) => {
-      if (s.length === 0) return s;
-      const prev = s[s.length - 1];
-      const newStack = s.slice(0, -1);
-      // animate back
-      startBackAnim(prev);
-      // update stack after animation completes
-      setTimeout(() => setStack(newStack), ANIM_MS + 20);
-      return newStack;
-    });
+    if (animating || stack.length === 0) return;
+    const prev = stack[stack.length - 1];
+    const newStack = stack.slice(0, -1);
+    // animate back
+    startBackAnim(prev);
+    // update stack immediately
+    setStack(newStack);
   };
 
   return (
@@ -168,7 +180,7 @@ export default function CategoryDrawer({ initialTree }: CategoryDrawerProps) {
         role="dialog"
         aria-modal="true"
         aria-label="Categories"
-        className={`fixed inset-y-0 left-0 z-50 w-72 md:w-80 lg:w-96 bg-white dark:bg-[#0B0B0B] shadow-xl transform ${
+        className={`fixed inset-y-0 left-0 z-50 w-72 md:w-80 lg:w-[419px] bg-white dark:bg-[#0B0B0B] shadow-xl transform ${
           isOpen ? "translate-x-0" : "-translate-x-full"
         } transition-transform duration-300 ease-in-out`}
       >
@@ -264,7 +276,10 @@ export default function CategoryDrawer({ initialTree }: CategoryDrawerProps) {
             {animating && prevPanel && nextPanel && (
               <>
                 <div
-                  className={`absolute inset-0 overflow-y-auto p-2 transition-transform duration-300 ease-in-out ${
+                  ref={(el) => setPrevPanelRef(el)}
+                  className={`absolute inset-0 overflow-y-auto  transition-transform duration-300 ease-in-out transform-gpu will-change-transform ${
+                    animating ? "pointer-events-none" : ""
+                  } ${
                     direction === "forward"
                       ? animateOn
                         ? "-translate-x-full"
@@ -274,16 +289,16 @@ export default function CategoryDrawer({ initialTree }: CategoryDrawerProps) {
                       : "translate-x-0"
                   }`}
                 >
-                  <ul className="divide-y divide-gray-100 dark:divide-[#161616]">
+                  <ul className="">
                     {prevPanel.map((node) => (
-                      <li key={node._id} className="p-2">
-                        <button className="w-full flex items-center gap-3 text-left px-2 py-3 rounded opacity-60">
+                      <li key={node._id} className="">
+                        <button className="w-full flex items-center gap-3 text-left px-4 sm:px-6 py-2.5 rounded opacity-60">
                           {node.icon ? (
                             // eslint-disable-next-line @next/next/no-img-element
                             <img
                               src={node.icon}
                               alt=""
-                              className="w-8 h-8 rounded"
+                              className="w-5 h-5 rounded"
                             />
                           ) : (
                             <div className="w-9 h-9 rounded bg-emerald-50 text-emerald-500 flex items-center justify-center">
@@ -312,7 +327,10 @@ export default function CategoryDrawer({ initialTree }: CategoryDrawerProps) {
                 </div>
 
                 <div
-                  className={`absolute inset-0 overflow-y-auto p-2 transition-transform duration-300 ease-in-out ${
+                  ref={(el) => setNextPanelRef(el)}
+                  className={`absolute inset-0 overflow-y-auto transition-transform duration-300 ease-in-out transform-gpu will-change-transform ${
+                    animating ? "pointer-events-none" : ""
+                  } ${
                     direction === "forward"
                       ? animateOn
                         ? "translate-x-0"
@@ -322,19 +340,19 @@ export default function CategoryDrawer({ initialTree }: CategoryDrawerProps) {
                       : "-translate-x-full"
                   }`}
                 >
-                  <ul className="divide-y divide-gray-100 dark:divide-[#161616]">
+                  <ul className="">
                     {nextPanel.map((node) => (
-                      <li key={node._id} className="p-2">
+                      <li key={node._id} className="">
                         <button
                           onClick={() => handleCategoryClick(node)}
-                          className="w-full flex items-center gap-3 text-left px-2 py-3 hover:bg-gray-50 dark:hover:bg-[#111111] rounded"
+                          className="w-full flex items-center gap-3 text-left px-4 sm:px-6 py-2.5 hover:bg-gray-50 dark:hover:bg-[#111111] rounded"
                         >
                           {node.icon ? (
                             // eslint-disable-next-line @next/next/no-img-element
                             <img
                               src={node.icon}
                               alt=""
-                              className="w-8 h-8 rounded"
+                              className="w-5 h-5 rounded"
                             />
                           ) : (
                             <div className="w-9 h-9 rounded bg-emerald-50 text-emerald-500 flex items-center justify-center">
@@ -351,11 +369,11 @@ export default function CategoryDrawer({ initialTree }: CategoryDrawerProps) {
                             <div className="font-medium text-sm">
                               {node.name?.en || node.slug || "Category"}
                             </div>
-                            {node.children && node.children.length > 0 && (
+                            {/* {node.children && node.children.length > 0 && (
                               <div className="text-xs text-gray-500">
                                 {node.children.length} subcategories
                               </div>
-                            )}
+                            )} */}
                           </div>
 
                           {node.children && node.children.length > 0 ? (
