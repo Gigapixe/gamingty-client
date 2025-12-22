@@ -3,7 +3,7 @@ import { useState, useRef, useEffect } from "react";
 import Head from "next/head";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import backgroundImage from "@/public/images/form-bg.webp";
+import backgroundImage from "@/public/images/form-bg.png";
 import Button from "@/components/ui/Button";
 import FullLogo from "@/components/ui/FullLogo";
 import AuthFooterLinks from "@/components/auth/AuthFooterLinks";
@@ -20,6 +20,24 @@ export default function VerifyOtpPage() {
   const [resendCountdown, setResendCountdown] = useState(0);
   const [resendLoading, setResendLoading] = useState(false);
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
+
+  const maskEmail = (email?: string | null) => {
+    if (!email) return "";
+    const parts = email.split("@");
+    if (parts.length !== 2) return email;
+    const [local, domain] = parts;
+
+    if (local.length <= 2) {
+      return `${local[0]}${"*".repeat(
+        Math.max(1, local.length - 1)
+      )}@${domain}`;
+    }
+
+    const stars = "*".repeat(Math.max(3, local.length - 2));
+    return `${local[0]}${stars}${local[local.length - 1]}@${domain}`;
+  };
+
+  const maskedEmail = maskEmail(tempEmail);
 
   useEffect(() => {
     // Redirect if no temp auth data
@@ -148,38 +166,39 @@ export default function VerifyOtpPage() {
       >
         <div className="absolute inset-0 bg-black/50 pointer-events-none z-0" />
 
-        <div className="container mx-auto relative lg:flex">
+        <div className="container mx-auto relative md:flex">
           {/* Left hero */}
-          <div className="z-10 w-full lg:w-1/2 flex flex-col text-white">
-            <div className="flex flex-col items-start mt-10 lg:mt-48 relative">
-              <p className="text-xl lg:text-2xl font-medium">Verify OTP</p>
-              <h1 className="text-4xl lg:text-6xl font-extrabold mt-2 relative z-10">
-                Enter verification code
+          <div className="z-10 w-full md:w-1/2 flex flex-col text-white">
+            <div className="flex flex-col items-start mt-10 md:mt-48 relative">
+              <p className="text-xl md:text-2xl font-medium">Verify OTP</p>
+              <h1 className="text-4xl md:text-6xl font-extrabold mt-2 relative z-10">
+                A verification code has been sent to your email
               </h1>
-              <div className="bg-primary h-2 lg:h-4 w-1/3 -mt-2 lg:-mt-4 z-0" />
+              <div className="bg-primary h-2 md:h-4 w-1/3 -mt-2 md:-mt-4 z-0" />
             </div>
 
             <AuthFooterLinks />
           </div>
 
           {/* Right form column */}
-          <div className="w-full lg:w-1/2 flex items-center justify-end py-12 z-10 mb-40 lg:mb-0">
-            <div className="w-full lg:max-w-md">
+          <div className="w-full md:w-1/2 flex items-center justify-end py-12 z-10 mb-40 md:mb-0">
+            <div className="w-full md:max-w-[404px]">
               <div className="bg-[#F8F8F8] dark:bg-[#141414] p-8 rounded-2xl dark:border dark:border-[#303030]">
                 <div className="text-center mb-10 flex flex-col justify-center items-center">
                   <FullLogo />
                 </div>
-
+                <h2 className="font-bold mb-4 text-lg">
+                  Additional Verification Required!
+                </h2>
                 <div className="mb-6 text-center">
                   <p className="text-sm text-gray-600 dark:text-gray-400">
-                    We sent a verification code to
-                  </p>
-                  <p className="text-sm font-semibold text-gray-800 dark:text-gray-200 mt-1">
-                    {tempEmail}
+                    For your security, we’ve sent a 6-digit code to your{" "}
+                    <span className="font-semibold">({maskedEmail})</span>{" "}
+                    Please enter it below to continue.
                   </p>
                 </div>
 
-                <form className="space-y-6" onSubmit={handleSubmit}>
+                <form className="" onSubmit={handleSubmit}>
                   <div className="flex justify-center gap-2">
                     {otp.map((digit, index) => (
                       <input
@@ -203,37 +222,36 @@ export default function VerifyOtpPage() {
                     <p className="text-sm text-red-600 text-center">{error}</p>
                   )}
 
+                  <p className="mt-2 mb-4 text-sm text-gray-600 dark:text-gray-400">
+                    Didn't receive code?{" "}
+                    <button
+                      type="button"
+                      className={`font-semibold ${
+                        resendCountdown > 0 || resendLoading
+                          ? "text-gray-400 cursor-not-allowed"
+                          : "text-emerald-600 hover:text-emerald-800 dark:text-emerald-400 dark:hover:text-emerald-300"
+                      }`}
+                      onClick={handleResendOTP}
+                      disabled={resendCountdown > 0 || resendLoading}
+                    >
+                      {resendLoading
+                        ? "Sending..."
+                        : resendCountdown > 0
+                        ? `Resend (${resendCountdown}s)`
+                        : "Resend Again"}
+                    </button>
+                  </p>
                   <Button
                     type="submit"
                     btnType="primary"
                     disabled={!isFormValid || loading}
                     className="w-full py-3 px-5"
                   >
-                    <span>{loading ? "Verifying..." : "Verify OTP"}</span>
+                    <span>{loading ? "Verifying..." : "Verify OTP"}</span>{" "}
                   </Button>
                 </form>
 
-                <p className="text-center text-sm mt-6 text-gray-600 dark:text-gray-400">
-                  Didn't receive code?{" "}
-                  <button
-                    type="button"
-                    className={`font-semibold ${
-                      resendCountdown > 0 || resendLoading
-                        ? "text-gray-400 cursor-not-allowed"
-                        : "text-emerald-600 hover:text-emerald-800 dark:text-emerald-400 dark:hover:text-emerald-300"
-                    }`}
-                    onClick={handleResendOTP}
-                    disabled={resendCountdown > 0 || resendLoading}
-                  >
-                    {resendLoading
-                      ? "Sending..."
-                      : resendCountdown > 0
-                      ? `Resend (${resendCountdown}s)`
-                      : "Resend"}
-                  </button>
-                </p>
-
-                <p className="text-center text-sm mt-4 text-gray-600 dark:text-gray-400">
+                <p className="text-sm mt-4 text-gray-600 dark:text-gray-400">
                   Wrong email?{" "}
                   <Link
                     href="/auth/login"
