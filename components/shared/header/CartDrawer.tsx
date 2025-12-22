@@ -62,7 +62,7 @@ export default function CartDrawer() {
         role="dialog"
         aria-modal="true"
         aria-label="Shopping Cart"
-        className={`fixed inset-y-0 right-0 z-50 w-full sm:w-96 lg:w-[420px] bg-white dark:bg-[#0B0B0B] shadow-xl transform ${
+        className={`fixed inset-y-0 right-0 z-50 w-full sm:w-96 lg:w-105 bg-white dark:bg-[#0B0B0B] shadow-xl transform ${
           isOpen ? "translate-x-0" : "translate-x-full"
         } transition-transform duration-300 ease-in-out`}
       >
@@ -101,7 +101,7 @@ export default function CartDrawer() {
                     className="flex gap-3 p-3 bg-gray-50 dark:bg-[#161616] rounded-lg"
                   >
                     {/* Product Image */}
-                    <div className="relative w-20 h-20 flex-shrink-0 bg-white dark:bg-[#1F1F1F] rounded-lg overflow-hidden">
+                    <div className="relative w-20 h-20 shrink-0 bg-white dark:bg-[#1F1F1F] rounded-lg overflow-hidden">
                       <Image
                         src={item.image}
                         alt={item.title}
