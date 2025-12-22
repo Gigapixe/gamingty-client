@@ -3,7 +3,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useCategoryStore } from "@/zustand/store";
-import VectorIcon from "@/public/icons/VectorIcon";
 import { getAllCategories } from "@/services/categoryService";
 
 type Category = {
@@ -28,9 +27,21 @@ export default function CategoryDrawer({ initialTree }: CategoryDrawerProps) {
   );
   const [nodes, setNodes] = useState<Category[]>(tree ?? []); // current visible nodes
   const [stack, setStack] = useState<Category[][]>([]); // navigation stack of previous node lists
+  const [titleStack, setTitleStack] = useState<string[]>([]);
+  const [currentTitle, setCurrentTitle] = useState<string>("All Categories");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  // keep in sync if server provides updated tree later
+  useEffect(() => {
+    if (initialTree && initialTree.length > 0) {
+      setTree(initialTree);
+      setNodes(initialTree);
+      setCurrentTitle("All Categories");
+      setStack([]);
+      setTitleStack([]);
+    }
+  }, [initialTree]);
   // animation state
   const [animating, setAnimating] = useState(false);
   const [animateOn, setAnimateOn] = useState(false); // toggles transforms
@@ -88,15 +99,16 @@ export default function CategoryDrawer({ initialTree }: CategoryDrawerProps) {
     };
   }, [isOpen, tree]);
 
-  const startForwardAnim = (newNodes: Category[]) => {
+  const startForwardAnim = (newNodes: Category[], newTitle?: string) => {
     if (animating) return;
     setAnimating(true);
     setDirection("forward");
     setPrevPanel(nodes);
     setNextPanel(newNodes);
 
-    // push current nodes to stack immediately for predictability
+    // push current nodes and title to stack immediately for predictability
     setStack((s) => [...s, nodes]);
+    setTitleStack((t) => [...t, currentTitle]);
 
     // reset scroll positions if refs exist
     if (nextPanelRef) nextPanelRef.scrollTop = 0;
@@ -109,6 +121,7 @@ export default function CategoryDrawer({ initialTree }: CategoryDrawerProps) {
 
     setTimeout(() => {
       setNodes(newNodes);
+      setCurrentTitle(newTitle ?? (newNodes[0]?.name?.en || "Category"));
       setPrevPanel(null);
       setNextPanel(null);
       setAnimateOn(false);
@@ -116,7 +129,7 @@ export default function CategoryDrawer({ initialTree }: CategoryDrawerProps) {
     }, ANIM_MS + 10);
   };
 
-  const startBackAnim = (prevNodes: Category[]) => {
+  const startBackAnim = (prevNodes: Category[], prevTitle?: string) => {
     if (animating) return;
     setAnimating(true);
     setDirection("back");
@@ -134,6 +147,7 @@ export default function CategoryDrawer({ initialTree }: CategoryDrawerProps) {
 
     setTimeout(() => {
       setNodes(prevNodes);
+      setCurrentTitle(prevTitle ?? "All Categories");
       setPrevPanel(null);
       setNextPanel(null);
       setAnimateOn(false);
@@ -144,7 +158,7 @@ export default function CategoryDrawer({ initialTree }: CategoryDrawerProps) {
   const handleCategoryClick = (node: Category) => {
     if (animating) return;
     if (node.children && node.children.length > 0) {
-      startForwardAnim(node.children);
+      startForwardAnim(node.children, node.name?.en || node.slug);
     } else {
       // navigate to category page and close drawer
       const target = node.slug
@@ -159,9 +173,17 @@ export default function CategoryDrawer({ initialTree }: CategoryDrawerProps) {
     if (animating || stack.length === 0) return;
     const prev = stack[stack.length - 1];
     const newStack = stack.slice(0, -1);
-    // animate back
-    startBackAnim(prev);
-    // update stack immediately
+
+    // compute previous title and update title stack
+    const prevTitle =
+      titleStack.length > 0
+        ? titleStack[titleStack.length - 1]
+        : "All Categories";
+    const newTitleStack = titleStack.slice(0, -1);
+    setTitleStack(newTitleStack);
+
+    // animate back and update stack immediately
+    startBackAnim(prev, prevTitle);
     setStack(newStack);
   };
 
@@ -180,32 +202,37 @@ export default function CategoryDrawer({ initialTree }: CategoryDrawerProps) {
         role="dialog"
         aria-modal="true"
         aria-label="Categories"
-        className={`fixed inset-y-0 left-0 z-50 w-72 md:w-80 lg:w-[419px] bg-white dark:bg-[#0B0B0B] shadow-xl transform ${
+        className={`fixed inset-y-0 left-0 z-50 w-full md:w-[419px] bg-white dark:bg-[#0B0B0B] shadow-xl transform ${
           isOpen ? "translate-x-0" : "-translate-x-full"
         } transition-transform duration-300 ease-in-out`}
       >
         <div className="flex flex-col h-full">
-          <div className="p-4 bg-emerald-500 text-white flex items-center justify-between">
+          <div className="p-4 bg-primary text-white relative flex items-center justify-between">
             <div className="flex items-center gap-2">
               {stack.length > 0 ? (
                 <button
                   onClick={handleBack}
-                  className="p-2 rounded-md bg-emerald-600/80 hover:bg-emerald-600/90"
+                  className="p-2 rounded-md bg-primary/80 hover:bg-primary/90 text-white"
                   aria-label="Back"
                 >
                   ←
                 </button>
               ) : (
-                <VectorIcon className="text-white" />
+                <div className="p-2" aria-hidden="true" />
               )}
+            </div>
 
-              <h3 className="font-medium text-white">All Categories</h3>
+            {/* centered title */}
+            <div className="absolute left-1/2 transform -translate-x-1/2 pointer-events-none w-3/4">
+              <h3 className="font-medium text-white text-center truncate">
+                {currentTitle}
+              </h3>
             </div>
 
             <button
               ref={closeButtonRef}
               onClick={closeCategory}
-              className="p-2 rounded-md hover:bg-emerald-600/80"
+              className="p-2 rounded-md hover:bg-primary/80 text-white"
               aria-label="Close drawer"
             >
               <span className="text-white">✕</span>
@@ -234,7 +261,7 @@ export default function CategoryDrawer({ initialTree }: CategoryDrawerProps) {
                       <li key={node._id} className="">
                         <button
                           onClick={() => handleCategoryClick(node)}
-                          className="w-full flex items-center gap-3 text-left px-4 sm:px-6 py-2.5 hover:bg-gray-50 dark:hover:bg-[#111111] rounded"
+                          className="w-full flex items-center gap-3 text-left px-4 sm:px-6 py-3.5 hover:bg-gray-50 dark:hover:bg-[#111111] rounded"
                         >
                           {node.icon ? (
                             // render icon if available
@@ -245,9 +272,9 @@ export default function CategoryDrawer({ initialTree }: CategoryDrawerProps) {
                               className="w-5 h-5 rounded"
                             />
                           ) : (
-                            <div className="w-9 h-9 rounded bg-emerald-50 text-emerald-500 flex items-center justify-center">
+                            <div className="w-9 h-9 rounded bg-primary/10 text-primary flex items-center justify-center">
                               <svg
-                                className="w-4 h-4 text-emerald-500"
+                                className="w-4 h-4 text-primary"
                                 viewBox="0 0 24 24"
                               >
                                 <path d="M3 3h18v18H3z" fill="currentColor" />
@@ -262,7 +289,7 @@ export default function CategoryDrawer({ initialTree }: CategoryDrawerProps) {
                           </div>
 
                           {node.children && node.children.length > 0 ? (
-                            <div className="text-gray-400">›</div>
+                            <div className="text-primary">›</div>
                           ) : null}
                         </button>
                       </li>
@@ -292,7 +319,7 @@ export default function CategoryDrawer({ initialTree }: CategoryDrawerProps) {
                   <ul className="">
                     {prevPanel.map((node) => (
                       <li key={node._id} className="">
-                        <button className="w-full flex items-center gap-3 text-left px-4 sm:px-6 py-2.5 rounded opacity-60">
+                        <button className="w-full flex items-center gap-3 text-left px-4 sm:px-6 py-3.5 rounded opacity-60">
                           {node.icon ? (
                             // eslint-disable-next-line @next/next/no-img-element
                             <img
@@ -301,9 +328,9 @@ export default function CategoryDrawer({ initialTree }: CategoryDrawerProps) {
                               className="w-5 h-5 rounded"
                             />
                           ) : (
-                            <div className="w-9 h-9 rounded bg-emerald-50 text-emerald-500 flex items-center justify-center">
+                            <div className="w-9 h-9 rounded bg-primary/10 text-primary flex items-center justify-center">
                               <svg
-                                className="w-4 h-4 text-emerald-500"
+                                className="w-4 h-4 text-primary"
                                 viewBox="0 0 24 24"
                               >
                                 <path d="M3 3h18v18H3z" fill="currentColor" />
@@ -318,7 +345,7 @@ export default function CategoryDrawer({ initialTree }: CategoryDrawerProps) {
                           </div>
 
                           {node.children && node.children.length > 0 ? (
-                            <div className="text-gray-400">›</div>
+                            <div className="text-primary">›</div>
                           ) : null}
                         </button>
                       </li>
@@ -345,7 +372,7 @@ export default function CategoryDrawer({ initialTree }: CategoryDrawerProps) {
                       <li key={node._id} className="">
                         <button
                           onClick={() => handleCategoryClick(node)}
-                          className="w-full flex items-center gap-3 text-left px-4 sm:px-6 py-2.5 hover:bg-gray-50 dark:hover:bg-[#111111] rounded"
+                          className="w-full flex items-center gap-3 text-left px-4 sm:px-6 py-3.5 hover:bg-gray-50 dark:hover:bg-[#111111] rounded"
                         >
                           {node.icon ? (
                             // eslint-disable-next-line @next/next/no-img-element
@@ -355,9 +382,9 @@ export default function CategoryDrawer({ initialTree }: CategoryDrawerProps) {
                               className="w-5 h-5 rounded"
                             />
                           ) : (
-                            <div className="w-9 h-9 rounded bg-emerald-50 text-emerald-500 flex items-center justify-center">
+                            <div className="w-9 h-9 rounded bg-primary/10 text-primary flex items-center justify-center">
                               <svg
-                                className="w-4 h-4 text-emerald-500"
+                                className="w-4 h-4 text-primary"
                                 viewBox="0 0 24 24"
                               >
                                 <path d="M3 3h18v18H3z" fill="currentColor" />
