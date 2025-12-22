@@ -1,14 +1,23 @@
 import Link from "next/link";
 import CategoryToggleButton from "./CategoryToggleButton";
+import CategoryDrawer from "./CategoryDrawer";
 import NavLinks from "./NavLinks";
 import ThemeToggle from "@/lib/ThemeToggle";
+import AuthStatus from "./AuthStatus";
 
 import Input from "@/components/ui/Input";
 import FullLogo from "@/components/ui/FullLogo";
+import { getAllCategories } from "@/services/categoryService";
+import CartButton from "./CartButton";
+import CartDrawer from "./CartDrawer";
 
-export default function Header() {
+export default async function Header() {
+  // Fetch categories at build time (SSG) to speed up drawer open
+  const catsRes = await getAllCategories({ cache: "force-cache" });
+  const initialTree = catsRes?.data || [];
+
   return (
-    <nav className="sticky">
+    <nav className="sticky top-0 z-20 w-full shadow-sm bg-white dark:bg-[#161616]">
       <div className="container mx-auto">
         <div className="flex items-center justify-between gap-10 py-4">
           <FullLogo />
@@ -20,18 +29,8 @@ export default function Header() {
             />
           </div>
           <div className="flex items-center gap-4">
-            <Link
-              href="/auth/login"
-              className="text-gray-600 hover:text-gray-800"
-            >
-              Login
-            </Link>
-            <Link
-              href="/auth/register"
-              className="text-gray-600 hover:text-gray-800"
-            >
-              Sign Up
-            </Link>
+            <CartButton />
+            <AuthStatus />
           </div>
         </div>
       </div>
@@ -42,6 +41,8 @@ export default function Header() {
             <CategoryToggleButton />
             <NavLinks />
             <ThemeToggle />
+            <CategoryDrawer initialTree={initialTree} />
+            <CartDrawer />
           </div>
         </div>
       </div>

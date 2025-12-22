@@ -8,10 +8,18 @@ interface BannerResponse {
   data: Banner[];
 }
 
-export async function getAllBanners(): Promise<Banner[]> {
+export async function getAllBanners(opts?: {
+  cache?: RequestCache;
+  next?: { revalidate?: number | false };
+}): Promise<Banner[]> {
   const url = `${API_BASE}/banner/all`;
   const res = await apiFetch<BannerResponse>(url, {
-    cache: "no-store",
+    cache: opts?.cache ?? "no-store",
+    next: opts?.next,
   });
   return res?.data || [];
 }
+
+export const getAllBannersSSG = (opts?: {
+  next?: { revalidate?: number | false };
+}) => getAllBanners({ cache: "force-cache", next: opts?.next });
