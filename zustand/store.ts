@@ -6,7 +6,13 @@ interface CategoryState {
   openCategory: () => void;
   closeCategory: () => void;
 }
+export const useCategoryStore = create<CategoryState>((set) => ({
+  isOpen: false,
+  openCategory: () => set({ isOpen: true }),
+  closeCategory: () => set({ isOpen: false }),
+}));
 
+// Theme store with persistence
 export const useThemeStore = create<{
   theme: "light" | "dark";
   toggleTheme: () => void;
@@ -24,8 +30,3 @@ export const useThemeStore = create<{
     }
   )
 );
-export const useCategoryStore = create<CategoryState>((set) => ({
-  isOpen: false,
-  openCategory: () => set({ isOpen: true }),
-  closeCategory: () => set({ isOpen: false }),
-}));

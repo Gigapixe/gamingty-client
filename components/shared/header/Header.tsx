@@ -1,13 +1,19 @@
 import Link from "next/link";
 import CategoryToggleButton from "./CategoryToggleButton";
+import CategoryDrawer from "./CategoryDrawer";
 import NavLinks from "./NavLinks";
 import ThemeToggle from "@/lib/ThemeToggle";
 import AuthStatus from "./AuthStatus";
 
 import Input from "@/components/ui/Input";
 import FullLogo from "@/components/ui/FullLogo";
+import { getAllCategories } from "@/services/categoryService";
 
-export default function Header() {
+export default async function Header() {
+  // Fetch categories at build time (SSG) to speed up drawer open
+  const catsRes = await getAllCategories({ cache: "force-cache" });
+  const initialTree = catsRes?.data || [];
+
   return (
     <nav className="sticky top-0 z-20 w-full shadow-sm bg-white dark:bg-[#161616]">
       <div className="container mx-auto">
@@ -32,6 +38,7 @@ export default function Header() {
             <CategoryToggleButton />
             <NavLinks />
             <ThemeToggle />
+            <CategoryDrawer initialTree={initialTree} />
           </div>
         </div>
       </div>

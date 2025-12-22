@@ -1,0 +1,376 @@
+"use client";
+
+import { useCallback, useEffect, useRef, useState } from "react";
+import { useRouter } from "next/navigation";
+import { useCategoryStore } from "@/zustand/store";
+import VectorIcon from "@/public/icons/VectorIcon";
+import { getAllCategories } from "@/services/categoryService";
+
+type Category = {
+  _id: string;
+  slug?: string;
+  name?: { en?: string; [k: string]: string | undefined };
+  icon?: string | null;
+  children?: Category[];
+};
+
+interface CategoryDrawerProps {
+  initialTree?: Category[];
+}
+
+export default function CategoryDrawer({ initialTree }: CategoryDrawerProps) {
+  const { isOpen, closeCategory } = useCategoryStore();
+  const closeButtonRef = useRef<HTMLButtonElement | null>(null);
+  const router = useRouter();
+
+  const [tree, setTree] = useState<Category[] | null>(
+    initialTree && initialTree.length > 0 ? initialTree : null
+  );
+  const [nodes, setNodes] = useState<Category[]>(tree ?? []); // current visible nodes
+  const [stack, setStack] = useState<Category[][]>([]); // navigation stack of previous node lists
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  // animation state
+  const [animating, setAnimating] = useState(false);
+  const [animateOn, setAnimateOn] = useState(false); // toggles transforms
+  const [direction, setDirection] = useState<"forward" | "back">("forward");
+  const [prevPanel, setPrevPanel] = useState<Category[] | null>(null);
+  const [nextPanel, setNextPanel] = useState<Category[] | null>(null);
+  const ANIM_MS = 280;
+
+  const fetchCategories = useCallback(async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const res = await getAllCategories({ cache: "no-store" });
+      const data: Category[] = res?.data || [];
+      setTree(data);
+      setNodes(data);
+    } catch (err) {
+      setError("Failed to load categories.");
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (isOpen) {
+      // if server provided a tree, reuse it; otherwise fetch once
+      if (tree === null) fetchCategories();
+      else setNodes(tree);
+    }
+  }, [isOpen, tree, fetchCategories]);
+
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape" && isOpen) closeCategory();
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [isOpen, closeCategory]);
+
+  useEffect(() => {
+    if (isOpen) {
+      closeButtonRef.current?.focus();
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+      // reset navigation when closed
+      setStack([]);
+      if (tree) setNodes(tree);
+    }
+
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [isOpen, tree]);
+
+  const startForwardAnim = (newNodes: Category[]) => {
+    if (animating) return;
+    setAnimating(true);
+    setDirection("forward");
+    setPrevPanel(nodes);
+    setNextPanel(newNodes);
+    // wait a tick then animate
+    requestAnimationFrame(() =>
+      requestAnimationFrame(() => setAnimateOn(true))
+    );
+    setTimeout(() => {
+      setStack((s) => [...s, nodes]);
+      setNodes(newNodes);
+      setPrevPanel(null);
+      setNextPanel(null);
+      setAnimateOn(false);
+      setAnimating(false);
+    }, ANIM_MS + 20);
+  };
+
+  const startBackAnim = (prevNodes: Category[]) => {
+    if (animating) return;
+    setAnimating(true);
+    setDirection("back");
+    setPrevPanel(nodes);
+    setNextPanel(prevNodes);
+    // wait a tick then animate
+    requestAnimationFrame(() =>
+      requestAnimationFrame(() => setAnimateOn(true))
+    );
+    setTimeout(() => {
+      setNodes(prevNodes);
+      setPrevPanel(null);
+      setNextPanel(null);
+      setAnimateOn(false);
+      setAnimating(false);
+    }, ANIM_MS + 20);
+  };
+
+  const handleCategoryClick = (node: Category) => {
+    if (animating) return;
+    if (node.children && node.children.length > 0) {
+      startForwardAnim(node.children);
+    } else {
+      // navigate to category page and close drawer
+      const target = node.slug
+        ? `/category/${node.slug}`
+        : `/category/${node._id}`;
+      closeCategory();
+      router.push(target);
+    }
+  };
+
+  const handleBack = () => {
+    if (animating) return;
+    setStack((s) => {
+      if (s.length === 0) return s;
+      const prev = s[s.length - 1];
+      const newStack = s.slice(0, -1);
+      // animate back
+      startBackAnim(prev);
+      // update stack after animation completes
+      setTimeout(() => setStack(newStack), ANIM_MS + 20);
+      return newStack;
+    });
+  };
+
+  return (
+    <>
+      {isOpen && (
+        <div
+          className="fixed inset-0 z-40 bg-black/50 transition-opacity duration-300 ease-in-out"
+          onClick={closeCategory}
+          style={{ opacity: isOpen ? 1 : 0 }}
+          aria-hidden="true"
+        />
+      )}
+
+      <aside
+        role="dialog"
+        aria-modal="true"
+        aria-label="Categories"
+        className={`fixed inset-y-0 left-0 z-50 w-72 md:w-80 lg:w-96 bg-white dark:bg-[#0B0B0B] shadow-xl transform ${
+          isOpen ? "translate-x-0" : "-translate-x-full"
+        } transition-transform duration-300 ease-in-out`}
+      >
+        <div className="flex flex-col h-full">
+          <div className="p-4 bg-emerald-500 text-white flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              {stack.length > 0 ? (
+                <button
+                  onClick={handleBack}
+                  className="p-2 rounded-md bg-emerald-600/80 hover:bg-emerald-600/90"
+                  aria-label="Back"
+                >
+                  ←
+                </button>
+              ) : (
+                <VectorIcon className="text-white" />
+              )}
+
+              <h3 className="font-medium text-white">All Categories</h3>
+            </div>
+
+            <button
+              ref={closeButtonRef}
+              onClick={closeCategory}
+              className="p-2 rounded-md hover:bg-emerald-600/80"
+              aria-label="Close drawer"
+            >
+              <span className="text-white">✕</span>
+            </button>
+          </div>
+
+          <div className="relative flex-1 overflow-hidden">
+            {/* Static / not animating view */}
+            {!animating && (
+              <div className="absolute inset-0 overflow-y-auto ">
+                {loading ? (
+                  <div className="space-y-2 p-2">
+                    <div className="h-3 bg-gray-200 dark:bg-[#1B1B1B] rounded w-3/4 animate-pulse" />
+                    <div className="h-3 bg-gray-200 dark:bg-[#1B1B1B] rounded w-1/2 animate-pulse" />
+                    <div className="h-3 bg-gray-200 dark:bg-[#1B1B1B] rounded w-2/3 animate-pulse" />
+                  </div>
+                ) : error ? (
+                  <div className="p-4 text-sm text-red-600">{error}</div>
+                ) : nodes.length === 0 ? (
+                  <div className="p-4 text-sm text-gray-600 dark:text-gray-400">
+                    No categories found.
+                  </div>
+                ) : (
+                  <ul className="">
+                    {nodes.map((node) => (
+                      <li key={node._id} className="">
+                        <button
+                          onClick={() => handleCategoryClick(node)}
+                          className="w-full flex items-center gap-3 text-left px-4 sm:px-6 py-2.5 hover:bg-gray-50 dark:hover:bg-[#111111] rounded"
+                        >
+                          {node.icon ? (
+                            // render icon if available
+                            // eslint-disable-next-line @next/next/no-img-element
+                            <img
+                              src={node.icon}
+                              alt=""
+                              className="w-5 h-5 rounded"
+                            />
+                          ) : (
+                            <div className="w-9 h-9 rounded bg-emerald-50 text-emerald-500 flex items-center justify-center">
+                              <svg
+                                className="w-4 h-4 text-emerald-500"
+                                viewBox="0 0 24 24"
+                              >
+                                <path d="M3 3h18v18H3z" fill="currentColor" />
+                              </svg>
+                            </div>
+                          )}
+
+                          <div className="flex-1">
+                            <div className="font-medium text-sm">
+                              {node.name?.en || node.slug || "Category"}
+                            </div>
+                          </div>
+
+                          {node.children && node.children.length > 0 ? (
+                            <div className="text-gray-400">›</div>
+                          ) : null}
+                        </button>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </div>
+            )}
+
+            {/* Animating view: render prev and next panels absolutely and animate them */}
+            {animating && prevPanel && nextPanel && (
+              <>
+                <div
+                  className={`absolute inset-0 overflow-y-auto p-2 transition-transform duration-300 ease-in-out ${
+                    direction === "forward"
+                      ? animateOn
+                        ? "-translate-x-full"
+                        : "translate-x-0"
+                      : animateOn
+                      ? "translate-x-full"
+                      : "translate-x-0"
+                  }`}
+                >
+                  <ul className="divide-y divide-gray-100 dark:divide-[#161616]">
+                    {prevPanel.map((node) => (
+                      <li key={node._id} className="p-2">
+                        <button className="w-full flex items-center gap-3 text-left px-2 py-3 rounded opacity-60">
+                          {node.icon ? (
+                            // eslint-disable-next-line @next/next/no-img-element
+                            <img
+                              src={node.icon}
+                              alt=""
+                              className="w-8 h-8 rounded"
+                            />
+                          ) : (
+                            <div className="w-9 h-9 rounded bg-emerald-50 text-emerald-500 flex items-center justify-center">
+                              <svg
+                                className="w-4 h-4 text-emerald-500"
+                                viewBox="0 0 24 24"
+                              >
+                                <path d="M3 3h18v18H3z" fill="currentColor" />
+                              </svg>
+                            </div>
+                          )}
+
+                          <div className="flex-1">
+                            <div className="font-medium text-sm">
+                              {node.name?.en || node.slug || "Category"}
+                            </div>
+                          </div>
+
+                          {node.children && node.children.length > 0 ? (
+                            <div className="text-gray-400">›</div>
+                          ) : null}
+                        </button>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+
+                <div
+                  className={`absolute inset-0 overflow-y-auto p-2 transition-transform duration-300 ease-in-out ${
+                    direction === "forward"
+                      ? animateOn
+                        ? "translate-x-0"
+                        : "translate-x-full"
+                      : animateOn
+                      ? "translate-x-0"
+                      : "-translate-x-full"
+                  }`}
+                >
+                  <ul className="divide-y divide-gray-100 dark:divide-[#161616]">
+                    {nextPanel.map((node) => (
+                      <li key={node._id} className="p-2">
+                        <button
+                          onClick={() => handleCategoryClick(node)}
+                          className="w-full flex items-center gap-3 text-left px-2 py-3 hover:bg-gray-50 dark:hover:bg-[#111111] rounded"
+                        >
+                          {node.icon ? (
+                            // eslint-disable-next-line @next/next/no-img-element
+                            <img
+                              src={node.icon}
+                              alt=""
+                              className="w-8 h-8 rounded"
+                            />
+                          ) : (
+                            <div className="w-9 h-9 rounded bg-emerald-50 text-emerald-500 flex items-center justify-center">
+                              <svg
+                                className="w-4 h-4 text-emerald-500"
+                                viewBox="0 0 24 24"
+                              >
+                                <path d="M3 3h18v18H3z" fill="currentColor" />
+                              </svg>
+                            </div>
+                          )}
+
+                          <div className="flex-1">
+                            <div className="font-medium text-sm">
+                              {node.name?.en || node.slug || "Category"}
+                            </div>
+                            {node.children && node.children.length > 0 && (
+                              <div className="text-xs text-gray-500">
+                                {node.children.length} subcategories
+                              </div>
+                            )}
+                          </div>
+
+                          {node.children && node.children.length > 0 ? (
+                            <div className="text-gray-400">›</div>
+                          ) : null}
+                        </button>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </>
+            )}
+          </div>
+        </div>
+      </aside>
+    </>
+  );
+}
