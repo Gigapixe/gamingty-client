@@ -261,7 +261,7 @@ export default function CategoryDrawer({ initialTree }: CategoryDrawerProps) {
                       <li key={node._id} className="">
                         <button
                           onClick={() => handleCategoryClick(node)}
-                          className="w-full flex items-center gap-3 text-left px-4 sm:px-6 py-3.5 hover:bg-gray-50 dark:hover:bg-[#111111] rounded"
+                          className="w-full flex items-center gap-3 text-left px-4 sm:px-6 py-2.5 hover:bg-gray-50 dark:hover:bg-[#111111] rounded transition-colors duration-150 hover:text-primary"
                         >
                           {node.icon ? (
                             // render icon if available
@@ -283,13 +283,13 @@ export default function CategoryDrawer({ initialTree }: CategoryDrawerProps) {
                           )}
 
                           <div className="flex-1">
-                            <div className="font-medium text-sm">
+                            <div className="font-medium text-sm transition-colors duration-150 hover:text-primary">
                               {node.name?.en || node.slug || "Category"}
                             </div>
                           </div>
 
                           {node.children && node.children.length > 0 ? (
-                            <div className="text-primary">›</div>
+                            <div className="">›</div>
                           ) : null}
                         </button>
                       </li>
@@ -319,7 +319,7 @@ export default function CategoryDrawer({ initialTree }: CategoryDrawerProps) {
                   <ul className="">
                     {prevPanel.map((node) => (
                       <li key={node._id} className="">
-                        <button className="w-full flex items-center gap-3 text-left px-4 sm:px-6 py-3.5 rounded opacity-60">
+                        <button className="w-full flex items-center gap-3 text-left px-4 sm:px-6 py-2.5 rounded opacity-60 transition-colors duration-150 hover:text-primary">
                           {node.icon ? (
                             // eslint-disable-next-line @next/next/no-img-element
                             <img
@@ -339,13 +339,13 @@ export default function CategoryDrawer({ initialTree }: CategoryDrawerProps) {
                           )}
 
                           <div className="flex-1">
-                            <div className="font-medium text-sm">
+                            <div className="font-medium text-sm transition-colors duration-150 hover:text-primary">
                               {node.name?.en || node.slug || "Category"}
                             </div>
                           </div>
 
                           {node.children && node.children.length > 0 ? (
-                            <div className="text-primary">›</div>
+                            <div className="">›</div>
                           ) : null}
                         </button>
                       </li>
@@ -372,7 +372,7 @@ export default function CategoryDrawer({ initialTree }: CategoryDrawerProps) {
                       <li key={node._id} className="">
                         <button
                           onClick={() => handleCategoryClick(node)}
-                          className="w-full flex items-center gap-3 text-left px-4 sm:px-6 py-3.5 hover:bg-gray-50 dark:hover:bg-[#111111] rounded"
+                          className="w-full flex items-center gap-3 text-left px-4 sm:px-6 py-2.5 hover:bg-gray-50 dark:hover:bg-[#111111] rounded transition-colors duration-150 hover:text-primary"
                         >
                           {node.icon ? (
                             // eslint-disable-next-line @next/next/no-img-element
@@ -393,7 +393,7 @@ export default function CategoryDrawer({ initialTree }: CategoryDrawerProps) {
                           )}
 
                           <div className="flex-1">
-                            <div className="font-medium text-sm">
+                            <div className="font-medium text-sm transition-colors duration-150 hover:text-primary">
                               {node.name?.en || node.slug || "Category"}
                             </div>
                             {/* {node.children && node.children.length > 0 && (
