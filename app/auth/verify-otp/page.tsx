@@ -106,7 +106,8 @@ export default function VerifyOtpPage() {
         const { token, status, ...userData } = res;
         setAuth(userData, token);
         clearTempAuth();
-        router.push("/");
+        // Replace history so back button doesn't take users back to verify page
+        router.replace("/");
       } else {
         setError(res?.message || "Invalid OTP");
       }
