@@ -2,6 +2,9 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import { FiShoppingCart, FiHeart } from "react-icons/fi";
+import { useCartStore } from "@/zustand/store";
+import { useState } from "react";
 
 type Product = {
   // title may be a localized object from API or a simple string
@@ -17,8 +20,11 @@ type Product = {
   };
   // API sometimes returns `image` as an array
   image?: string | string[];
+  isStock?: boolean;
   stock?: number;
   slug: string;
+  _id?: string;
+  id?: string;
 };
 
 type ProductCardProps = {
@@ -30,6 +36,9 @@ export default function ProductCard({
   product,
   className = "",
 }: ProductCardProps) {
+  const { addToCart, openCart } = useCartStore();
+  const [isLiked, setIsLiked] = useState(false);
+
   const imageSrc = Array.isArray(product.image)
     ? product.image[0]
     : product.image || "/images/placeholder.png";
@@ -48,47 +57,114 @@ export default function ProductCard({
   ) {
     discountPercent = Math.round(product.prices.discount * 100);
   }
+
   const outOfStock =
-    typeof product.stock === "number" ? product.stock <= 0 : false;
+    product.isStock === false ||
+    (typeof product.stock === "number" ? product.stock <= 0 : false);
+
   const titleText =
     typeof product.title === "string"
       ? product.title
       : product.title?.en ?? product.title?.zh ?? "";
+
+  const productId = product._id || product.id || product.slug;
+
+  const handleAddToCart = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    addToCart({
+      id: productId,
+      title: titleText,
+      slug: product.slug,
+      price: price,
+      originalPrice: originalPrice,
+      image: imageSrc,
+    });
+
+    // Optional: Open cart after adding
+    openCart();
+  };
+
+  const handleLike = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsLiked(!isLiked);
+  };
+
   return (
     <Link
-      className={`group relative hover:-translate-y-1 w-40 bg-background-light dark:bg-background-dark border border-border-light dark:border-border-dark rounded-xl flex flex-col justify-between hover:shadow-lg transition-all duration-200 ${className}`}
+      className={`group relative w-52 rounded-2xl overflow-hidden flex flex-col hover:shadow-xl transition-all duration-300 bg-white dark:bg-background-dark-2 ${className}`}
       href={`/product/${product.slug}`}
     >
-      <Image
-        src={imageSrc}
-        alt="Product Image"
-        width={200}
-        height={200}
-        className="object-fill w-full h-40"
-        loading="eager"
-      />
-      {outOfStock && (
-        <div className="absolute top-2 right-2 bg-red-600 text-white text-xs px-2 py-1 rounded">
-          Out of stock
-        </div>
-      )}
-      <div className="p-2">
-        <h2 className="font-semibold mt-2 text-center text-sm line-clamp-2 group-hover:text-primary transition-colors duration-150">
-          {titleText}
-        </h2>
+      {/* Product Image */}
+      <div className="relative">
+        <Image
+          src={imageSrc}
+          alt={titleText}
+          height={600}
+          width={600}
+          className="object-contain"
+          loading="eager"
+        />
       </div>
-      <div className="text-lg font-semibold bg-gray-200 dark:bg-gray-700 rounded-b-xl p-2 text-center flex flex-col items-center">
-        <div className="flex items-center gap-2">
-          <span className="text-xl">${price.toFixed(2)}</span>
-          {originalPrice && originalPrice > price && (
-            <span className="line-through text-sm text-gray-500">
-              ${originalPrice.toFixed(2)}
-            </span>
-          )}
+
+      {/* Product Details */}
+      <div className="p-4 space-y-3">
+        {/* Stock Status and Like */}
+        <div className="flex items-center justify-between">
+          <span
+            className={`text-xs font-medium ${
+              outOfStock ? "text-red-500" : "text-primary"
+            }`}
+          >
+            {outOfStock ? "Out of Stock" : "In Stock"}
+          </span>
+          <button
+            onClick={handleLike}
+            className="p-1.5 hover:scale-110 transition-transform"
+            aria-label="Add to wishlist"
+          >
+            <FiHeart
+              className={`text-lg ${
+                isLiked
+                  ? "fill-red-500 text-red-500"
+                  : "text-gray-400 hover:text-gray-300"
+              }`}
+            />
+          </button>
         </div>
-        {/* {discountPercent > 0 && (
-          <span className="text-xs text-green-700">{discountPercent}% off</span>
-        )} */}
+
+        {/* Product Title */}
+        <h2 className="text-sm font-medium  line-clamp-1">{titleText}</h2>
+
+        {/* Price and Cart Button */}
+        <div className="flex items-end justify-between">
+          <div className="flex flex-col gap-0.5">
+            <span className="text-primary font-bold">
+              USD ${price.toFixed(2)}
+            </span>
+            {originalPrice && originalPrice > price && (
+              <span className="line-through text-xs ">
+                USD ${originalPrice.toFixed(2)}
+              </span>
+            )}
+          </div>
+
+          {/* Add to Cart Button */}
+          <button
+            onClick={handleAddToCart}
+            disabled={outOfStock}
+            className={`p-3 rounded-xl transition-all ${
+              outOfStock
+                ? "bg-gray-600 cursor-not-allowed"
+                : "bg-primary hover:bg-primary/90 hover:scale-105"
+            } text-white`}
+            aria-label="Add to cart"
+          >
+            <FiShoppingCart className="text-xl" />
+          </button>
+        </div>
       </div>
     </Link>
   );

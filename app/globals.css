@@ -15,7 +15,7 @@
   --color-secondary-dark: #4b6cb7;
   --color-warning: #f59e0b; /* Amber for warning buttons (light mode) */
   --color-warning-dark: #d97706; /* Darker amber for dark mode contrast */
-  --color-background: #ffffff; /* Light mode background */
+  --color-background: #eceef1; /* Light mode background */
   --color-background-dark: #1f2937; /* Softer dark mode background */
   --color-background-dark-2: #11182780; /* make this color 50% opacity of --color-background-dark-2 */
   --color-background-light: #f8f8f8; /* Light gray for light mode secondary background */

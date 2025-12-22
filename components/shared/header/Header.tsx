@@ -8,6 +8,8 @@ import AuthStatus from "./AuthStatus";
 import Input from "@/components/ui/Input";
 import FullLogo from "@/components/ui/FullLogo";
 import { getAllCategories } from "@/services/categoryService";
+import CartButton from "./CartButton";
+import CartDrawer from "./CartDrawer";
 
 export default async function Header() {
   // Fetch categories at build time (SSG) to speed up drawer open
@@ -27,6 +29,7 @@ export default async function Header() {
             />
           </div>
           <div className="flex items-center gap-4">
+            <CartButton />
             <AuthStatus />
           </div>
         </div>
@@ -39,6 +42,7 @@ export default async function Header() {
             <NavLinks />
             <ThemeToggle />
             <CategoryDrawer initialTree={initialTree} />
+            <CartDrawer />
           </div>
         </div>
       </div>

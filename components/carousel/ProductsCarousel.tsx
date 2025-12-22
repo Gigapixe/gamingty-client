@@ -7,6 +7,7 @@ import { useRef, useState, useEffect } from "react";
 
 export default function ProductsCarousel({ products }: { products: any[] }) {
   const [isReady, setIsReady] = useState(false);
+  console.log(products);
 
   // Transform the products data to match ProductCard's expected Product type
   const formattedProducts = products?.map((product) => ({
@@ -94,7 +95,7 @@ export default function ProductsCarousel({ products }: { products: any[] }) {
       >
         {formattedProducts.map((product) => (
           <SwiperSlide key={product.slug}>
-            <ProductCard product={product} className="w-full min-h-[270px]" />
+            <ProductCard product={product} className="w-full min-h-67.5" />
           </SwiperSlide>
         ))}
       </Swiper>
