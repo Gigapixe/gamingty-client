@@ -82,21 +82,15 @@ export default function ProductCard({
   const handleAddToCart = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-
-    if (isInCart) {
-      // If already in cart, open cart drawer
-      openCart();
-    } else {
-      // If not in cart, add to cart
-      addToCart({
-        id: productId,
-        title: titleText,
-        slug: product.slug,
-        price: price,
-        originalPrice: originalPrice,
-        image: imageSrc,
-      });
-    }
+    openCart();
+    addToCart({
+      id: productId,
+      title: titleText,
+      slug: product.slug,
+      price: price,
+      originalPrice: originalPrice,
+      image: imageSrc,
+    });
   };
 
   const handleLike = (e: React.MouseEvent) => {
