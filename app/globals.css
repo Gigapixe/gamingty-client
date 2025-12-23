@@ -10,7 +10,7 @@
 @theme {
   /* Custom colors for primary, secondary, and warning */
   --color-primary: #12b47e; /* Blue for primary buttons (light mode) */
-  --color-secondary: #2b4bb2; /* Gray for secondary buttons (light mode) */
+  --color-secondary: #261e63; /* Gray for secondary buttons (light mode) */
   --color-primary-dark: #059669;
   --color-secondary-dark: #4b6cb7;
   --color-warning: #f59e0b; /* Amber for warning buttons (light mode) */

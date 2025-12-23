@@ -1,10 +1,11 @@
-const Support24Icon = () => {
+const Support24Icon = ({ className = "" }) => {
   return (
     <svg
       width={41}
       height={40}
       viewBox="0 0 41 40"
       fill="none"
+      className={className}
       xmlns="http://www.w3.org/2000/svg"
     >
       <g clipPath="url(#clip0_2749_427)">

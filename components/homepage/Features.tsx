@@ -5,22 +5,52 @@ import Support24Icon from "@/public/icons/categories/Support24Icon";
 
 export default function Features() {
   const features = [
-    { id: 1, title: "Instant Delivery", icon: <DeliveryIcon /> },
-    { id: 2, title: "Support 24/7", icon: <Support24Icon /> },
-    { id: 3, title: "Secure Payment", icon: <SecureIcon /> },
-    { id: 4, title: "Gift Cards", icon: <GiftCardIcon /> },
+    {
+      id: 1,
+      title: "Instant Delivery",
+      icon: <DeliveryIcon className="h-8 w-8 lg:h-6 lg:w-6" />,
+    },
+    {
+      id: 2,
+      title: "24/7 Support",
+      icon: <Support24Icon className="h-8 w-8 lg:h-6 lg:w-6" />,
+    },
+    {
+      id: 3,
+      title: "Gift Cards",
+      icon: <GiftCardIcon className="h-8 w-8 lg:h-6 lg:w-6" />,
+    },
+    {
+      id: 4,
+      title: "Secure Payment",
+      icon: <SecureIcon className="h-8 w-8 lg:h-6 lg:w-6" />,
+    },
   ];
   return (
     <div className="bg-secondary text-white py-2">
-      <div className="grid grid-cols-2 justify-items-center md:flex md:justify-between md:items-center container mx-auto gap-4">
-        {features.map((feature, index) => (
-          <div key={feature.id} className="flex md:flex-col items-center gap-2">
-            <div className="text-xl sm:text-2xl">{feature.icon}</div>
-            <h1 className="text-xs sm:text-sm md:text-base lg:text-lg font-bold text-center">
-              {feature.title}
-            </h1>
-          </div>
-        ))}
+      <div className="container mx-auto">
+        <div className="grid grid-cols-2 gap-4 py-3 lg:py-3 lg:flex lg:items-center lg:justify-between">
+          {features.map((feature, index) => (
+            <div
+              key={index}
+              className={` ${
+                index > 0 ? "lg:border-l lg:border-white/20 lg:pl-6" : ""
+              }`}
+            >
+              {/* On mobile: left column items are left-aligned, right column items are right-aligned; on lg each item centers within its column */}
+              <div
+                className={`flex items-center gap-3 sm:gap-4 w-full ${
+                  index % 2 === 0 ? "justify-start" : "justify-center"
+                } lg:justify-between`}
+              >
+                <div className="flex items-center gap-3">
+                  {feature.icon}
+                  <h1 className="text-base font-bold">{feature.title}</h1>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );
