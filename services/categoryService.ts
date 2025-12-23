@@ -12,3 +12,23 @@ export async function getAllCategories(opts?: {
     next: opts?.next,
   });
 }
+
+export async function getCategoryParents(opts?: {
+  cache?: RequestCache;
+  next?: { revalidate?: number | false };
+}) {
+  const response = `${API_BASE}/category/parent`;
+  return await apiFetch<any>(response, {
+    cache: opts?.cache ?? "no-store",
+    next: opts?.next,
+  });
+}
+
+// SSG wrappers
+export const getAllCategoriesSSG = (opts?: {
+  next?: { revalidate?: number | false };
+}) => getAllCategories({ cache: "force-cache", next: opts?.next });
+
+export const getCategoryParentsSSG = (opts?: {
+  next?: { revalidate?: number | false };
+}) => getCategoryParents({ cache: "force-cache", next: opts?.next });

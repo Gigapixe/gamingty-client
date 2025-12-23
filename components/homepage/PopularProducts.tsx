@@ -1,8 +1,8 @@
-import { getPopularProducts } from "@/services/productService";
+import { getPopularProductsSSG } from "@/services/productService";
 import ProductsCarousel from "../carousel/ProductsCarousel";
 
 export default async function PopularProducts() {
-  const data = await getPopularProducts();
+  const data = await getPopularProductsSSG();
   return (
     <>
       <h1 className="mt-8 text-3xl font-semibold text-center">

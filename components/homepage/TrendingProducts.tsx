@@ -1,8 +1,8 @@
-import { getTrendingProducts } from "@/services/productService";
+import { getTrendingProductsSSG } from "@/services/productService";
 import ProductsCarousel from "../carousel/ProductsCarousel";
 
 export default async function TrendingProducts() {
-  const data = await getTrendingProducts();
+  const data = await getTrendingProductsSSG();
 
   return (
     <>

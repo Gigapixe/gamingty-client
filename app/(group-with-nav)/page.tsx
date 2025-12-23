@@ -3,11 +3,11 @@ import HeroSection from "@/components/homepage/HeroSection/HeroSection";
 import PopularProducts from "@/components/homepage/PopularProducts";
 import ProductSection from "@/components/homepage/ProductSection";
 import TrendingProducts from "@/components/homepage/TrendingProducts";
-import { getAllBanners } from "@/services/bannerService";
+import { getAllBannersSSG } from "@/services/bannerService";
 import Head from "next/head";
 
 export default async function Home() {
-  const data = await getAllBanners();
+  const data = await getAllBannersSSG();
   return (
     <div>
       <Head>
