@@ -202,7 +202,7 @@ export default function CategoryDrawer({ initialTree }: CategoryDrawerProps) {
         role="dialog"
         aria-modal="true"
         aria-label="Categories"
-        className={`fixed inset-y-0 left-0 z-50 w-full md:w-[419px] bg-white dark:bg-[#0B0B0B] shadow-xl transform ${
+        className={`fixed inset-y-0 left-0 z-50 w-full md:w-104.75 bg-white dark:bg-[#0B0B0B] shadow-xl transform ${
           isOpen ? "translate-x-0" : "-translate-x-full"
         } transition-transform duration-300 ease-in-out`}
       >

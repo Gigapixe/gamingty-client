@@ -7,13 +7,13 @@ import AuthStatus from "./AuthStatus";
 
 import Input from "@/components/ui/Input";
 import FullLogo from "@/components/ui/FullLogo";
-import { getAllCategories } from "@/services/categoryService";
+import { getAllCategoriesSSG } from "@/services/categoryService";
 import CartButton from "./CartButton";
 import CartDrawer from "./CartDrawer";
 
 export default async function Header() {
   // Fetch categories at build time (SSG) to speed up drawer open
-  const catsRes = await getAllCategories({ cache: "force-cache" });
+  const catsRes = await getAllCategoriesSSG();
   const initialTree = catsRes?.data || [];
 
   return (

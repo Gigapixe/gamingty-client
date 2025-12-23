@@ -1,5 +1,5 @@
 import DynamicPages from "@/components/pages/DynamicPages";
-import { getPageBySlug } from "@/services/pageService";
+import { getPageBySlugSSG } from "@/services/pageService";
 
 export default async function FooterPage({
   params,
@@ -10,7 +10,7 @@ export default async function FooterPage({
 
   let pageData = null;
   try {
-    const pageResponse = await getPageBySlug(slug);
+    const pageResponse = await getPageBySlugSSG(slug);
     if (pageResponse) {
       pageData = pageResponse?.data || null;
     } else return null;
