@@ -1,9 +1,9 @@
 import ProductCard from "@/components/product/ProductCard";
-import { getBestSellerProducts } from "@/services/productService";
+import { getBestSellerProductsSSG } from "@/services/productService";
 import Image from "next/image";
 
 export default async function BestSellerPage() {
-  const data = await getBestSellerProducts();
+  const data = await getBestSellerProductsSSG();
   return (
     <div>
       <div className="relative">
