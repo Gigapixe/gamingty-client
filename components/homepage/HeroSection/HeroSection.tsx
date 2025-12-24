@@ -43,10 +43,10 @@ export default function HeroSection({ banners = [] }: SliderCarouselProps) {
     }
   }, [banners]);
 
-  if (!isReady) {
-    // Show skeleton with the expected count (or 3 as default)
-    return <HeroSectionSkeleton />;
-  }
+  // if (!isReady) {
+  //   // Show skeleton with the expected count (or 3 as default)
+  //   return <HeroSectionSkeleton />;
+  // }
 
   return (
     <div className="w-full container mx-auto py-8 relative">
