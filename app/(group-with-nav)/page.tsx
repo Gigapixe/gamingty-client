@@ -1,3 +1,4 @@
+import CategoriesCatalog from "@/components/homepage/CategoriesCatalog";
 import CategorySliderUi from "@/components/homepage/CategorySilderUi";
 import Features from "@/components/homepage/Features";
 import HeroSection from "@/components/homepage/HeroSection/HeroSection";
@@ -6,13 +7,17 @@ import ProductSection from "@/components/homepage/ProductSection";
 import TrendingProducts from "@/components/homepage/TrendingProducts";
 import CategorySliderSkeleton from "@/components/skeletons/CategorySliderSkeleton";
 import { getAllBannersSSG } from "@/services/bannerService";
-import { getCategoryParentsSSG } from "@/services/categoryService";
+import {
+  getCategoryParentsSSG,
+  getShowingCatalogCategorysSSG,
+} from "@/services/categoryService";
 import Head from "next/head";
 import { Suspense } from "react";
 
 export default async function Home() {
   const data = await getAllBannersSSG();
   const res = await getCategoryParentsSSG();
+  const categoriesCatalog = await getShowingCatalogCategorysSSG();
   const raw = res?.data || [];
 
   const values = raw.map((item: any) => ({
@@ -21,6 +26,7 @@ export default async function Home() {
     slug: item.slug,
     image: item.icon ?? null,
   }));
+
   return (
     <div>
       <Head>
@@ -38,6 +44,7 @@ export default async function Home() {
           <CategorySliderUi values={values} />
         </Suspense>
       </div>
+      <CategoriesCatalog values={categoriesCatalog} />
       <PopularProducts />
       <TrendingProducts />
     </div>

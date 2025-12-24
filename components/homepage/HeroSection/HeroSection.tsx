@@ -68,7 +68,7 @@ export default function HeroSection({ banners = [] }: SliderCarouselProps) {
               href={
                 banner.slug.startsWith("/") ? banner.slug : `/${banner.slug}`
               }
-              className="glance-effect block w-full h-[171px] md:h-[365px] group relative overflow-hidden rounded-lg"
+              className="glance-effect block w-full h-42.75 md:h-91.25 group relative overflow-hidden rounded-lg"
             >
               <Image
                 src={banner.image}
