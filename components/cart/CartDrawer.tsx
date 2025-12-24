@@ -4,8 +4,10 @@ import { useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { useCartStore } from "@/zustand/store";
-import { FiMinus, FiPlus, FiX, FiTrash2 } from "react-icons/fi";
+import { FiMinus, FiPlus, FiTrash2 } from "react-icons/fi";
 import { BsCart3 } from "react-icons/bs";
+import { IoBagAddSharp, IoBagCheckOutline } from "react-icons/io5";
+import CloseButton from "@/components/ui/CloseButton";
 
 export default function CartDrawer() {
   const {
@@ -68,20 +70,17 @@ export default function CartDrawer() {
       >
         <div className="flex flex-col h-full">
           {/* Header */}
-          <div className="p-4 bg-primary text-white flex items-center justify-between border-b border-primary/20">
+          <div className="p-4  flex items-center justify-between border-b border-primary/20">
             <div className="flex items-center gap-2">
-              <BsCart3 className="text-xl" />
-              <h3 className="font-medium text-white">Shopping Cart</h3>
+              <IoBagCheckOutline className="text-xl text-primary" />
+              <h3 className="font-medium ">Shopping Cart</h3>
             </div>
 
-            <button
+            <CloseButton
               ref={closeButtonRef}
               onClick={closeCart}
-              className="p-2 rounded-md hover:bg-primary/80 text-white transition-colors"
-              aria-label="Close cart"
-            >
-              <FiX className="text-xl" />
-            </button>
+              ariaLabel="Close cart"
+            />
           </div>
 
           {/* Cart Items */}

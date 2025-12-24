@@ -101,7 +101,7 @@ export default function ProductCard({
 
   return (
     <div
-      className={`group rounded-xl bg-background-light dark:bg-white/5 max-w-50.5 ${className}`}
+      className={`group hover:-translate-y-1 transition-all duration-200 rounded-xl bg-background-light dark:bg-white/5 max-w-50.5 ${className}`}
     >
       <Link href={`/product/${product.slug}`}>
         <div className="relative pt-[100%]">
@@ -121,7 +121,7 @@ export default function ProductCard({
           <div
             className={`text-xs font-medium px-2.5 py-1 rounded-full ${
               outOfStock
-                ? "bg-primary/20 text-primary dark:bg-primary/20 dark:text-primary"
+                ? "bg-primary/20 text-red-500 dark:bg-primary/20 dark:text-red-500 font-semibold"
                 : "bg-primary/20 text-primary dark:bg-primary/20 dark:text-primary"
             }`}
           >

@@ -4,6 +4,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useCategoryStore } from "@/zustand/store";
 import { getAllCategories } from "@/services/categoryService";
+import CloseButton from "@/components/ui/CloseButton";
 
 type Category = {
   _id: string;
@@ -229,14 +230,11 @@ export default function CategoryDrawer({ initialTree }: CategoryDrawerProps) {
               </h3>
             </div>
 
-            <button
+            <CloseButton
               ref={closeButtonRef}
               onClick={closeCategory}
-              className="p-2 rounded-md hover:bg-primary/80 text-white"
-              aria-label="Close drawer"
-            >
-              <span className="text-white">✕</span>
-            </button>
+              ariaLabel="Close drawer"
+            />
           </div>
 
           <div className="relative flex-1 overflow-hidden">

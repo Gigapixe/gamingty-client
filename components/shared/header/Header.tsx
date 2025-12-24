@@ -9,7 +9,7 @@ import Input from "@/components/ui/Input";
 import FullLogo from "@/components/ui/FullLogo";
 import { getAllCategoriesSSG } from "@/services/categoryService";
 import CartButton from "./CartButton";
-import CartDrawer from "./CartDrawer";
+import CartDrawer from "../../cart/CartDrawer";
 
 export default async function Header() {
   // Fetch categories at build time (SSG) to speed up drawer open
