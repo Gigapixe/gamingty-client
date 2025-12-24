@@ -23,6 +23,17 @@ export async function getCategoryParents(opts?: {
     next: opts?.next,
   });
 }
+// /category/show/catalog
+export async function getShowingCatalogCategorys(opts?: {
+  cache?: RequestCache;
+  next?: { revalidate?: number | false };
+}) {
+  const response = `${API_BASE}/category/popular`;
+  return await apiFetch<any>(response, {
+    cache: opts?.cache ?? "no-store",
+    next: opts?.next,
+  });
+}
 
 // SSG wrappers
 export const getAllCategoriesSSG = (opts?: {
@@ -32,3 +43,7 @@ export const getAllCategoriesSSG = (opts?: {
 export const getCategoryParentsSSG = (opts?: {
   next?: { revalidate?: number | false };
 }) => getCategoryParents({ cache: "force-cache", next: opts?.next });
+
+export const getShowingCatalogCategorysSSG = (opts?: {
+  next?: { revalidate?: number | false };
+}) => getShowingCatalogCategorys({ cache: "force-cache", next: opts?.next });
