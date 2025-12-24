@@ -36,8 +36,10 @@ export default function CategoriesCatalog({ values }: CategoriesCatalogProps) {
       <div className="absolute inset-0 hidden dark:block"></div>
       <div className="relative z-10 container mx-auto">
         <div className="text-center mb-8 px-4">
-          <h2 className="text-3xl font-bold mb-4">Browse Our Categories</h2>
-          <p className="text-lg text-content-muted dark:text-gray-300">
+          <h2 className="text-2xl md:text-3xl font-semibold text-center">
+            Browse Our Categories
+          </h2>
+          <p className="mt-2 text-center text-gray-600 dark:text-gray-300 md:text-base text-sm">
             Explore our wide range of categories, from gaming essentials to
             accessories and more.
           </p>
@@ -54,7 +56,7 @@ export default function CategoriesCatalog({ values }: CategoriesCatalogProps) {
                       <span className="text-xs uppercase tracking-wider text-primary font-medium mb-1">
                         HOME
                       </span>
-                      <h3 className="text-xl font-bold ">
+                      <h3 className="md:text-xl font-bold ">
                         {mainCategory.name.en}
                       </h3>
                     </div>
@@ -86,7 +88,7 @@ export default function CategoriesCatalog({ values }: CategoriesCatalogProps) {
                               alt={child.name.en}
                               width={420}
                               height={240}
-                              className="object-cover w-full md:h-40 transform transition-transform duration-200 ease-out group-hover:scale-105"
+                              className="object-cover w-full h-[101.88px] md:h-40 transform transition-transform duration-200 ease-out group-hover:scale-105"
                             />
                             <div className="absolute inset-0 bg-linear-to-t from-black/60 to-transparent pointer-events-none" />
                           </div>

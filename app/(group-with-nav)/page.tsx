@@ -39,7 +39,7 @@ export default async function Home() {
       <HeroSection banners={data} />
       <ProductSection />
       <Features />
-      <div className="mt-8">
+      <div className="my-8">
         <Suspense fallback={<CategorySliderSkeleton />}>
           <CategorySliderUi values={values} />
         </Suspense>

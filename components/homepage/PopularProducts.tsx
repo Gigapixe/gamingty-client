@@ -5,10 +5,10 @@ export default async function PopularProducts() {
   const data = await getPopularProductsSSG();
   return (
     <>
-      <h1 className="mt-8 text-3xl font-semibold text-center">
+      <h1 className="mt-8 text-2xl md:text-3xl font-semibold text-center">
         Popular Products
       </h1>
-      <p className="mt-2 text-center text-gray-600 dark:text-gray-300">
+      <p className="mt-2 text-center text-gray-600 dark:text-gray-300 md:text-base text-sm">
         Discover our most loved products that customers can't get enough of.
       </p>
       <ProductsCarousel products={data} />

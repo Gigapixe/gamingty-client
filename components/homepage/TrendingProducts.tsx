@@ -6,10 +6,10 @@ export default async function TrendingProducts() {
 
   return (
     <>
-      <h1 className="mt-8 text-3xl font-semibold text-center">
+      <h1 className="mt-8 text-2xl md:text-3xl font-semibold text-center">
         Trending Products
       </h1>
-      <p className="mt-2 text-center text-gray-600 dark:text-gray-300">
+      <p className="mt-2 text-center text-gray-600 dark:text-gray-300 md:text-base text-sm">
         See what's currently popular and catch the latest trends in digital
         goods.
       </p>
