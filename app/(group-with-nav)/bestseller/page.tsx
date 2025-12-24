@@ -12,7 +12,7 @@ export default async function BestSellerPage() {
           alt="Bestsellers"
           width={1200}
           height={1200}
-          className="w-full min-h-60"
+          className="w-full h-71.25"
         />
         <div className="absolute inset-0 bg-black opacity-50"></div>
         <div className="absolute inset-0 flex flex-col items-center justify-center text-white text-center">
