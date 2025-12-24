@@ -36,9 +36,7 @@ export default function CategoriesCatalog({ values }: CategoriesCatalogProps) {
       <div className="absolute inset-0 hidden dark:block"></div>
       <div className="relative z-10 container mx-auto">
         <div className="text-center mb-8 px-4">
-          <h2 className="text-3xl font-bold mb-4 text-content-default ">
-            Browse Our Categories
-          </h2>
+          <h2 className="text-3xl font-bold mb-4">Browse Our Categories</h2>
           <p className="text-lg text-content-muted dark:text-gray-300">
             Explore our wide range of categories, from gaming essentials to
             accessories and more.
@@ -48,7 +46,7 @@ export default function CategoriesCatalog({ values }: CategoriesCatalogProps) {
         <div className="grid lg:grid-cols-2 grid-cols-1 gap-8">
           {categories.map((mainCategory: any) => (
             <div key={mainCategory._id}>
-              <div className="bg-background-light rounded-xl shadow-sm hover:shadow-md transition-all duration-300 dark:bg-white/5 dark:backdrop-blur-lg dark:border dark:border-white/10 dark:hover:shadow-lg">
+              <div className="rounded-2xl bg-white dark:bg-gray-800 shadow-sm hover:shadow-md transition-shadow duration-200">
                 <div className="flex items-center justify-between p-6 lg:px-10">
                   <div className="flex items-center space-x-3">
                     <div className="w-1.5 h-12 bg-primary rounded-full "></div>
@@ -75,22 +73,22 @@ export default function CategoriesCatalog({ values }: CategoriesCatalogProps) {
                     )}
                 </div>
                 {mainCategory.children && mainCategory.children.length > 0 && (
-                  <div className="grid lg:grid-cols-2 md:grid-cols-2 grid-cols-2 gap-5 p-6 lg:p-10">
+                  <div className="grid grid-cols-2 gap-4 p-6 lg:p-8">
                     {mainCategory.children.map((child: any) => (
                       <div
                         key={child._id}
-                        className="group relative rounded-xl shadow-lg hover:shadow-primary-500/20 bg-background dark:bg-background-dark dark:border-white/10 overflow-hidden transition-all duration-300 hover:-translate-y-0.5"
+                        className="group rounded-xl overflow-hidden shadow-sm hover:shadow-md bg-white dark:bg-gray-700 transition-shadow duration-200 transform hover:-translate-y-0.5"
                       >
                         <Link href={`/product-category/${child.slug}`}>
-                          <div className="aspect-w-16 aspect-h-10 relative overflow-hidden rounded-t-xl h-40">
+                          <div className="relative overflow-hidden rounded-t-xl md:h-40">
                             <Image
-                              fill
                               src={child.icon || "/placeholder-category.jpg"}
                               alt={child.name.en}
-                              className="object-cover transform transition-transform duration-700 ease-out group-hover:scale-110"
-                              sizes="(max-width: 768px) 50vw, (max-width: 1024px) 25vw, 20vw"
+                              width={420}
+                              height={240}
+                              className="object-cover w-full md:h-40 transform transition-transform duration-200 ease-out group-hover:scale-105"
                             />
-                            <div className="absolute inset-0 bg-linear-to-t from-black/60 via-transparent to-transparent" />
+                            <div className="absolute inset-0 bg-linear-to-t from-black/60 to-transparent pointer-events-none" />
                           </div>
                           <div className="py-3 rounded-b-xl">
                             <p className="text-content-default font-semibold text-center text-base px-2 line-clamp-1 dark:text-gray-200">
