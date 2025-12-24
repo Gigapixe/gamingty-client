@@ -13,7 +13,22 @@ export async function getPageBySlug(
   });
 }
 
+export async function getAllPages(opts?: {
+  cache?: RequestCache;
+  next?: { revalidate?: number | false };
+}) {
+  const response = `${API_BASE}/pages`;
+  return await apiFetch<any>(response, {
+    cache: opts?.cache ?? "no-store",
+    next: opts?.next,
+  });
+}
+
 export const getPageBySlugSSG = (
   slug: string,
   opts?: { next?: { revalidate?: number | false } }
 ) => getPageBySlug(slug, { cache: "force-cache", next: opts?.next });
+
+export const getAllPagesSSG = (opts?: {
+  next?: { revalidate?: number | false };
+}) => getAllPages({ cache: "force-cache", next: opts?.next });

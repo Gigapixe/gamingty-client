@@ -76,7 +76,7 @@ export default function ProductsCarousel({ products }: { products: any[] }) {
             spaceBetween: 16,
           },
           1024: {
-            slidesPerView: 4,
+            slidesPerView: 6,
             spaceBetween: 16,
           },
           1280: {

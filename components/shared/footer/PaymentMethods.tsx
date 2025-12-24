@@ -42,9 +42,11 @@ const PaymentMethods = () => {
     theme === "dark" ? paymentMethodsDark : paymentImagesWhite;
 
   return (
-    <div className="container mx-auto pb-6 flex flex-col md:flex-row gap-4 md:gap-8 items-start md:items-center justify-between">
-      <h2 className="font-bold text-lg lg:mb-0">Payment Methods</h2>
-      <div className="flex flex-wrap gap-2 md:gap-2">
+    <div className="flex lg:flex-row flex-col w-full lg:items-center lg:justify-between flex-wrap container mx-auto">
+      <h2 className="font-bold text-lg lg:mb-0 whitespace-nowrap">
+        Payment Methods
+      </h2>
+      <div className="flex flex-wrap items-center space-x-2">
         {paymentImages.map((payment) => (
           <div key={payment.id} className="flex flex-col items-center">
             <Image
