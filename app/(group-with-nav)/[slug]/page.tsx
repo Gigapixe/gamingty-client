@@ -1,5 +1,19 @@
 import DynamicPages from "@/components/pages/DynamicPages";
-import { getPageBySlugSSG } from "@/services/pageService";
+import { getPageBySlugSSG, getAllPagesSSG } from "@/services/pageService";
+
+export async function generateStaticParams() {
+  try {
+    const pagesResponse = await getAllPagesSSG();
+    const pages = pagesResponse?.data || [];
+
+    return pages.map((page: any) => ({
+      slug: page.slug,
+    }));
+  } catch (error) {
+    console.error("Error generating static params:", error);
+    return [];
+  }
+}
 
 export default async function FooterPage({
   params,
