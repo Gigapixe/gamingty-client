@@ -111,44 +111,46 @@ export default function CartItem({
         </div>
 
         {/* Quantity Controls */}
-        <div className="flex items-center gap-2">
-          <button
-            onClick={handleDecrease}
-            disabled={item.quantity <= 1}
-            className="p-1 rounded bg-gray-200 dark:bg-[#1F1F1F] hover:bg-gray-300 dark:hover:bg-[#2A2A2A] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-            aria-label="Decrease quantity"
-          >
-            <FiMinus className="text-sm" />
-          </button>
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2 border border-gray-100 bg-white text-gray-600 rounded-md dark:border-gray-700 dark:bg-gray-900/50 dark:text-gray-300">
+            <button
+              onClick={handleDecrease}
+              disabled={item.quantity <= 1}
+              className="p-1 rounded bg-gray-200 dark:bg-[#1F1F1F] hover:bg-gray-300 dark:hover:bg-[#2A2A2A] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              aria-label="Decrease quantity"
+            >
+              <FiMinus className="text-sm" />
+            </button>
 
-          <input
-            type="number"
-            min="1"
-            value={item.quantity}
-            onChange={handleQuantityChange}
-            onBlur={handleQuantityBlur}
-            className="w-12 text-center text-sm font-medium bg-white dark:bg-[#1F1F1F] border border-gray-300 dark:border-gray-600 rounded px-1 py-0.5 focus:outline-none focus:ring-1 focus:ring-primary [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
-            aria-label="Quantity"
-          />
+            <input
+              type="number"
+              min="1"
+              value={item.quantity}
+              onChange={handleQuantityChange}
+              onBlur={handleQuantityBlur}
+              className="w-12 text-center text-sm font-medium bg-white dark:bg-[#1F1F1F] border border-gray-300 dark:border-gray-600 rounded px-1 py-0.5 focus:outline-none focus:ring-1 focus:ring-primary [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+              aria-label="Quantity"
+            />
 
+            <button
+              onClick={handleIncrease}
+              className="p-1 rounded bg-gray-200 dark:bg-[#1F1F1F] hover:bg-gray-300 dark:hover:bg-[#2A2A2A] transition-colors"
+              aria-label="Increase quantity"
+            >
+              <FiPlus className="text-sm" />
+            </button>
+          </div>
+
+          {/* Remove Button (moved beside quantity) */}
           <button
-            onClick={handleIncrease}
-            className="p-1 rounded bg-gray-200 dark:bg-[#1F1F1F] hover:bg-gray-300 dark:hover:bg-[#2A2A2A] transition-colors"
-            aria-label="Increase quantity"
+            onClick={handleRemove}
+            className="p-2 text-red-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/10 rounded transition-colors ml-2"
+            aria-label="Remove item"
           >
-            <FiPlus className="text-sm" />
+            <FiTrash2 className="text-lg" />
           </button>
         </div>
       </div>
-
-      {/* Remove Button */}
-      <button
-        onClick={handleRemove}
-        className="p-2 text-red-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/10 rounded transition-colors self-start"
-        aria-label="Remove item"
-      >
-        <FiTrash2 className="text-lg" />
-      </button>
     </div>
   );
 }
