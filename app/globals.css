@@ -38,7 +38,7 @@
   /* Custom breakpoints */
   --breakpoint-sm: 420px;
   --breakpoint-md: 768px;
-  --breakpoint-xl: 1024px;
+  --breakpoint-lg: 1024px;
   --breakpoint-xl: 1280px;
 }
 

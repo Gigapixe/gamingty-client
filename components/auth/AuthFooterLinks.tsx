@@ -2,9 +2,9 @@ import Link from "next/link";
 
 export default function AuthFooterLinks() {
   return (
-    <div className="absolute bottom-12 w-full left-0 md:left-16">
-      <div className="flex flex-col items-center md:items-start">
-        <div className="flex flex-wrap justify-center gap-x-8 gap-y-2 mb-6 md:justify-start">
+    <div className="absolute bottom-4 sm:bottom-12 w-full left-0 lg:left-16">
+      <div className="flex flex-col items-center lg:items-start">
+        <div className="flex flex-wrap justify-center gap-x-8 gap-y-2 mb-6 lg:justify-start">
           <Link
             href="/privacy-policy"
             className="text-sm text-gray-300 hover:text-emerald-500"
@@ -25,7 +25,7 @@ export default function AuthFooterLinks() {
           </Link>
         </div>
 
-        <p className="text-base text-gray-400 max-w-lg leading-relaxed text-center md:text-left">
+        <p className="text-base text-gray-400 max-w-lg leading-relaxed text-center lg:text-left">
           The product names & logos used on this website are for identification
           purposes only. All trademarks are property of their respective owners.
         </p>

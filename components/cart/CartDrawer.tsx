@@ -64,7 +64,7 @@ export default function CartDrawer() {
         role="dialog"
         aria-modal="true"
         aria-label="Shopping Cart"
-        className={`fixed inset-y-0 right-0 z-50 w-full sm:w-96 lg:w-105 bg-white dark:bg-[#0B0B0B] shadow-xl transform ${
+        className={`fixed inset-y-0 right-0 z-50 w-full sm:w-96 lg:w-105 bg-background-light dark:bg-background-dark shadow-xl transform ${
           isOpen ? "translate-x-0" : "translate-x-full"
         } transition-transform duration-300 ease-in-out`}
       >

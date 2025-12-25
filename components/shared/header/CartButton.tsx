@@ -18,15 +18,21 @@ const CartButton = () => {
   return (
     <button
       onClick={openCart}
-      className="relative p-2 hover:bg-gray-100 dark:hover:bg-[#1F1F1F] rounded-lg transition-colors"
+      className="relative lg:hover:scale-105 lg:transition-all lg:duration-200 flex flex-col items-center"
       aria-label="Shopping cart"
     >
-      <CartIcon className="dark:text-white" />
+      <span className="hidden lg:inline-block">
+        <CartIcon />
+      </span>
+      <span className="lg:hidden">
+        <CartIcon fill="white" />
+      </span>
       {mounted && totalItems > 0 && (
-        <span className="absolute -top-1 -right-1 h-5 w-5 rounded-full bg-primary text-white text-xs font-medium flex items-center justify-center">
+        <span className="absolute right-0 -top-2 lg:-right-2 h-5 w-5 rounded-full bg-red-500 lg:bg-primary text-white text-xs font-medium flex items-center justify-center">
           {totalItems}
         </span>
       )}
+      <h1 className="text-xl text-white lg:hidden">Cart</h1>
     </button>
   );
 };

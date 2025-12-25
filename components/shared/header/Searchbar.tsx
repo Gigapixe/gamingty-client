@@ -3,7 +3,7 @@ import { IoSearchOutline } from "react-icons/io5";
 
 const Searchbar = () => {
   return (
-    <div>
+    <div className="relative flex-1">
       <form
         //  onSubmit={handleSearchSubmit}
         className="relative"

@@ -26,7 +26,7 @@ export default async function BestSellerPage() {
       </div>
       <div className="container mx-auto py-12">
         <h2 className="text-2xl lg:text-4xl font-bold mb-6">🔥Bestsellers</h2>
-        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-4">
+        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-7 gap-4">
           {data?.map((product: any) => (
             <ProductCard product={product} key={product.id} />
           ))}

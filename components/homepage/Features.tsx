@@ -45,7 +45,9 @@ export default function Features() {
               >
                 <div className="flex items-center gap-3">
                   {feature.icon}
-                  <h1 className="text-base font-bold">{feature.title}</h1>
+                  <h1 className="text-sm lg:text-base font-bold whitespace-nowrap">
+                    {feature.title}
+                  </h1>
                 </div>
               </div>
             </div>
