@@ -13,7 +13,12 @@ const deleteCookie = (name: string) => {
   document.cookie = `${name}=;expires=Thu, 01 Jan 1970 00:00:00 UTC;path=/;`;
 };
 
-export const useAuthStore = create<AuthState>()(
+interface AuthStoreState extends AuthState {
+  _hasHydrated: boolean;
+  setHasHydrated: (state: boolean) => void;
+}
+
+export const useAuthStore = create<AuthStoreState>()(
   persist(
     (set) => ({
       user: null,
@@ -21,6 +26,8 @@ export const useAuthStore = create<AuthState>()(
       isAuthenticated: false,
       tempToken: null,
       tempEmail: null,
+      _hasHydrated: false,
+      setHasHydrated: (state: boolean) => set({ _hasHydrated: state }),
       setAuth: (user: User, token: string) => {
         setCookie("authToken", token, 7);
         set({
@@ -48,6 +55,9 @@ export const useAuthStore = create<AuthState>()(
     {
       name: "auth-storage",
       storage: createJSONStorage(() => localStorage),
+      onRehydrateStorage: () => (state) => {
+        state?.setHasHydrated(true);
+      },
     }
   )
 );

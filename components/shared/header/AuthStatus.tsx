@@ -5,9 +5,10 @@ import { useRouter } from "next/navigation";
 import { useAuthStore } from "@/zustand/authStore";
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
+import UserIcon from "@/public/icons/navbar/UserIcon";
 
 export default function AuthStatus() {
-  const { isAuthenticated, user, logout } = useAuthStore();
+  const { isAuthenticated, user, logout, _hasHydrated } = useAuthStore();
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement | null>(null);
   const router = useRouter();
@@ -28,11 +29,20 @@ export default function AuthStatus() {
     router.push("/");
   };
 
+  // Show a placeholder while hydrating to prevent flicker
+  if (!_hasHydrated) {
+    return (
+      <div className="flex items-center gap-4">
+        <div className="w-8 h-8 rounded-full bg-gray-200 dark:bg-gray-700 animate-pulse" />
+      </div>
+    );
+  }
+
   if (!isAuthenticated) {
     return (
       <div className="flex items-center gap-4">
         <Link href="/auth/login" className="text-gray-600 hover:text-gray-800">
-          Login
+          <UserIcon />
         </Link>
       </div>
     );
