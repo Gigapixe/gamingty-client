@@ -15,8 +15,6 @@ interface CartItemProps {
   className?: string;
   /** Image size in pixels (default: 80) */
   imageSize?: number;
-  /** Compact layout for smaller screens or checkout summary */
-  compact?: boolean;
 }
 
 export default function CartItem({
@@ -26,14 +24,40 @@ export default function CartItem({
   showOriginalPrice = true,
   className = "",
   imageSize = 80,
-  compact = false,
 }: CartItemProps) {
   const handleDecrease = () => {
-    onUpdateQuantity(item.id, item.quantity - 1);
+    // Don't go below 1
+    if (item.quantity > 1) {
+      onUpdateQuantity(item.id, item.quantity - 1);
+    }
   };
 
   const handleIncrease = () => {
     onUpdateQuantity(item.id, item.quantity + 1);
+  };
+
+  const handleQuantityChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+
+    // Allow empty string for typing
+    if (value === "") return;
+
+    const num = parseInt(value, 10);
+
+    // Only update if valid number >= 1
+    if (!isNaN(num) && num >= 1) {
+      onUpdateQuantity(item.id, num);
+    }
+  };
+
+  const handleQuantityBlur = (e: React.FocusEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    const num = parseInt(value, 10);
+
+    // Reset to 1 if invalid or empty
+    if (isNaN(num) || num < 1) {
+      onUpdateQuantity(item.id, 1);
+    }
   };
 
   const handleRemove = () => {
@@ -43,11 +67,11 @@ export default function CartItem({
   const lineTotal = item.price * item.quantity;
 
   return (
-    <div className={`flex gap-3 py-3  rounded-lg ${className}`}>
+    <div className={`flex gap-3 py-3 rounded-lg ${className}`}>
       {/* Product Image */}
       <Link
         href={`/product/${item.slug}`}
-        className="relative rounded border border-gray-100 shadow-sm cursor-pointer  dark:border-gray-700 dark:shadow-none"
+        className="relative rounded border border-gray-100 shadow-sm cursor-pointer dark:border-gray-700 dark:shadow-none"
         style={{ width: imageSize, height: imageSize }}
       >
         <Image
@@ -61,80 +85,69 @@ export default function CartItem({
 
       {/* Product Details */}
       <div className="flex-1 min-w-0">
-        <Link
-          href={`/product/${item.slug}`}
-          className={`font-medium text-gray-900 dark:text-white line-clamp-1 mb-1 hover:text-primary transition-colors ${
-            compact ? "text-xs" : "text-base"
-          }`}
-        >
-          {item.title}
-        </Link>
-
-        <div className="flex items-center gap-2 mb-2">
-          <p
-            className={`text-gray-700 text-heading line-clamp-1 dark:text-white  ${
-              compact ? "text-xs" : "text-sm"
-            }`}
+        {/* Title and Line Total Row */}
+        <div className="flex items-start justify-between gap-2 mb-1">
+          <Link
+            href={`/product/${item.slug}`}
+            className="font-medium text-base text-gray-900 dark:text-white line-clamp-1 hover:text-primary transition-colors"
           >
+            {item.title}
+          </Link>
+          <p className="text-sm font-semibold text-gray-700 dark:text-gray-300 whitespace-nowrap">
+            ${lineTotal.toFixed(2)}
+          </p>
+        </div>
+
+        {/* Unit Price */}
+        <div className="flex items-center gap-2 mb-2">
+          <p className="text-sm text-gray-700 dark:text-white line-clamp-1">
             Item Price ${item.price.toFixed(2)}
           </p>
           {/* {showOriginalPrice && item.originalPrice && (
-            <p
-              className={`text-gray-400 line-through ${
-                compact ? "text-xs" : "text-sm"
-              }`}
-            >
+            <p className="text-sm text-gray-400 line-through">
               ${item.originalPrice.toFixed(2)}
             </p>
           )} */}
         </div>
 
         {/* Quantity Controls */}
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <button
-              onClick={handleDecrease}
-              className="p-1 rounded bg-gray-200 dark:bg-[#1F1F1F] hover:bg-gray-300 dark:hover:bg-[#2A2A2A] transition-colors"
-              aria-label="Decrease quantity"
-            >
-              <FiMinus className={compact ? "text-xs" : "text-sm"} />
-            </button>
+        <div className="flex items-center gap-2">
+          <button
+            onClick={handleDecrease}
+            disabled={item.quantity <= 1}
+            className="p-1 rounded bg-gray-200 dark:bg-[#1F1F1F] hover:bg-gray-300 dark:hover:bg-[#2A2A2A] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            aria-label="Decrease quantity"
+          >
+            <FiMinus className="text-sm" />
+          </button>
 
-            <span
-              className={`w-8 text-center font-medium ${
-                compact ? "text-xs" : "text-sm"
-              }`}
-            >
-              {item.quantity}
-            </span>
+          <input
+            type="number"
+            min="1"
+            value={item.quantity}
+            onChange={handleQuantityChange}
+            onBlur={handleQuantityBlur}
+            className="w-12 text-center text-sm font-medium bg-white dark:bg-[#1F1F1F] border border-gray-300 dark:border-gray-600 rounded px-1 py-0.5 focus:outline-none focus:ring-1 focus:ring-primary [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+            aria-label="Quantity"
+          />
 
-            <button
-              onClick={handleIncrease}
-              className="p-1 rounded bg-gray-200 dark:bg-[#1F1F1F] hover:bg-gray-300 dark:hover:bg-[#2A2A2A] transition-colors"
-              aria-label="Increase quantity"
-            >
-              <FiPlus className={compact ? "text-xs" : "text-sm"} />
-            </button>
-          </div>
-
-          {/* Line Total (visible in non-compact mode) */}
-          {!compact && (
-            <p className="text-sm font-semibold text-gray-700 dark:text-gray-300">
-              ${lineTotal.toFixed(2)}
-            </p>
-          )}
+          <button
+            onClick={handleIncrease}
+            className="p-1 rounded bg-gray-200 dark:bg-[#1F1F1F] hover:bg-gray-300 dark:hover:bg-[#2A2A2A] transition-colors"
+            aria-label="Increase quantity"
+          >
+            <FiPlus className="text-sm" />
+          </button>
         </div>
       </div>
 
       {/* Remove Button */}
       <button
         onClick={handleRemove}
-        className={`text-red-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/10 rounded transition-colors self-start ${
-          compact ? "p-1" : "p-2"
-        }`}
+        className="p-2 text-red-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/10 rounded transition-colors self-start"
         aria-label="Remove item"
       >
-        <FiTrash2 className={compact ? "text-base" : "text-lg"} />
+        <FiTrash2 className="text-lg" />
       </button>
     </div>
   );
