@@ -93,14 +93,14 @@ export default function CartItem({
           >
             {item.title}
           </Link>
-          <p className="text-sm font-semibold text-gray-700 dark:text-gray-300 whitespace-nowrap">
+          <p className="text-sm font-semibold text-primary whitespace-nowrap">
             ${lineTotal.toFixed(2)}
           </p>
         </div>
 
         {/* Unit Price */}
         <div className="flex items-center gap-2 mb-2">
-          <p className="text-sm text-gray-700 dark:text-white line-clamp-1">
+          <p className="text-xs text-gray-700 dark:text-white line-clamp-1">
             Item Price ${item.price.toFixed(2)}
           </p>
           {/* {showOriginalPrice && item.originalPrice && (
@@ -112,32 +112,35 @@ export default function CartItem({
 
         {/* Quantity Controls */}
         <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2 border border-gray-100 bg-white text-gray-600 rounded-md dark:border-gray-700 dark:bg-gray-900/50 dark:text-gray-300">
+          <div className="items-center h-8 w-24 flex flex-wrap justify-evenly p-1 border border-gray-100 bg-white text-gray-600 rounded-md dark:border-gray-700 dark:bg-gray-900/50 dark:text-gray-300">
             <button
               onClick={handleDecrease}
               disabled={item.quantity <= 1}
-              className="p-1 rounded bg-gray-200 dark:bg-[#1F1F1F] hover:bg-gray-300 dark:hover:bg-[#2A2A2A] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               aria-label="Decrease quantity"
+              className="focus:outline-none"
             >
-              <FiMinus className="text-sm" />
+              <span className="text-dark text-base">
+                <FiMinus />
+              </span>
             </button>
 
             <input
-              type="number"
-              min="1"
-              value={item.quantity}
+              type="text"
+              value={String(item.quantity)}
               onChange={handleQuantityChange}
               onBlur={handleQuantityBlur}
-              className="w-12 text-center text-sm font-medium bg-white dark:bg-[#1F1F1F] border border-gray-300 dark:border-gray-600 rounded px-1 py-0.5 focus:outline-none focus:ring-1 focus:ring-primary [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+              className="w-10 text-center font-medium bg-gray-50 dark:bg-gray-700 h-full border-0 focus:outline-none focus:ring-1 focus:ring-emerald-500 disabled:opacity-50"
               aria-label="Quantity"
             />
 
             <button
               onClick={handleIncrease}
-              className="p-1 rounded bg-gray-200 dark:bg-[#1F1F1F] hover:bg-gray-300 dark:hover:bg-[#2A2A2A] transition-colors"
               aria-label="Increase quantity"
+              className="focus:outline-none"
             >
-              <FiPlus className="text-sm" />
+              <span className="text-dark text-base">
+                <FiPlus />
+              </span>
             </button>
           </div>
 
