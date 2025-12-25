@@ -1,5 +1,6 @@
 "use client";
 
+import CategoryIcon from "@/public/icons/footer/CategoryIocn";
 import VectorIcon from "@/public/icons/VectorIcon";
 import { useCategoryStore } from "@/zustand/store";
 
@@ -7,11 +8,15 @@ export default function CategoryToggleButton() {
   return (
     <button
       onClick={() => useCategoryStore.getState().openCategory()}
-      className="flex justify-between bg-primary-dark md:py-4 items-center p-2 lg:px-4 w-full md:w-auto hover:bg-primary-dark/60"
+      className="lg:flex lg:justify-between lg:bg-primary-dark lg:py-4 items-center lg:p-2 lg:px-4 lg:w-auto lg:hover:bg-primary-dark/60"
     >
-      <div className="flex items-center gap-2">
+      <div className="hidden lg:flex items-center gap-2">
         <VectorIcon className="text-white" />
         <h1 className="text-white">All Categories</h1>
+      </div>
+      <div className="lg:hidden mx-auto flex flex-col items-center">
+        <CategoryIcon className="w-6 h-6 text-white" />
+        <h1 className="text-white lg:hidden text-xl">Category</h1>
       </div>
     </button>
   );

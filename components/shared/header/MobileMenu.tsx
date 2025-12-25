@@ -68,10 +68,11 @@ export default function MobileMenu({
           {isOpen ? <CloseIcon /> : <MenuIcon />}
         </button>
         <Link href="/" className="shrink-0" onClick={() => setIsOpen(false)}>
-          <div className="relative h-8 w-8">
+          <div className="h-8 w-8">
             <Image
-              fill
-              className="object-contain h-8"
+              width={32}
+              height={32}
+              className="object-contain"
               priority
               src="/logo/logo-sort.png"
               alt="logo"
