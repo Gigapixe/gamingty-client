@@ -18,7 +18,7 @@ const CartButton = () => {
   return (
     <button
       onClick={openCart}
-      className="relative p-2 hover:bg-gray-100 dark:hover:bg-[#1F1F1F] rounded-lg transition-colors"
+      className="relative hover:scale-105 transition-all duration-200"
       aria-label="Shopping cart"
     >
       <CartIcon className="dark:text-white" />

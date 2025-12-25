@@ -3,8 +3,6 @@ import CategoryDrawer from "./CategoryDrawer";
 import NavLinks from "./NavLinks";
 import ThemeToggle from "@/lib/ThemeToggle";
 import AuthStatus from "./AuthStatus";
-
-import Input from "@/components/ui/Input";
 import FullLogo from "@/components/ui/FullLogo";
 import { getAllCategoriesSSG } from "@/services/categoryService";
 import CartButton from "./CartButton";
@@ -17,7 +15,7 @@ export default async function Header() {
   const initialTree = catsRes?.data || [];
 
   return (
-    <nav className="sticky top-0 z-20 w-full shadow-sm bg-white dark:bg-[#161616]">
+    <nav className="sticky top-0 z-20 w-full shadow-sm bg-background-light dark:bg-background-dark">
       <div className="container mx-auto">
         <div className="flex items-center justify-between gap-10 py-4">
           <FullLogo />
