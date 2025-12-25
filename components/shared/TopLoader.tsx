@@ -90,7 +90,7 @@ export default function TopLoader() {
   if (!loading && progress === 0) return null;
 
   return (
-    <div className="fixed top-0 left-0 right-0 z-[9999] h-[3px] bg-transparent pointer-events-none">
+    <div className="fixed top-0 left-0 right-0 z-9999 h-0.75 bg-transparent pointer-events-none">
       <div
         className="h-full bg-primary shadow-[0_0_10px_rgba(16,185,129,0.7)]"
         style={{
