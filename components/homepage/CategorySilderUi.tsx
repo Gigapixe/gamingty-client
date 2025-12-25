@@ -98,10 +98,7 @@ export default function CategorySliderUi({ values }: { values: Category[] }) {
         {filteredValues.length > 0 ? (
           filteredValues.map((item) => (
             <SwiperSlide key={item.id}>
-              <Link
-                href={`/product-category/${item.slug}`}
-                className="shrink-0 p-2"
-              >
+              <Link href={`/category/${item.slug}`} className="shrink-0 p-2">
                 <div className="group border border-white dark:border-white/10 dark:hover:border-primary/50 dark:hover:shadow-[0_8px_30px_rgba(0,0,0,0.12)] rounded-xl shadow flex flex-col lg:flex-row gap-2 lg:gap-4 items-center p-6 hover:shadow-lg transition-all duration-150 bg-background-light dark:bg-background-dark-2">
                   {item.image ? (
                     <Image

@@ -64,7 +64,7 @@ export default function CategoriesCatalog({ values }: CategoriesCatalogProps) {
                   {mainCategory.children &&
                     mainCategory.children.length > 0 && (
                       <Link
-                        href={`/product-category/${mainCategory.slug}`}
+                        href={`/category/${mainCategory.slug}`}
                         className="group flex items-center px-4 py-2 bg-primary/5 text-primary hover:bg-primary/10 dark:bg-primary/5 dark:text-primary dark:hover:bg-primary/20 transition-all duration-300 rounded-full"
                       >
                         <span className="text-sm font-medium mr-2 whitespace-nowrap">
@@ -81,7 +81,7 @@ export default function CategoriesCatalog({ values }: CategoriesCatalogProps) {
                         key={child._id}
                         className="group rounded-xl overflow-hidden shadow-sm hover:shadow-md bg-white dark:bg-gray-700 transition-shadow duration-200 transform hover:-translate-y-0.5"
                       >
-                        <Link href={`/product-category/${child.slug}`}>
+                        <Link href={`/category/${child.slug}`}>
                           <div className="relative overflow-hidden rounded-t-xl md:h-40">
                             <Image
                               src={child.icon || "/placeholder-category.jpg"}
