@@ -8,8 +8,7 @@ import { getAllCategoriesSSG } from "@/services/categoryService";
 import CartButton from "./CartButton";
 import CartDrawer from "../../cart/CartDrawer";
 import Searchbar from "./Searchbar";
-import Image from "next/image";
-import Link from "next/link";
+import MobileMenu from "./MobileMenu";
 
 export default async function Header() {
   // Fetch categories at build time (SSG) to speed up drawer open
@@ -23,15 +22,7 @@ export default async function Header() {
           <div className="lg:block hidden">
             <FullLogo />
           </div>
-          <Link href="/" className="lg:hidden block">
-            <Image
-              src="/logo/logo-sort.png"
-              alt="Logo"
-              width={150}
-              height={150}
-              className="w-8 h-8 lg:hidden"
-            />
-          </Link>
+          <MobileMenu />
           <div className="hidden lg:block lg:flex-1 ">
             <Searchbar />
           </div>
