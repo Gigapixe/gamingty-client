@@ -8,6 +8,8 @@ import { getAllCategoriesSSG } from "@/services/categoryService";
 import CartButton from "./CartButton";
 import CartDrawer from "../../cart/CartDrawer";
 import Searchbar from "./Searchbar";
+import Image from "next/image";
+import Link from "next/link";
 
 export default async function Header() {
   // Fetch categories at build time (SSG) to speed up drawer open
@@ -18,10 +20,19 @@ export default async function Header() {
     <nav className="sticky top-0 z-20 w-full shadow-sm bg-background-light dark:bg-background-dark">
       <div className="container mx-auto">
         <div className="flex items-center justify-between gap-10 py-4">
-          <div>
+          <div className="lg:block hidden">
             <FullLogo />
           </div>
-          <div className="flex-1 ">
+          <Link href="/" className="lg:hidden block">
+            <Image
+              src="/logo/logo-sort.png"
+              alt="Logo"
+              width={150}
+              height={150}
+              className="w-8 h-8 lg:hidden"
+            />
+          </Link>
+          <div className="hidden lg:block lg:flex-1 ">
             <Searchbar />
           </div>
           <div className="flex items-center gap-4">
