@@ -15,7 +15,7 @@ export default function FullLogo() {
         alt="Logo"
         width={400}
         height={400}
-        className="w-48 h-10"
+        className="w-44 h-8"
         loading="eager"
       />
     </Link>
