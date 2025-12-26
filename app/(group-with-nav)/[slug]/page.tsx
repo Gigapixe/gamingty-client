@@ -1,5 +1,6 @@
 import DynamicPages from "@/components/pages/DynamicPages";
 import { getPageBySlugSSG, getAllPagesSSG } from "@/services/pageService";
+import { notFound } from "next/navigation";
 
 export async function generateStaticParams() {
   try {
@@ -29,8 +30,8 @@ export default async function FooterPage({
       pageData = pageResponse?.data || null;
     } else return null;
   } catch (error) {
-    // console.error("Error fetching page data:", error);
-    pageData = null;
+    console.error("Error fetching page data:", error);
+    notFound();
   }
 
   return (
