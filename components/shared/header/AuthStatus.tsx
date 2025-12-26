@@ -1,22 +1,38 @@
 "use client";
 
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { useAuthStore } from "@/zustand/authStore";
-import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
+import { useRouter, usePathname } from "next/navigation";
+import { useEffect, useRef, useState } from "react";
+import { useAuthStore } from "@/zustand/authStore";
 import UserIcon from "@/public/icons/navbar/UserIcon";
+import { RiLogoutBoxRLine } from "react-icons/ri";
+import UserNavLinks from "@/components/user/UserNavLinks";
 
 export default function AuthStatus() {
   const { isAuthenticated, user, logout, _hasHydrated } = useAuthStore();
-  const [open, setOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
   const ref = useRef<HTMLDivElement | null>(null);
+  const timeoutRef = useRef<number | null>(null);
   const router = useRouter();
+
+  const clearCloseTimeout = () => {
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
+      timeoutRef.current = null;
+    }
+  };
+
+  const scheduleClose = (delay = 200) => {
+    clearCloseTimeout();
+    timeoutRef.current = window.setTimeout(() => setIsOpen(false), delay);
+  };
 
   useEffect(() => {
     function onDoc(e: MouseEvent) {
       if (ref.current && !ref.current.contains(e.target as Node)) {
-        setOpen(false);
+        setIsOpen(false);
       }
     }
 
@@ -24,7 +40,17 @@ export default function AuthStatus() {
     return () => document.removeEventListener("click", onDoc);
   }, []);
 
+  useEffect(() => {
+    const checkScreen = () => setIsMobile(window.innerWidth < 1024);
+    checkScreen();
+    window.addEventListener("resize", checkScreen);
+    return () => window.removeEventListener("resize", checkScreen);
+  }, []);
+
+  const pathname = usePathname();
+
   const handleLogout = () => {
+    setIsOpen(false);
     logout();
     router.push("/");
   };
@@ -48,52 +74,86 @@ export default function AuthStatus() {
     );
   }
 
-  const getInitial = (u?: any) => {
-    const nameOrEmail = u?.name ?? u?.email ?? "U";
-    return String(nameOrEmail).trim().charAt(0).toUpperCase();
-  };
-
   return (
     <div className="relative" ref={ref}>
-      <button
-        onClick={() => setOpen((v) => !v)}
-        className="flex items-center gap-2 hover:opacity-90 focus:outline-none"
+      <div
+        className={`flex items-center gap-3 ${
+          isOpen ? "ring-2 ring-primary ring-offset-2" : ""
+        } rounded-full bg-background-subtle hover:bg-background-muted dark:bg-white/5 dark:hover:bg-white/10 dark:border dark:border-white/10 transition duration-200 cursor-pointer`}
+        onClick={() => setIsOpen((s) => !s)}
+        onMouseEnter={() => {
+          if (!isMobile) {
+            clearCloseTimeout();
+            setIsOpen(true);
+          }
+        }}
+        onMouseLeave={() => !isMobile && scheduleClose()}
         aria-haspopup="true"
-        aria-expanded={open}
-        aria-label="User menu"
+        aria-expanded={isOpen}
       >
         {user?.image ? (
           <Image
             src={user.image}
             alt={user?.name || user?.email || "User"}
-            width={32}
-            height={32}
+            width={36}
+            height={36}
             className="rounded-full object-cover"
           />
         ) : (
-          <div className="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center text-sm font-medium text-gray-700">
-            {getInitial(user)}
+          <div className="w-9 h-9 rounded-full bg-emerald-500 text-white flex items-center justify-center font-medium">
+            {String(user?.name ?? user?.email ?? "U")
+              .trim()
+              .charAt(0)
+              .toUpperCase()}
           </div>
         )}
-      </button>
+      </div>
 
-      {open && (
-        <div className="absolute right-0 mt-2 w-44 bg-white border rounded shadow-md z-50">
-          <Link href="/user" className="block px-4 py-2 hover:bg-gray-50">
-            Profile
-          </Link>
-          <Link
-            href="/user/orders"
-            className="block px-4 py-2 hover:bg-gray-50"
-          >
-            Orders
-          </Link>
-          <button
-            onClick={handleLogout}
-            className="w-full text-left px-4 py-2 hover:bg-gray-50"
-          >
-            Logout
-          </button>
+      {isOpen && (
+        <div
+          className="absolute right-0 z-50 mt-2 w-64 origin-top-right"
+          onMouseEnter={() => clearCloseTimeout()}
+          onMouseLeave={() => scheduleClose()}
+        >
+          <div className="overflow-hidden rounded-2xl bg-white shadow-lg ring-1 ring-black/5 dark:bg-[#141414] dark:ring-white/10 dark:border dark:border-[#303030]">
+            <div className="p-4 border-b border-background-muted dark:border-[#303030]">
+              <div className="grid grid-cols-[60px_1fr] items-center">
+                {user?.image ? (
+                  <div className="relative w-12 h-12">
+                    <Image
+                      src={user.image}
+                      alt={user.name}
+                      fill
+                      className="rounded-full object-cover"
+                    />
+                  </div>
+                ) : (
+                  <div className="h-12 w-12 rounded-full bg-emerald-500 text-white flex items-center justify-center text-lg font-medium">
+                    {String(user?.name ?? "U")
+                      .trim()
+                      .charAt(0)
+                      .toUpperCase()}
+                  </div>
+                )}
+                <div>
+                  <h4 className="font-medium text-[#161616] dark:text-[#FFFFFF]">
+                    {user?.name}
+                  </h4>
+                  <p className="text-sm text-[#6B7280] dark:text-[#E5E5E5]">
+                    {user?.email}
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div className="py-2">
+              <UserNavLinks
+                activePath={pathname}
+                onClose={() => setIsOpen(false)}
+                onLogout={handleLogout}
+              />
+            </div>
+          </div>
         </div>
       )}
     </div>
