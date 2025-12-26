@@ -7,14 +7,16 @@ export async function generateMetadata(): Promise<Metadata> {
     description: "Manage your account and view your orders.",
   };
 }
+import UserSideNav from "@/components/user/UserSideNav";
+import Header from "@/components/shared/header/Header";
 
 export default function CustomerLayout({ children }: { children: ReactNode }) {
   return (
     <div>
       <div className="flex">
-        {/* <SideNav /> */}
+        <UserSideNav />
         <div className="flex-1">
-          {/* <Navbar /> */}
+          <Header />
           <main className="p-4 md:min-h-[calc(100vh-120px)] bg-background-light dark:bg-background-dark">
             {children}
           </main>

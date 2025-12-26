@@ -6,11 +6,8 @@ import { useRouter, usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { useAuthStore } from "@/zustand/authStore";
 import UserIcon from "@/public/icons/navbar/UserIcon";
-import { AiOutlineHeart } from "react-icons/ai";
-import { BsShieldCheck } from "react-icons/bs";
-import { CiSettings } from "react-icons/ci";
 import { RiLogoutBoxRLine } from "react-icons/ri";
-import { IoBagCheckOutline } from "react-icons/io5";
+import UserNavLinks from "@/components/user/UserNavLinks";
 
 export default function AuthStatus() {
   const { isAuthenticated, user, logout, _hasHydrated } = useAuthStore();
@@ -76,23 +73,6 @@ export default function AuthStatus() {
       </div>
     );
   }
-
-  const menuItems = [
-    { name: "Dashboard", href: "/user/dashboard", icon: IoBagCheckOutline },
-    { name: "My Orders", href: "/user/my-orders", icon: IoBagCheckOutline },
-    { name: "My Wallet", href: "/user/my-wallet", icon: IoBagCheckOutline },
-    { name: "Reviews", href: "/user/my-reviews", icon: AiOutlineHeart },
-    {
-      name: "Redeem Gift Card",
-      href: "/user/redeem-card",
-      icon: AiOutlineHeart,
-    },
-    { name: "Referral", href: "/user/affiliate", icon: AiOutlineHeart },
-    { name: "Wishlist", href: "/user/wishlist", icon: AiOutlineHeart },
-    { name: "Update Profile", href: "/user/update-profile", icon: CiSettings },
-    { name: "Support", href: "/user/open-ticket", icon: AiOutlineHeart },
-    { name: "Security", href: "/user/security", icon: BsShieldCheck },
-  ];
 
   return (
     <div className="relative" ref={ref}>
@@ -167,42 +147,11 @@ export default function AuthStatus() {
             </div>
 
             <div className="py-2">
-              {menuItems.map((item) => {
-                const active = pathname === item.href;
-                return (
-                  <Link
-                    key={item.name}
-                    href={item.href}
-                    className={`flex items-center px-4 py-2.5 text-sm transition-colors duration-150 font-semibold w-full ${
-                      active
-                        ? "bg-primary/10 text-primary"
-                        : "text-[#6B7280] dark:text-[#E5E5E5] hover:bg-[#FAFAFA] dark:hover:bg-gray-800"
-                    }`}
-                    onClick={() => setIsOpen(false)}
-                  >
-                    <item.icon
-                      className={`w-5 h-5 mr-3 shrink-0 ${
-                        active
-                          ? "text-primary"
-                          : "text-gray-500 dark:text-gray-400"
-                      }`}
-                    />
-                    <span
-                      className={`text-base ${active ? "font-semibold" : ""}`}
-                    >
-                      {item.name}
-                    </span>
-                  </Link>
-                );
-              })}
-
-              <button
-                onClick={handleLogout}
-                className="flex w-full items-center px-4 py-2.5 text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors duration-150"
-              >
-                <RiLogoutBoxRLine className="w-5 h-5 mr-3 shrink-0" />
-                <span className="text-base">Logout</span>
-              </button>
+              <UserNavLinks
+                activePath={pathname}
+                onClose={() => setIsOpen(false)}
+                onLogout={handleLogout}
+              />
             </div>
           </div>
         </div>
