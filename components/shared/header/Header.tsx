@@ -14,7 +14,12 @@ export default function Header() {
   const { user } = useAuthStore();
   const pathname = usePathname();
   const isUserRoute = pathname?.startsWith("/user");
-  console.log(user?.name);
+
+  const getFirstName = (fullName?: string) => {
+    if (!fullName) return null;
+    const first = String(fullName).trim().split(" ")[0];
+    return first ? first.charAt(0).toUpperCase() + first.slice(1) : null;
+  };
   return (
     <nav
       className={`${
@@ -24,7 +29,16 @@ export default function Header() {
       <div className="container mx-auto">
         <div className="flex items-center justify-between gap-10 py-4">
           <div className="lg:block hidden">
-            <FullLogo />
+            {isUserRoute && user ? (
+              <div className="flex flex-col">
+                <span className="text-sm">Welcome back,</span>
+                <span className="text-2xl font-medium ">
+                  {getFirstName(user.name)}
+                </span>
+              </div>
+            ) : (
+              <FullLogo />
+            )}
           </div>
           <MobileMenu />
           <div className="hidden lg:block lg:flex-1 ">

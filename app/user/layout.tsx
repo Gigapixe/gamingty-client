@@ -9,10 +9,19 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 import UserSideNav from "@/components/user/UserSideNav";
 import Header from "@/components/shared/header/Header";
+import { getAllCategoriesSSG } from "@/services/categoryService";
+import CategoryDrawer from "@/components/shared/header/CategoryDrawer";
+import CartDrawer from "@/components/cart/CartDrawer";
 
-export default function CustomerLayout({ children }: { children: ReactNode }) {
+export default async function CustomerLayout({
+  children,
+}: {
+  children: ReactNode;
+}) {
+  const catsRes = await getAllCategoriesSSG();
+  const initialTree = catsRes?.data || [];
   return (
-    <div>
+    <>
       <div className="flex">
         <UserSideNav />
         <div className="flex-1">
@@ -22,6 +31,8 @@ export default function CustomerLayout({ children }: { children: ReactNode }) {
           </main>
         </div>
       </div>
-    </div>
+      <CategoryDrawer initialTree={initialTree} />
+      <CartDrawer />
+    </>
   );
 }
