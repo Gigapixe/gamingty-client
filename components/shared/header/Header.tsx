@@ -26,7 +26,7 @@ export default function Header() {
         isUserRoute ? "relative" : "sticky"
       } top-0 z-20 w-full shadow-sm bg-background-light dark:bg-background-dark`}
     >
-      <div className="container mx-auto">
+      <div className={`${isUserRoute ? "px-4" : "container mx-auto"}`}>
         <div className="flex items-center justify-between gap-10 py-4">
           <div className="lg:block hidden">
             {isUserRoute && user ? (
