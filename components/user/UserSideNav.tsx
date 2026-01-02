@@ -14,7 +14,7 @@ export default function UserSideNav() {
 
       <div className="px-4">
         {/* Profile Card */}
-        <div className="border border-gray-200 dark:border-[#1F1F1F] p-4 rounded-2xl overflow-hidden bg-[#232323]">
+        <div className="border border-gray-200 dark:border-[#1F1F1F] p-4 rounded-2xl overflow-hidden dark:bg-[#232323] bg:-[#FDFDFD]">
           <UserProfile />
         </div>
 

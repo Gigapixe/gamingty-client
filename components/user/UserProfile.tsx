@@ -52,7 +52,7 @@ export default function UserProfile() {
           </div>
         </div>
 
-        <hr className="border-gray-200 dark:border-[#1F1F1F] w-full my-4" />
+        <hr className="border-border-light dark:border-border-dark w-full my-4" />
 
         {/* ID and Tier */}
         <div className="flex justify-between items-center text-sm">
@@ -69,16 +69,17 @@ export default function UserProfile() {
             </span>
           </div>
         </div>
+        <hr className="border-border-light dark:border-border-dark w-full mt-4" />
 
         {/* KYC Status */}
         <div className="flex justify-between items-center text-sm mt-4">
           <span className="text-gray-500 dark:text-gray-400">KYC Status:</span>
           {user.kycStatus ? (
             <span
-              className={`font-bold text-xs ${
-                user.kycStatus === "Approved"
+              className={`font-bold text-xs capitalize ${
+                user.kycStatus === "approved"
                   ? "text-primary"
-                  : user.kycStatus === "Pending"
+                  : user.kycStatus === "pending"
                   ? "text-yellow-500"
                   : "text-red-500"
               }`}

@@ -44,7 +44,7 @@ const UserSideNavLink = ({ onClose }: Props) => {
                   className={`rounded-full text-sm font-medium transition-colors pl-4 pr-2 py-2 flex items-center justify-between gap-2 h-11
                     ${
                       isActive
-                        ? "bg-primary/20 text-primary font-semibold"
+                        ? "bg-primary/10 text-primary font-semibold"
                         : "hover:bg-gray-100 dark:hover:bg-[#1F1F1F] text-gray-700 dark:text-gray-300"
                     }`}
                 >
@@ -58,7 +58,7 @@ const UserSideNavLink = ({ onClose }: Props) => {
                   </span>
                   {isActive && (
                     <span className="p-2 bg-primary rounded-full">
-                      <FaArrowRight className="text-white" />
+                      <FaArrowRight className="text-white" size={12} />
                     </span>
                   )}
                 </Link>
