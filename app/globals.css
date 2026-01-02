@@ -16,7 +16,7 @@
   --color-warning: #f59e0b; /* Amber for warning buttons (light mode) */
   --color-warning-dark: #d97706; /* Darker amber for dark mode contrast */
   --color-background: #eceef1; /* Light mode background */
-  --color-background-dark: #1f2937; /* Softer dark mode background */
+  --color-background-dark: #141414; /* Softer dark mode background */
   --color-background-dark-2: #11182780; /* make this color 50% opacity of --color-background-dark-2 */
   --color-background-light: #f8f8f8; /* Light gray for light mode secondary background */
   --color-text: #111827; /* Light mode text */
@@ -265,4 +265,38 @@ button {
 .prose div,
 .prose span {
   color: inherit !important;
+}
+
+/* Custom thin scrollbar utility — uses project primary color */
+.thin-scrollbar {
+  /* Firefox */
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-primary) transparent;
+}
+
+/* WebKit-based browsers */
+.thin-scrollbar::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+.thin-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+.thin-scrollbar::-webkit-scrollbar-thumb {
+  background-color: var(--color-primary);
+  border-radius: 9999px;
+  border: 2px solid transparent;
+  background-clip: content-box;
+  box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.06) inset;
+}
+.thin-scrollbar::-webkit-scrollbar-thumb:hover {
+  filter: brightness(0.95);
+}
+
+/* Dark mode adjustments */
+.dark .thin-scrollbar {
+  scrollbar-color: var(--color-primary-dark) transparent;
+}
+.dark .thin-scrollbar::-webkit-scrollbar-thumb {
+  background-color: var(--color-primary-dark);
 }

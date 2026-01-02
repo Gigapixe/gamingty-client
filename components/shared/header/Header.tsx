@@ -11,7 +11,7 @@ import { usePathname } from "next/navigation";
 import { useAuthStore } from "@/zustand/authStore";
 
 export default function Header() {
-  const { user } = useAuthStore();
+  const { user, _hasHydrated } = useAuthStore();
   const pathname = usePathname();
   const isUserRoute = pathname?.startsWith("/user");
 
@@ -26,16 +26,23 @@ export default function Header() {
         isUserRoute ? "relative" : "sticky"
       } top-0 z-20 w-full shadow-sm bg-background-light dark:bg-background-dark`}
     >
-      <div className="container mx-auto">
+      <div className={`${isUserRoute ? "px-4" : "container mx-auto"}`}>
         <div className="flex items-center justify-between gap-10 py-4">
           <div className="lg:block hidden">
-            {isUserRoute && user ? (
-              <div className="flex flex-col">
-                <span className="text-sm">Welcome back,</span>
-                <span className="text-2xl font-medium ">
-                  {getFirstName(user.name)}
-                </span>
-              </div>
+            {isUserRoute ? (
+              /* While auth store rehydrates don't show the logo (avoids flash). Keep a spacer to prevent layout shift */
+              !_hasHydrated ? (
+                <div className="w-36 h-8" aria-hidden="true" />
+              ) : user ? (
+                <div className="flex flex-col">
+                  <span className="text-sm">Welcome back,</span>
+                  <span className="text-2xl font-medium ">
+                    {getFirstName(user.name)}
+                  </span>
+                </div>
+              ) : (
+                <FullLogo />
+              )
             ) : (
               <FullLogo />
             )}

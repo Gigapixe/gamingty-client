@@ -1,17 +1,10 @@
 "use client";
 
 import Link from "next/link";
-import { AiOutlineHeart } from "react-icons/ai";
-import { BsShieldCheck } from "react-icons/bs";
-import { CiSettings } from "react-icons/ci";
-import { IoBagCheckOutline } from "react-icons/io5";
 import { RiLogoutBoxRLine } from "react-icons/ri";
+import { navItems, type NavItem as SharedNavItem } from "@/components/user/navData";
 
-type NavItem = {
-  name: string;
-  href: string;
-  icon?: any;
-};
+type NavItem = SharedNavItem;
 
 interface Props {
   items?: NavItem[];
@@ -20,18 +13,7 @@ interface Props {
   onLogout?: () => void;
 }
 
-const defaultItems: NavItem[] = [
-  { name: "Dashboard", href: "/user/dashboard", icon: IoBagCheckOutline },
-  { name: "My Orders", href: "/user/my-orders", icon: IoBagCheckOutline },
-  { name: "My Wallet", href: "/user/my-wallet", icon: IoBagCheckOutline },
-  { name: "Reviews", href: "/user/my-reviews", icon: AiOutlineHeart },
-  { name: "Redeem Gift Card", href: "/user/redeem-card", icon: AiOutlineHeart },
-  { name: "Referral", href: "/user/affiliate", icon: AiOutlineHeart },
-  { name: "Wishlist", href: "/user/wishlist", icon: AiOutlineHeart },
-  { name: "Update Profile", href: "/user/update-profile", icon: CiSettings },
-  { name: "Support", href: "/user/open-ticket", icon: AiOutlineHeart },
-  { name: "Security", href: "/user/security", icon: BsShieldCheck },
-];
+const defaultItems: NavItem[] = navItems;
 
 export default function UserNavLinks({
   items,

@@ -6,7 +6,6 @@ import { useRouter, usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { useAuthStore } from "@/zustand/authStore";
 import UserIcon from "@/public/icons/navbar/UserIcon";
-import { RiLogoutBoxRLine } from "react-icons/ri";
 import UserNavLinks from "@/components/user/UserNavLinks";
 
 export default function AuthStatus() {
