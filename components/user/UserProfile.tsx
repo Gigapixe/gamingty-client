@@ -6,7 +6,7 @@ interface Props {
   onClose?: () => void;
 }
 
-export default function UserProfile({ onClose }: Props) {
+export default function UserProfile() {
   const { user, _hasHydrated } = useAuthStore();
 
   if (!_hasHydrated) {

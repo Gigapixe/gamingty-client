@@ -4,23 +4,10 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useState } from "react";
 
-import ArrowIcon from "@/public/icons/ArrowIcon";
 import { RiLogoutBoxRLine } from "react-icons/ri";
 import { useAuthStore } from "@/zustand/authStore";
 import { navGroups } from "@/components/user/navData";
-
-interface NavItem {
-  label: string;
-  href: string;
-  icon?: React.ComponentType<any>;
-}
-
-interface NavGroup {
-  title: string;
-  items: NavItem[];
-}
-
-
+import { FaArrowRight } from "react-icons/fa";
 
 interface Props {
   onClose?: () => void;
@@ -71,7 +58,7 @@ const UserSideNavLink = ({ onClose }: Props) => {
                   </span>
                   {isActive && (
                     <span className="p-2 bg-primary rounded-full">
-                      <ArrowIcon className="-rotate-45 text-white w-3 h-3" />
+                      <FaArrowRight className="text-white" />
                     </span>
                   )}
                 </Link>
