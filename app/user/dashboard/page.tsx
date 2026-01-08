@@ -1,6 +1,8 @@
 import { DashboardAnalytics } from "@/components/dashboard/DashboardAnalytics";
 import OrderChart from "@/components/dashboard/OrderChart";
+import RecentOrders from "@/components/dashboard/RecentOrders";
 import TopProductsTable from "@/components/dashboard/TopProductsTable";
+import { IoMdPricetag } from "react-icons/io";
 import { TbAward } from "react-icons/tb";
 
 export default function userDashboard() {
@@ -31,6 +33,17 @@ export default function userDashboard() {
           </div>
           <TopProductsTable />
         </div>
+      </div>
+
+       {/* --- Recent Orders --- */}
+      <div className="bg-white dark:bg-background-dark p-2 lg:p-5 rounded-xl border border-gray-200 dark:border-[#303030]">
+        <div className="flex flex-wrap justify-between items-center gap-3 mb-4">
+          <h3 className="text-xl font-bold text-gray-900 dark:text-[#FFFFFF] flex items-center gap-2">
+            <IoMdPricetag className="text-primary" />
+            Recent Orders
+          </h3>
+        </div>
+        <RecentOrders />
       </div>
     </div>
   );
