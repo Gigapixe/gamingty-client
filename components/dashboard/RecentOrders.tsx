@@ -1,27 +1,8 @@
 "use client";
+
 import React, { useCallback, useMemo, useState } from "react";
-import { FiChevronRight } from "react-icons/fi";
 import { IoBagHandle } from "react-icons/io5";
-import StatusBadge from "../ui/StatusBadge";
-
-
-type OrderStatus =
-  | "Pending"
-  | "Processing"
-  | "Delivered"
-  | "Failed"
-  | "Cancelled"
-  | "On Hold"
-  | "Refunded";
-
-type RecentOrder = {
-  _id: string;
-  invoice: string | number;
-  total: number;
-  paymentMethod: string;
-  status: OrderStatus | string;
-  createdAt: string; // ISO string
-};
+import OrdersTable, { RecentOrder } from "../ui/OrdersTable";
 
 const FAKE_ORDERS: RecentOrder[] = [
   {
@@ -30,7 +11,7 @@ const FAKE_ORDERS: RecentOrder[] = [
     total: 129.99,
     paymentMethod: "card",
     status: "Delivered",
-    createdAt: "52024-06-10T14:48:00.000Z",
+    createdAt: "2024-06-10T14:48:00.000Z",
   },
   {
     _id: "o_1002",
@@ -66,33 +47,20 @@ const FAKE_ORDERS: RecentOrder[] = [
   },
 ];
 
-const toMoney = (n: number) =>
-  new Intl.NumberFormat(undefined, {
-    style: "currency",
-    currency: "USD",
-    maximumFractionDigits: 2,
-  }).format(n);
-
-const normalizeStatus = (status: string) => {
-  if (!status) return "";
-  return status === "Cancel" ? "Cancelled" : status;
-};
-
 const RecentOrders: React.FC = () => {
-  // Fake-mode states (replace with API states later)
+  // replace with API states later
   const [loading] = useState(false);
   const [error] = useState<string | null>(null);
 
-  const [selectedOrderData, setSelectedOrderData] = useState<RecentOrder | null>(
-    null
-  );
+  const [selectedOrderData, setSelectedOrderData] =
+    useState<RecentOrder | null>(null);
 
   const recentOrders = useMemo(() => FAKE_ORDERS, []);
 
-  const handleOrderCardClick = useCallback(
+  const handleSelectOrder = useCallback(
     (orderId: string) => {
-      const selectedOrder = recentOrders.find((o) => o._id === orderId) || null;
-      setSelectedOrderData(selectedOrder);
+      const selected = recentOrders.find((o) => o._id === orderId) || null;
+      setSelectedOrderData(selected);
     },
     [recentOrders]
   );
@@ -119,16 +87,12 @@ const RecentOrders: React.FC = () => {
     );
   }
 
-  // Order details view (kept same)
-//   if (selectedOrderData) {
-//     return (
-//       <section aria-label="Order details">
-//         <OrderDetails order={selectedOrderData as any} onBack={handleBackToOrders} />
-//       </section>
-//     );
-//   }
+  // Details view later
+  // if (selectedOrderData) {
+  //   return <OrderDetails order={selectedOrderData} onBack={handleBackToOrders} />;
+  // }
 
-  // Empty
+  // Empty state
   if (recentOrders.length === 0) {
     return (
       <section className="text-center py-10" aria-label="No orders">
@@ -146,61 +110,28 @@ const RecentOrders: React.FC = () => {
   }
 
   return (
-    <section aria-label="Recent orders">
-      <ul className="space-y-4">
-        {recentOrders.map((order) => (
-          <li key={order._id}>
-            <article
-              role="button"
-              tabIndex={0}
-              onClick={() => handleOrderCardClick(order._id)}
-              onKeyDown={(e) => {
-                if (e.key === "Enter" || e.key === " ") {
-                  e.preventDefault();
-                  handleOrderCardClick(order._id);
-                }
-              }}
-              className="bg-gray-50 dark:bg-background-dark rounded-xl p-4 shadow-sm group hover:bg-gray-100 dark:hover:bg-[#202020] transition-colors duration-200 border border-gray-200 dark:border-[#303030] cursor-pointer outline-none focus:ring-2 focus:ring-emerald-400/60"
-              aria-label={`Open order ${order.invoice}`}
-            >
-              <header className="flex justify-between items-center gap-4">
-                {/* Left side */}
-                <div className="flex flex-col gap-1 min-w-0">
-                  {/* Line 1: invoice + amount + payment */}
-                  <div className="flex flex-wrap items-center gap-2">
-                    <span className="text-lg font-semibold text-gray-800 dark:text-white">
-                      #{order.invoice}
-                    </span>
+    <div>
+      <OrdersTable
+        orders={recentOrders}
+        onSelect={handleSelectOrder}
+        moneyCurrency="USD"
+      />
 
-                    <span className="text-lg font-semibold text-gray-800 dark:text-white">
-                      {toMoney(order.total)}
-                    </span>
-
-                    <span className="text-sm text-gray-500 dark:text-[#E5E5E5] capitalize">
-                      {order.paymentMethod}
-                    </span>
-                  </div>
-
-                  {/* Line 2: status + date */}
-                  <div className="flex flex-wrap items-center gap-2">
-                    <StatusBadge status={normalizeStatus(order.status)} />
-                    <time
-                      dateTime={order.createdAt}
-                      className="text-sm text-gray-500 dark:text-[#E5E5E5] whitespace-nowrap"
-                    >
-                      {(order.createdAt)}
-                    </time>
-                  </div>
-                </div>
-
-                {/* Right chevron */}
-                <FiChevronRight className="shrink-0 text-gray-400 text-xl group-hover:translate-x-1 transition-transform duration-200" />
-              </header>
-            </article>
-          </li>
-        ))}
-      </ul>
-    </section>
+      {/* Example: if you want to show selected order info for now */}
+      {selectedOrderData && (
+        <div className="mt-4 text-sm text-gray-600 dark:text-gray-300">
+          Selected:{" "}
+          <span className="font-semibold">{selectedOrderData.invoice}</span>{" "}
+          <button
+            type="button"
+            onClick={handleBackToOrders}
+            className="ml-2 text-primary underline"
+          >
+            Clear
+          </button>
+        </div>
+      )}
+    </div>
   );
 };
 
