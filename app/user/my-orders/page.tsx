@@ -46,19 +46,20 @@ export default function MyOrders() {
                 options={statusOptions}
                 placeholder="All Status"
                 searchable={false}
+                className="min-w-full"
               />
             </div>
-            <div className="w-full">
+            <div>
               <Select
                 value={payment}
                 onChange={(v) => setPayment(v)}
                 options={paymentOptions}
                 placeholder="All Payment Methods"
                 searchable
-                className="w-full"
+                className="min-w-full"
               />
             </div>
-            <div className="w-full">
+            <div>
               <DateRangeFilter
                 value={range}
                 onChange={setRange}

@@ -1,11 +1,12 @@
 "use client";
 
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { BiCalendar } from "react-icons/bi";
+import { IoIosArrowDown } from "react-icons/io";
 
 export type DateRange = {
-  from: string | null; // "YYYY-MM-DD"
-  to: string | null;   // "YYYY-MM-DD"
+  from: string | null;
+  to: string | null;
 };
 
 type DateRangeFilterProps = {
@@ -153,7 +154,11 @@ const buildPresets = (weekStartsOn: 0 | 1): Preset[] => {
   const thisYearFrom = startOfYear(now);
   const thisYearTo = endOfYear(now);
 
-  const lastYearBase = new Date(now.getFullYear() - 1, now.getMonth(), now.getDate());
+  const lastYearBase = new Date(
+    now.getFullYear() - 1,
+    now.getMonth(),
+    now.getDate()
+  );
   const lastYearFrom = startOfYear(lastYearBase);
   const lastYearTo = endOfYear(lastYearBase);
 
@@ -161,20 +166,66 @@ const buildPresets = (weekStartsOn: 0 | 1): Preset[] => {
 
   return [
     { key: "today", label: "Today", from: to(todayFrom), to: to(todayTo) },
-    { key: "yesterday", label: "Yesterday", from: to(yesterdayFrom), to: to(yesterdayTo) },
-    { key: "thisweek", label: "This Week", from: to(thisWeekFrom), to: to(thisWeekTo) },
-    { key: "last7", label: "Last 7 Days", from: to(last7From), to: to(last7To) },
-    { key: "thismonth", label: "This Month", from: to(thisMonthFrom), to: to(thisMonthTo) },
-    { key: "last30", label: "Last 30 Days", from: to(last30From), to: to(last30To) },
-    { key: "last90", label: "Last 90 Days", from: to(last90From), to: to(last90To) },
-    { key: "lastmonth", label: "Last Month", from: to(lastMonthFrom), to: to(lastMonthTo) },
-    { key: "thisyear", label: "This Year", from: to(thisYearFrom), to: to(thisYearTo) },
-    { key: "lastyear", label: "Last Year", from: to(lastYearFrom), to: to(lastYearTo) },
+    {
+      key: "yesterday",
+      label: "Yesterday",
+      from: to(yesterdayFrom),
+      to: to(yesterdayTo),
+    },
+    {
+      key: "thisweek",
+      label: "This Week",
+      from: to(thisWeekFrom),
+      to: to(thisWeekTo),
+    },
+    {
+      key: "last7",
+      label: "Last 7 Days",
+      from: to(last7From),
+      to: to(last7To),
+    },
+    {
+      key: "thismonth",
+      label: "This Month",
+      from: to(thisMonthFrom),
+      to: to(thisMonthTo),
+    },
+    {
+      key: "last30",
+      label: "Last 30 Days",
+      from: to(last30From),
+      to: to(last30To),
+    },
+    {
+      key: "last90",
+      label: "Last 90 Days",
+      from: to(last90From),
+      to: to(last90To),
+    },
+    {
+      key: "lastmonth",
+      label: "Last Month",
+      from: to(lastMonthFrom),
+      to: to(lastMonthTo),
+    },
+    {
+      key: "thisyear",
+      label: "This Year",
+      from: to(thisYearFrom),
+      to: to(thisYearTo),
+    },
+    {
+      key: "lastyear",
+      label: "Last Year",
+      from: to(lastYearFrom),
+      to: to(lastYearTo),
+    },
   ];
 };
 
 const sameRange = (a?: DateRange, b?: DateRange) =>
-  (a?.from ?? null) === (b?.from ?? null) && (a?.to ?? null) === (b?.to ?? null);
+  (a?.from ?? null) === (b?.from ?? null) &&
+  (a?.to ?? null) === (b?.to ?? null);
 
 export default function DateRangeFilter({
   value,
@@ -195,9 +246,9 @@ export default function DateRangeFilter({
   });
 
   // store selected preset if matches, otherwise custom/null
-  const [selectedPresetKey, setSelectedPresetKey] = useState<PresetKey | "custom" | null>(
-    defaultPresetKey
-  );
+  const [selectedPresetKey, setSelectedPresetKey] = useState<
+    PresetKey | "custom" | null
+  >(defaultPresetKey);
 
   const ref = useRef<HTMLDivElement>(null);
 
@@ -208,7 +259,9 @@ export default function DateRangeFilter({
     setDraft({ from: value?.from ?? null, to: value?.to ?? null });
 
     // detect preset vs custom
-    const match = presets.find((p) => p.from === (value?.from ?? null) && p.to === (value?.to ?? null));
+    const match = presets.find(
+      (p) => p.from === (value?.from ?? null) && p.to === (value?.to ?? null)
+    );
     if (match) setSelectedPresetKey(match.key);
     else if (value?.from || value?.to) setSelectedPresetKey("custom");
     else setSelectedPresetKey(defaultPresetKey ?? null);
@@ -229,7 +282,9 @@ export default function DateRangeFilter({
 
     if (!value?.from && !value?.to) return defaultLabel;
 
-    const preset = presets.find((p) => p.from === value?.from && p.to === value?.to);
+    const preset = presets.find(
+      (p) => p.from === value?.from && p.to === value?.to
+    );
     if (preset) return preset.label;
 
     // custom
@@ -247,7 +302,9 @@ export default function DateRangeFilter({
 
     // set custom/preset label detection
     const match = presets.find((p) => p.from === next.from && p.to === next.to);
-    setSelectedPresetKey(match ? match.key : next.from || next.to ? "custom" : null);
+    setSelectedPresetKey(
+      match ? match.key : next.from || next.to ? "custom" : null
+    );
 
     // avoid noisy re-renders
     if (!sameRange(next, value)) onChange(next);
@@ -280,7 +337,7 @@ export default function DateRangeFilter({
         disabled={disabled}
         onClick={() => setOpen((v) => !v)}
         className={[
-          "w-full sm:w-auto",
+          "min-w-50",
           "inline-flex items-center justify-between gap-2",
           "px-4 py-2 rounded-full border text-sm",
           "bg-white dark:bg-background-dark",
@@ -293,9 +350,17 @@ export default function DateRangeFilter({
         aria-haspopup="dialog"
         aria-expanded={open}
       >
-        <BiCalendar className="text-primary" size={20}/>
-        <span className="truncate">{selectedLabel}</span>
-        <span className="text-gray-400">▾</span>
+        <span className="inline-flex items-center gap-2">
+          <BiCalendar className="text-primary" size={20} />
+          <span className="truncate">{selectedLabel}</span>
+        </span>
+        <span
+          className={`text-gray-400 ${
+            open ? "rotate-180 duration-300" : "duration-300"
+          }`}
+        >
+          <IoIosArrowDown />
+        </span>
       </button>
 
       {/* Popover */}

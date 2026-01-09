@@ -1,6 +1,8 @@
 "use client";
 
+import ArrowIcon from "@/public/icons/ArrowIcon";
 import React, { useEffect, useMemo, useRef, useState } from "react";
+import { IoIosArrowDown } from "react-icons/io";
 
 export type SelectOption = {
   value: string;
@@ -174,7 +176,7 @@ export default function Select({
         aria-haspopup="listbox"
         aria-expanded={open}
         className={[
-          "w-full inline-flex items-center justify-between gap-2",
+          "min-w-50 flex items-center justify-between gap-2",
           "px-4 py-2 rounded-full border text-sm",
           "bg-white dark:bg-background-dark",
           "border-gray-200 dark:border-[#303030]",
@@ -188,7 +190,7 @@ export default function Select({
         <span className="truncate">
           {typeof triggerText === "string" ? triggerText : triggerText}
         </span>
-        <span className="text-gray-400">{open ? "▴" : "▾"}</span>
+        <span className={`text-gray-400 ${open ? "rotate-180 duration-300" : "duration-300"}`}><IoIosArrowDown/></span>
       </button>
 
       {/* Menu */}
