@@ -2,7 +2,7 @@
 
 import React, { useCallback, useMemo, useState } from "react";
 import { IoBagHandle } from "react-icons/io5";
-import OrdersTable, { RecentOrder } from "../ui/OrdersTable";
+import OrdersTable, { RecentOrder } from "../../ui/OrdersTable";
 
 const FAKE_ORDERS: RecentOrder[] = [
   {
@@ -47,7 +47,7 @@ const FAKE_ORDERS: RecentOrder[] = [
   },
 ];
 
-const RecentOrders: React.FC = () => {
+const AllOrders: React.FC = () => {
   // replace with API states later
   const [loading] = useState(false);
   const [error] = useState<string | null>(null);
@@ -134,4 +134,4 @@ const RecentOrders: React.FC = () => {
   );
 };
 
-export default RecentOrders;
+export default AllOrders;
