@@ -3,6 +3,7 @@
 import React, { useCallback, useMemo, useState } from "react";
 import { IoBagHandle } from "react-icons/io5";
 import OrdersTable, { RecentOrder } from "../../ui/OrdersTable";
+import Pagination from "../../ui/Pagination"; // ✅ import
 
 const FAKE_ORDERS: RecentOrder[] = [
   {
@@ -47,29 +48,37 @@ const FAKE_ORDERS: RecentOrder[] = [
   },
 ];
 
+const PAGE_SIZE = 5;
+
 const AllOrders: React.FC = () => {
-  // replace with API states later
   const [loading] = useState(false);
   const [error] = useState<string | null>(null);
 
   const [selectedOrderData, setSelectedOrderData] =
     useState<RecentOrder | null>(null);
 
-  const recentOrders = useMemo(() => FAKE_ORDERS, []);
+  const [page, setPage] = useState(1);
+
+  const allOrders = useMemo(() => FAKE_ORDERS, []);
+  const total = allOrders.length;
+
+  const pagedOrders = useMemo(() => {
+    const start = (page - 1) * PAGE_SIZE;
+    return allOrders.slice(start, start + PAGE_SIZE);
+  }, [allOrders, page]);
 
   const handleSelectOrder = useCallback(
     (orderId: string) => {
-      const selected = recentOrders.find((o) => o._id === orderId) || null;
+      const selected = allOrders.find((o) => o._id === orderId) || null;
       setSelectedOrderData(selected);
     },
-    [recentOrders]
+    [allOrders]
   );
 
   const handleBackToOrders = useCallback(() => {
     setSelectedOrderData(null);
   }, []);
 
-  // Loading
   if (loading) {
     return (
       <section aria-busy="true" className="py-6">
@@ -78,7 +87,6 @@ const AllOrders: React.FC = () => {
     );
   }
 
-  // Error
   if (error) {
     return (
       <section aria-live="polite" className="text-center py-10">
@@ -87,13 +95,7 @@ const AllOrders: React.FC = () => {
     );
   }
 
-  // Details view later
-  // if (selectedOrderData) {
-  //   return <OrderDetails order={selectedOrderData} onBack={handleBackToOrders} />;
-  // }
-
-  // Empty state
-  if (recentOrders.length === 0) {
+  if (total === 0) {
     return (
       <section className="text-center py-10" aria-label="No orders">
         <span className="flex justify-center text-emerald-500 text-6xl mb-4">
@@ -110,15 +112,15 @@ const AllOrders: React.FC = () => {
   }
 
   return (
-    <div>
+    <div className="space-y-4">
       <OrdersTable
-        orders={recentOrders}
+        orders={pagedOrders}
         onSelect={handleSelectOrder}
         moneyCurrency="USD"
       />
 
       {selectedOrderData && (
-        <div className="mt-4 text-sm text-gray-600 dark:text-gray-300">
+        <div className="text-sm text-gray-600 dark:text-gray-300">
           Selected:{" "}
           <span className="font-semibold">{selectedOrderData.invoice}</span>{" "}
           <button
@@ -130,6 +132,15 @@ const AllOrders: React.FC = () => {
           </button>
         </div>
       )}
+
+      {/* ✅ Pagination row like your screenshot */}
+      <Pagination
+        page={page}
+        pageSize={PAGE_SIZE}
+        total={total}
+        onPageChange={(p) => setPage(p)}
+        className="pt-2"
+      />
     </div>
   );
 };
