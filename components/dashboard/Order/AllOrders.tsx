@@ -7,6 +7,7 @@ import Pagination from "../../ui/Pagination";
 import type { DateRange } from "@/components/ui/DateRangeFilter";
 import { getOrdersPaginated } from "@/services/orderService"; // adjust path
 import { useAuthStore } from "@/zustand/authStore";
+import { OrderDetails } from "./OrderDetails";
 
 const PAGE_SIZE = 10;
 
@@ -163,33 +164,28 @@ const AllOrders: React.FC<AllOrdersProps> = ({
 
   return (
     <div className="space-y-4">
-      <OrdersTable
-        orders={orders}
-        onSelect={handleSelectOrder}
-        moneyCurrency="USD"
-      />
-
-      {selectedOrderData && (
-        <div className="text-sm text-gray-600 dark:text-gray-300">
-          Selected:{" "}
-          <span className="font-semibold">{selectedOrderData.invoice}</span>{" "}
-          <button
-            type="button"
-            onClick={handleBackToOrders}
-            className="ml-2 text-primary underline"
-          >
-            Clear
-          </button>
-        </div>
+      {selectedOrderData ? (
+        <>
+          {" "}
+          <OrderDetails order={selectedOrderData} onBack={handleBackToOrders} />
+        </>
+      ) : (
+        <OrdersTable
+          orders={orders}
+          onSelect={handleSelectOrder}
+          moneyCurrency="USD"
+        />
       )}
 
-      <Pagination
-        page={page}
-        pageSize={PAGE_SIZE}
-        total={total}
-        onPageChange={setPage}
-        className="pt-2"
-      />
+      {!selectedOrderData && (
+        <Pagination
+          page={page}
+          pageSize={PAGE_SIZE}
+          total={total}
+          onPageChange={setPage}
+          className="pt-2"
+        />
+      )}
     </div>
   );
 };
