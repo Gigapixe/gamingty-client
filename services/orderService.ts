@@ -109,14 +109,34 @@ export async function getOrderOverview(
 
 export async function getOrdersPaginated(
   params: Record<string, any> = {},
-  opts?: FetchOpts
+  opts?: {
+    token?: string;
+    cache?: RequestCache;
+    next?: { revalidate?: number | false };
+  }
 ) {
-  const url = `${API_BASE}/order/paginated${buildQuery(params)}`;
+  const query = new URLSearchParams();
+
+  Object.entries(params).forEach(([key, value]) => {
+    if (value === null || value === undefined || value === "") return;
+
+    if (key === "startDate" || key === "endDate") {
+      const d = value instanceof Date ? value : new Date(value);
+      query.append(key, d.toISOString());
+    } else {
+      query.append(key, String(value));
+    }
+  });
+
+  const url = `${API_BASE}/order/paginated?${query.toString()}`;
+
   return apiFetch<any>(url, {
+    token: opts?.token, 
     cache: opts?.cache ?? "no-store",
     next: opts?.next,
   });
 }
+
 
 export async function getOrderById(id: string | number, opts?: FetchOpts) {
   const url = `${API_BASE}/order/${id}`;

@@ -1,78 +1,134 @@
 "use client";
 
-import React, { useCallback, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { IoBagHandle } from "react-icons/io5";
 import OrdersTable, { RecentOrder } from "../../ui/OrdersTable";
-import Pagination from "../../ui/Pagination"; // ✅ import
+import Pagination from "../../ui/Pagination";
+import type { DateRange } from "@/components/ui/DateRangeFilter";
 
-const FAKE_ORDERS: RecentOrder[] = [
-  {
-    _id: "o_1001",
-    invoice: "INV-1001",
-    total: 129.99,
-    paymentMethod: "card",
-    status: "Delivered",
-    createdAt: "2024-06-10T14:48:00.000Z",
-  },
-  {
-    _id: "o_1002",
-    invoice: "INV-1002",
-    total: 45.5,
-    paymentMethod: "wallet",
-    status: "Processing",
-    createdAt: "2024-06-12T09:30:00.000Z",
-  },
-  {
-    _id: "o_1003",
-    invoice: "INV-1003",
-    total: 299.0,
-    paymentMethod: "cash",
-    status: "Pending",
-    createdAt: "2024-06-14T16:15:00.000Z",
-  },
-  {
-    _id: "o_1004",
-    invoice: "INV-1004",
-    total: 15.75,
-    paymentMethod: "card",
-    status: "Failed",
-    createdAt: "2024-06-15T11:20:00.000Z",
-  },
-  {
-    _id: "o_1005",
-    invoice: "INV-1005",
-    total: 89.25,
-    paymentMethod: "wallet",
-    status: "Cancelled",
-    createdAt: "2024-06-16T13:45:00.000Z",
-  },
-];
+// ✅ import your apiFetch-style function
+import { getOrdersPaginated } from "@/services/orderService"; // adjust path
+import { useAuthStore } from "@/zustand/authStore";
 
-const PAGE_SIZE = 5;
+const PAGE_SIZE = 10;
 
-const AllOrders: React.FC = () => {
-  const [loading] = useState(false);
-  const [error] = useState<string | null>(null);
+type AllOrdersProps = {
+  search?: string;
+  status?: string;
+  paymentMethod?: string;
+  range?: DateRange;
+};
+
+type PaginatedOrdersResponse = {
+  status: "success" | "error";
+  message: string;
+  data: {
+    orders: RecentOrder[];
+    pagination: {
+      totalDoc: number;
+      limit: number;
+      page: number;
+      totalPages: number;
+    };
+  };
+};
+
+const useDebouncedValue = <T,>(value: T, delay = 400) => {
+  const [debounced, setDebounced] = useState(value);
+
+  useEffect(() => {
+    const t = setTimeout(() => setDebounced(value), delay);
+    return () => clearTimeout(t);
+  }, [value, delay]);
+
+  return debounced;
+};
+
+const AllOrders: React.FC<AllOrdersProps> = ({
+  search = "",
+  status = "",
+  paymentMethod = "",
+  range = { from: null, to: null },
+}) => {
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const { token } = useAuthStore();
+
+  const [orders, setOrders] = useState<RecentOrder[]>([]);
+  const [total, setTotal] = useState(0);
 
   const [selectedOrderData, setSelectedOrderData] =
     useState<RecentOrder | null>(null);
 
   const [page, setPage] = useState(1);
 
-  const allOrders = useMemo(() => FAKE_ORDERS, []);
-  const total = allOrders.length;
+  // ✅ debounce search
+  const debouncedSearch = useDebouncedValue(search.trim(), 400);
 
-  const pagedOrders = useMemo(() => {
-    const start = (page - 1) * PAGE_SIZE;
-    return allOrders.slice(start, start + PAGE_SIZE);
-  }, [allOrders, page]);
+  // ✅ reset to page 1 when filters change
+  useEffect(() => {
+    setPage(1);
+  }, [debouncedSearch, status, paymentMethod, range?.from, range?.to]);
+
+  const params = useMemo(() => {
+    return {
+      page,
+      limit: PAGE_SIZE,
+
+      // rename these keys to match your backend:
+      search: debouncedSearch || undefined,
+      status: status || undefined,
+      paymentMethod: paymentMethod || undefined,
+
+      startDate: range?.from ?? undefined,
+      endDate: range?.to ?? undefined,
+    };
+  }, [page, debouncedSearch, status, paymentMethod, range?.from, range?.to]);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    const run = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+
+        if (!token) {
+          setLoading(false);
+          setOrders([]);
+          setTotal(0);
+          return;
+        }
+
+        const res = await getOrdersPaginated(params, {
+          token: token ?? undefined,
+        });
+
+        const payload = res as PaginatedOrdersResponse;
+
+        if (!cancelled) {
+          setOrders(payload?.data?.orders ?? []);
+          setTotal(payload?.data?.pagination?.totalDoc ?? 0);
+        }
+      } catch (e: any) {
+        if (!cancelled) setError(e?.message ?? "Failed to load orders");
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    };
+
+    run();
+    return () => {
+      cancelled = true;
+    };
+  }, [params, token]);
 
   const handleSelectOrder = useCallback(
     (orderId: string) => {
-      const selected = allOrders.find((o) => o._id === orderId) || null;
+      const selected = orders.find((o) => o._id === orderId) || null;
       setSelectedOrderData(selected);
     },
-    [allOrders]
+    [orders]
   );
 
   const handleBackToOrders = useCallback(() => {
@@ -102,10 +158,10 @@ const AllOrders: React.FC = () => {
           <IoBagHandle />
         </span>
         <h2 className="font-medium text-lg text-gray-600 dark:text-[#E5E5E5]">
-          You have no orders yet!
+          No orders found
         </h2>
         <p className="text-sm text-gray-500 dark:text-[#E5E5E5]">
-          Make a purchase to see your orders here.
+          Try changing filters or your search.
         </p>
       </section>
     );
@@ -114,7 +170,7 @@ const AllOrders: React.FC = () => {
   return (
     <div className="space-y-4">
       <OrdersTable
-        orders={pagedOrders}
+        orders={orders}
         onSelect={handleSelectOrder}
         moneyCurrency="USD"
       />
@@ -133,12 +189,11 @@ const AllOrders: React.FC = () => {
         </div>
       )}
 
-      {/* ✅ Pagination row like your screenshot */}
       <Pagination
         page={page}
         pageSize={PAGE_SIZE}
         total={total}
-        onPageChange={(p) => setPage(p)}
+        onPageChange={setPage}
         className="pt-2"
       />
     </div>
