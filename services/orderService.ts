@@ -101,14 +101,17 @@ export async function getTopProducts(
 
 export async function getOrderOverview(
   params: { startDate?: Date | string; endDate?: Date | string } = {},
-  opts?: FetchOpts
+  opts?: FetchOpts & { token?: string }
 ) {
   const url = `${API_BASE}/order/overview${buildQuery(params)}`;
+
   return apiFetch<any>(url, {
+    token: opts?.token,
     cache: opts?.cache ?? "no-store",
     next: opts?.next,
   });
 }
+
 
 export async function getOrdersPaginated(
   params: Record<string, any> = {},
