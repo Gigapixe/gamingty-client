@@ -64,14 +64,17 @@ export async function createPaymentIntent(body: any, opts?: FetchOpts) {
 
 export async function getOrderStats(
   params: { startDate?: Date | string; endDate?: Date | string } = {},
-  opts?: FetchOpts
+  opts?: FetchOpts & { token?: string }
 ) {
   const url = `${API_BASE}/order/stats${buildQuery(params)}`;
+
   return apiFetch<any>(url, {
+    token: opts?.token,
     cache: opts?.cache ?? "no-store",
     next: opts?.next,
   });
 }
+
 
 export async function getRecentOrders(opts?: FetchOpts) {
   const url = `${API_BASE}/order/recent`;

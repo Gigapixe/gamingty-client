@@ -26,7 +26,7 @@ export default function userDashboard() {
           />
         </div>
       </div>
-      <DashboardAnalytics />
+       <DashboardAnalytics range={range} />
 
       {/* --- Charts & Top Products --- */}
       <div className="grid grid-cols-1 lg:grid-cols-5 gap-4 my-7">
