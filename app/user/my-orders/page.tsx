@@ -5,6 +5,7 @@ import DateRangeFilter, { DateRange } from "@/components/ui/DateRangeFilter";
 import Select, { SelectOption } from "@/components/ui/Select";
 import OrderIcon from "@/public/icons/user/OrderIcon";
 import { useState } from "react";
+import { IoSearchOutline } from "react-icons/io5";
 
 const statusOptions: SelectOption[] = [
   { value: "", label: "All Status" },
@@ -40,15 +41,22 @@ export default function MyOrders() {
 
         <div className="flex flex-col items-center lg:items-end gap-4 w-full lg:w-auto">
           {/* ✅ Search */}
-          <div className="w-full lg:w-[320px]">
+          <div className="w-full lg:w-[320px] relative">
+            <IoSearchOutline
+              className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none"
+              size={18}
+            />
+
             <input
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              placeholder="Search by invoice, order id, product..."
-              className="w-full h-11 px-3 rounded-lg border border-gray-200 dark:border-[#303030] bg-white dark:bg-[#111] text-gray-900 dark:text-white outline-none"
+              placeholder="Search by invoice, order id..."
+              className="w-full h-11 pl-10 pr-3 rounded-full border border-gray-200 
+               dark:border-[#303030] bg-white dark:bg-[#111] 
+               text-gray-900 dark:text-white outline-none 
+               focus:ring-2 focus:ring-primary"
             />
           </div>
-
           <div className="flex flex-col lg:flex-row gap-4 items-center w-full lg:w-auto">
             <div className="w-full">
               <Select

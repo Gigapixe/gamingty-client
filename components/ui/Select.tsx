@@ -183,7 +183,7 @@ export default function Select({
           "text-gray-800 dark:text-gray-100",
           "hover:bg-gray-50 dark:hover:bg-[#1c1c1c]",
           "disabled:opacity-60 disabled:cursor-not-allowed",
-          "outline-none focus:ring-2 focus:ring-emerald-400/40",
+          "outline-none focus:ring-2 focus:ring-primary",
           buttonClassName,
         ].join(" ")}
       >

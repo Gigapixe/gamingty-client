@@ -5,8 +5,6 @@ import { IoBagHandle } from "react-icons/io5";
 import OrdersTable, { RecentOrder } from "../../ui/OrdersTable";
 import Pagination from "../../ui/Pagination";
 import type { DateRange } from "@/components/ui/DateRangeFilter";
-
-// ✅ import your apiFetch-style function
 import { getOrdersPaginated } from "@/services/orderService"; // adjust path
 import { useAuthStore } from "@/zustand/authStore";
 
@@ -62,10 +60,8 @@ const AllOrders: React.FC<AllOrdersProps> = ({
 
   const [page, setPage] = useState(1);
 
-  // ✅ debounce search
   const debouncedSearch = useDebouncedValue(search.trim(), 400);
 
-  // ✅ reset to page 1 when filters change
   useEffect(() => {
     setPage(1);
   }, [debouncedSearch, status, paymentMethod, range?.from, range?.to]);
@@ -74,8 +70,6 @@ const AllOrders: React.FC<AllOrdersProps> = ({
     return {
       page,
       limit: PAGE_SIZE,
-
-      // rename these keys to match your backend:
       search: debouncedSearch || undefined,
       status: status || undefined,
       paymentMethod: paymentMethod || undefined,
