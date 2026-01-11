@@ -76,13 +76,17 @@ export async function getOrderStats(
   });
 }
 
-export async function getRecentOrders(opts?: FetchOpts) {
+export async function getRecentOrders(
+  opts?: FetchOpts & { token?: string }
+) {
   const url = `${API_BASE}/order/recent`;
   return apiFetch<any>(url, {
+    token: opts?.token,
     cache: opts?.cache ?? "no-store",
     next: opts?.next,
   });
 }
+
 
 export async function getTopProducts(
   params: {

@@ -1,73 +1,98 @@
 "use client";
 
-import React, { useCallback, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { IoBagHandle } from "react-icons/io5";
 import OrdersTable, { RecentOrder } from "../ui/OrdersTable";
+import { useAuthStore } from "@/zustand/authStore";
+import { getRecentOrders } from "@/services/orderService";
+import { OrderDetails } from "./Order/OrderDetails";
 
-const FAKE_ORDERS: RecentOrder[] = [
-  {
-    _id: "o_1001",
-    invoice: "INV-1001",
-    total: 129.99,
-    paymentMethod: "card",
-    status: "Delivered",
-    createdAt: "2024-06-10T14:48:00.000Z",
-  },
-  {
-    _id: "o_1002",
-    invoice: "INV-1002",
-    total: 45.5,
-    paymentMethod: "wallet",
-    status: "Processing",
-    createdAt: "2024-06-12T09:30:00.000Z",
-  },
-  {
-    _id: "o_1003",
-    invoice: "INV-1003",
-    total: 299.0,
-    paymentMethod: "cash",
-    status: "Pending",
-    createdAt: "2024-06-14T16:15:00.000Z",
-  },
-  {
-    _id: "o_1004",
-    invoice: "INV-1004",
-    total: 15.75,
-    paymentMethod: "card",
-    status: "Failed",
-    createdAt: "2024-06-15T11:20:00.000Z",
-  },
-  {
-    _id: "o_1005",
-    invoice: "INV-1005",
-    total: 89.25,
-    paymentMethod: "wallet",
-    status: "Cancelled",
-    createdAt: "2024-06-16T13:45:00.000Z",
-  },
-];
+type RecentOrdersResponse = {
+  status?: "success" | "error";
+  message?: string;
+  orders?: RecentOrder[];
+};
+
+function extractRecentOrders(res: RecentOrdersResponse | any): RecentOrder[] {
+  if (Array.isArray(res?.orders)) return res.orders;
+  if (Array.isArray(res?.data?.orders)) return res.data.orders;
+  if (Array.isArray(res?.data?.data?.orders)) return res.data.data.orders;
+  if (Array.isArray(res?.data)) return res.data; // if API returns data: []
+  return [];
+}
 
 const RecentOrders: React.FC = () => {
-  // replace with API states later
-  const [loading] = useState(false);
-  const [error] = useState<string | null>(null);
+  const token = useAuthStore((s) => s.token);
 
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  const [orders, setOrders] = useState<RecentOrder[]>([]);
   const [selectedOrderData, setSelectedOrderData] =
     useState<RecentOrder | null>(null);
 
-  const recentOrders = useMemo(() => FAKE_ORDERS, []);
+  useEffect(() => {
+    let cancelled = false;
+
+    const run = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+
+        if (!token) {
+          if (!cancelled) {
+            setOrders([]);
+            setSelectedOrderData(null);
+            setLoading(false);
+          }
+          return;
+        }
+
+        const res = (await getRecentOrders({ token })) as RecentOrdersResponse;
+
+        // ✅ force correct type so `.find((o) => ...)` isn't `any`
+        const list: RecentOrder[] = extractRecentOrders(res);
+
+        if (!cancelled) {
+          setOrders(list);
+
+          // keep selected if still exists, otherwise clear
+          setSelectedOrderData((prev) =>
+            prev
+              ? list.find((o: RecentOrder) => o._id === prev._id) ?? null
+              : null
+          );
+        }
+      } catch (e: any) {
+        if (!cancelled) {
+          setError(e?.message ?? "Failed to load recent orders");
+          setOrders([]);
+          setSelectedOrderData(null);
+        }
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    };
+
+    run();
+    return () => {
+      cancelled = true;
+    };
+  }, [token]);
 
   const handleSelectOrder = useCallback(
     (orderId: string) => {
-      const selected = recentOrders.find((o) => o._id === orderId) || null;
+      const selected = orders.find((o) => o._id === orderId) || null;
       setSelectedOrderData(selected);
     },
-    [recentOrders]
+    [orders]
   );
 
   const handleBackToOrders = useCallback(() => {
     setSelectedOrderData(null);
   }, []);
+
+  const recentOrders = useMemo(() => orders, [orders]);
 
   // Loading
   if (loading) {
@@ -87,11 +112,6 @@ const RecentOrders: React.FC = () => {
     );
   }
 
-  // Details view later
-  // if (selectedOrderData) {
-  //   return <OrderDetails order={selectedOrderData} onBack={handleBackToOrders} />;
-  // }
-
   // Empty state
   if (recentOrders.length === 0) {
     return (
@@ -110,25 +130,15 @@ const RecentOrders: React.FC = () => {
   }
 
   return (
-    <div>
-      <OrdersTable
-        orders={recentOrders}
-        onSelect={handleSelectOrder}
-        moneyCurrency="USD"
-      />
-
-      {selectedOrderData && (
-        <div className="mt-4 text-sm text-gray-600 dark:text-gray-300">
-          Selected:{" "}
-          <span className="font-semibold">{selectedOrderData.invoice}</span>{" "}
-          <button
-            type="button"
-            onClick={handleBackToOrders}
-            className="ml-2 text-primary underline"
-          >
-            Clear
-          </button>
-        </div>
+    <div className="space-y-4">
+      {selectedOrderData ? (
+        <OrderDetails order={selectedOrderData} onBack={handleBackToOrders} />
+      ) : (
+        <OrdersTable
+          orders={recentOrders}
+          onSelect={handleSelectOrder}
+          moneyCurrency="USD"
+        />
       )}
     </div>
   );
