@@ -88,7 +88,6 @@ const OrderChart: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [rows, setRows] = useState<OverviewRow[]>([]);
 
-  // ✅ fetch overview when range changes
   useEffect(() => {
     let cancelled = false;
 

@@ -1,8 +1,11 @@
 "use client";
-import React, { useMemo, useState } from "react";
+
+import React, { useEffect, useMemo, useState } from "react";
 import { IoMdArrowDropdown, IoMdArrowDropup } from "react-icons/io";
 import { MdOutlineArrowDownward, MdOutlineArrowUpward } from "react-icons/md";
-
+import { DateRange } from "../ui/DateRangeFilter";
+import { useAuthStore } from "@/zustand/authStore";
+import { getTopProducts } from "@/services/orderService";
 
 type SortDirection = "ascending" | "descending";
 type SortConfig = { key: string; direction: SortDirection } | null;
@@ -16,6 +19,14 @@ type ProductRow = {
   isSkeleton?: boolean;
 };
 
+type ApiTopProductsItem = {
+  _id: number | string;
+  name: string;
+  image?: string[];
+  price: number;
+  quantity: number;
+};
+
 type Column<T> = {
   header: string;
   accessor: keyof T | string;
@@ -26,54 +37,22 @@ type Column<T> = {
 };
 
 type TopProductsTableProps = {
-  /** Optional: pass real data later. If not passed, component uses FAKE_DATA */
-  data?: ProductRow[];
-  /** Optional: customize columns later. If not passed, uses default columns */
+  range: DateRange;
+  limit?: number;
   columns?: Column<ProductRow>[];
-  /** Optional empty state */
   emptyStateComponent?: React.ReactNode;
-  /** Optional initial sort */
   initialSort?: { key: keyof ProductRow; direction: SortDirection };
 };
 
-const FAKE_DATA: ProductRow[] = [
-  {
-    _id: 1,
-    name: "Apple iPhone 15 Pro Max (256GB)",
-    image: ["https://via.placeholder.com/80"],
-    price: 1299,
-    quantity: 84,
-  },
-  {
-    _id: 2,
-    name: "Samsung Galaxy S24 Ultra (512GB)",
-    image: ["https://via.placeholder.com/80"],
-    price: 1199,
-    quantity: 67,
-  },
-  {
-    _id: 3,
-    name: "Sony WH-1000XM5 Headphones",
-    image: ["https://via.placeholder.com/80"],
-    price: 299,
-    quantity: 112,
-  },
-  {
-    _id: 4,
-    name: "Apple MacBook Air M2 (13-inch)",
-    image: ["https://via.placeholder.com/80"],
-    price: 999,
-    quantity: 45,
-  },
-  {
-    _id: 5,
-    name: "Logitech MX Master 3S Mouse",
-    image: ["https://via.placeholder.com/80"],
-    price: 99,
-    quantity: 176,
-  },
-  
-];
+const makeSkeletonRows = (count = 5): ProductRow[] =>
+  Array.from({ length: count }).map((_, i) => ({
+    _id: `skeleton-${i}`,
+    name: "",
+    image: [],
+    price: 0,
+    quantity: 0,
+    isSkeleton: true,
+  }));
 
 const money = (n: number) =>
   new Intl.NumberFormat(undefined, {
@@ -116,10 +95,10 @@ const defaultColumns: Column<ProductRow>[] = [
             <img
               src={row.image[0]}
               alt={row.name}
-              className="w-5 h-5 rounded-md object-cover"
+              className="w-6 h-6 rounded-md object-cover"
             />
           ) : (
-            <div className="w-5 h-5 rounded-md bg-gray-100 dark:bg-gray-700" />
+            <div className="w-6 h-6 rounded-md bg-gray-100 dark:bg-gray-700" />
           )}
           <span className="text-sm font-medium text-gray-800 dark:text-white line-clamp-2">
             {row.name}
@@ -150,30 +129,103 @@ const defaultColumns: Column<ProductRow>[] = [
       row.isSkeleton ? (
         <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded animate-pulse w-1/4" />
       ) : (
-        <span className="text-gray-600 dark:text-[#E5E5E5]">
+        <span className="text-gray-600 flex justify-center dark:text-[#E5E5E5]">
           {row.quantity}
         </span>
       ),
   },
 ];
 
+function extractTopProducts(res: any): ApiTopProductsItem[] {
+  if (Array.isArray(res?.data)) return res.data;
+  return [];
+}
+
 const TopProductsTable: React.FC<TopProductsTableProps> = ({
-  data,
+  range,
+  limit = 10,
   columns,
-  emptyStateComponent = (
-    <div className="p-5 text-sm text-gray-500 dark:text-gray-400">
-      No products found.
-    </div>
-  ),
+  emptyStateComponent,
   initialSort = { key: "quantity", direction: "descending" },
 }) => {
+  const token = useAuthStore((s) => s.token);
+
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [rows, setRows] = useState<ProductRow[]>([]);
+
   const [sortConfig, setSortConfig] = useState<SortConfig>({
     key: String(initialSort.key),
     direction: initialSort.direction,
   });
 
+  // ✅ stable primitive deps (prevents infinite loop)
+  const fromKey = useMemo(
+    () => (range?.from ? new Date(range.from).toISOString() : ""),
+    [range?.from]
+  );
+  const toKey = useMemo(
+    () => (range?.to ? new Date(range.to).toISOString() : ""),
+    [range?.to]
+  );
+
+  useEffect(() => {
+    let cancelled = false;
+
+    const run = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+
+        if (!token) {
+          if (!cancelled) {
+            setRows([]);
+            setLoading(false);
+          }
+          return;
+        }
+
+        if (!cancelled) setRows(makeSkeletonRows(Math.min(5, limit)));
+
+        const res = await getTopProducts(
+          {
+            startDate: fromKey || undefined,
+            endDate: toKey || undefined,
+            limit,
+          },
+          { token }
+        );
+
+        const list = extractTopProducts(res);
+
+        if (!cancelled) {
+          setRows(
+            list.map((p) => ({
+              _id: p._id,
+              name: p.name,
+              image: p.image,
+              price: Number(p.price ?? 0),
+              quantity: Number(p.quantity ?? 0),
+            }))
+          );
+        }
+      } catch (e: any) {
+        if (!cancelled) {
+          setError(e?.message ?? "Failed to load top products");
+          setRows([]);
+        }
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    };
+
+    run();
+    return () => {
+      cancelled = true;
+    };
+  }, [token, fromKey, toKey, limit]);
+
   const cols = useMemo(() => columns ?? defaultColumns, [columns]);
-  const rows = useMemo(() => data ?? FAKE_DATA, [data]);
 
   const sortedRows = useMemo(() => {
     if (!rows?.length) return [];
@@ -185,12 +237,10 @@ const TopProductsTable: React.FC<TopProductsTableProps> = ({
       const av = (a as any)[key];
       const bv = (b as any)[key];
 
-      // number sort
       if (typeof av === "number" && typeof bv === "number") {
         return sortConfig.direction === "ascending" ? av - bv : bv - av;
       }
 
-      // string sort
       const as = String(av ?? "");
       const bs = String(bv ?? "");
       return sortConfig.direction === "ascending"
@@ -201,9 +251,8 @@ const TopProductsTable: React.FC<TopProductsTableProps> = ({
 
   const requestSort = (accessor: string) => {
     setSortConfig((prev) => {
-      if (!prev || prev.key !== accessor) {
+      if (!prev || prev.key !== accessor)
         return { key: accessor, direction: "ascending" };
-      }
       return {
         key: accessor,
         direction: prev.direction === "ascending" ? "descending" : "ascending",
@@ -211,8 +260,26 @@ const TopProductsTable: React.FC<TopProductsTableProps> = ({
     });
   };
 
+  const emptyUI =
+    emptyStateComponent ??
+    (loading ? (
+      <div className="p-5 text-sm text-gray-500 dark:text-gray-400">
+        Loading...
+      </div>
+    ) : (
+      <div className="p-5 text-sm text-gray-500 dark:text-gray-400">
+        No products found.
+      </div>
+    ));
+
   return (
     <div className="w-full">
+      {error ? (
+        <div className="p-4 text-sm text-red-600 dark:text-red-400">
+          {error}
+        </div>
+      ) : null}
+
       {/* Desktop */}
       <div className="hidden lg:block overflow-x-auto border border-gray-200 dark:border-[#303030] rounded-lg">
         <table className="min-w-full">
@@ -235,7 +302,9 @@ const TopProductsTable: React.FC<TopProductsTableProps> = ({
                       {getSortIcon(sortConfig, String(col.accessor))}
                     </button>
                   ) : (
-                    <div className={col.headerClassName || ""}>{col.header}</div>
+                    <div className={col.headerClassName || ""}>
+                      {col.header}
+                    </div>
                   )}
                 </th>
               ))}
@@ -263,7 +332,7 @@ const TopProductsTable: React.FC<TopProductsTableProps> = ({
               ))
             ) : (
               <tr>
-                <td colSpan={cols.length}>{emptyStateComponent}</td>
+                <td colSpan={cols.length}>{emptyUI}</td>
               </tr>
             )}
           </tbody>
@@ -277,7 +346,6 @@ const TopProductsTable: React.FC<TopProductsTableProps> = ({
             {sortedRows.map((row, rowIndex) => {
               const rowId = row._id ?? rowIndex;
 
-              // Primary = first column, others on right
               const nonActionCols = cols.filter((c) => c.header !== "Actions");
               const primaryCol = nonActionCols[0];
               const otherCols = nonActionCols.slice(1);
@@ -315,7 +383,6 @@ const TopProductsTable: React.FC<TopProductsTableProps> = ({
                     </div>
                   </div>
 
-                  {/* Actions block (optional) */}
                   {cols.some((c) => c.header === "Actions") && (
                     <div className="pt-2 mt-2 border-t border-gray-100 dark:border-[#222] flex items-center justify-end">
                       {cols.map((col) =>
@@ -337,7 +404,7 @@ const TopProductsTable: React.FC<TopProductsTableProps> = ({
             })}
           </div>
         ) : (
-          <div className="p-4">{emptyStateComponent}</div>
+          <div className="p-4">{emptyUI}</div>
         )}
       </div>
     </div>
