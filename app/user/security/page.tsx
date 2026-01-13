@@ -1,4 +1,5 @@
 import ChangePasswordUi from "@/components/dashboard/security/ChangePasswordUi";
+import TwoFAUi from "@/components/dashboard/security/TwoFAUi";
 import { FiShield } from "react-icons/fi";
 
 export default function SecurityPage() {
@@ -10,6 +11,7 @@ export default function SecurityPage() {
       </div>
       <div className="p-4 md:p-6 border border-border-light dark:border-border-dark rounded-xl">
         <ChangePasswordUi />
+        <TwoFAUi />
       </div>
     </div>
   );

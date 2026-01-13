@@ -50,3 +50,31 @@ export async function changePassword(
     token: token || undefined,
   });
 }
+
+// /customer/2fa/enable
+export async function enable2FA() {
+  const url = `${API_BASE}/customer/2fa/enable`;
+  return apiFetch(url, {
+    method: "POST",
+  });
+}
+// /customer/2fa/verify-setup
+export async function verify2FA(code: string) {
+  const token = await getToken();
+  const url = `${API_BASE}/customer/2fa/verify-setup`;
+  return apiFetch(url, {
+    method: "POST",
+    body: { code },
+    token: token || undefined,
+  });
+}
+// /customer/2fa/disable
+export async function disable2FA(code: string) {
+  const token = await getToken();
+  const url = `${API_BASE}/customer/2fa/disable`;
+  return apiFetch(url, {
+    method: "POST",
+    body: { code },
+    token: token || undefined,
+  });
+}
