@@ -176,6 +176,7 @@ export default function Select({
         aria-haspopup="listbox"
         aria-expanded={open}
         className={[
+          "w-full",
           "min-w-50 flex items-center justify-between gap-2",
           "px-4 py-2 rounded-full border text-sm",
           "bg-white dark:bg-background-dark",

@@ -23,8 +23,10 @@ export const OrderDetails: React.FC<OrderDetailsProps> = ({
   const statusText = order?.status ?? "Unknown";
 
   const handleViewKeys = () => {
-    setShowKeys(true);
+    setShowKeys(!showKeys);
   };
+
+  console.log(order)
 
   return (
     <div className="space-y-4 bg-white dark:bg-background-dark p-4 rounded-lg border border-gray-200 dark:border-[#303030]">
@@ -70,7 +72,7 @@ export const OrderDetails: React.FC<OrderDetailsProps> = ({
       </div>
 
       {/* Product Card + View Keys */}
-      <div className="rounded-xl border border-gray-200 dark:border-[#303030] bg-white dark:bg-[#111] p-4 flex items-center justify-between gap-4">
+      <div className="rounded-xl border border-gray-200 dark:border-[#303030] bg-white dark:bg-[#111] p-4 flex flex-col lg:flex-row lg:items-center justify-between gap-4">
         <div className="min-w-0">
           <div className="font-medium text-gray-900 dark:text-white truncate">
             {order?.cart?.[0]?.title ?? "Order Items"}
@@ -107,33 +109,32 @@ export const OrderDetails: React.FC<OrderDetailsProps> = ({
       {/* Keys Section (only after clicking View Keys) */}
       {showKeys && (
         <div className="rounded-xl border border-gray-200 dark:border-[#303030] bg-white dark:bg-[#111] p-4">
-          <div className="flex items-center justify-between mb-3">
-            <h3 className="font-semibold text-gray-900 dark:text-white">
-              Keys & Credentials
-            </h3>
-
-            {/* optional download button (only if delivered) */}
-            <button
-              type="button"
-              disabled={!isDelivered}
-              className={[
-                "px-4 h-10 rounded-full text-sm font-medium inline-flex items-center gap-2",
-                isDelivered
-                  ? "bg-emerald-500 text-white hover:opacity-95"
-                  : "bg-gray-200 text-gray-500 cursor-not-allowed dark:bg-[#1b1b1b] dark:text-gray-500",
-              ].join(" ")}
-            >
-              Download All (CSV)
-            </button>
-          </div>
-
           {!isDelivered ? (
-            <div className="rounded-lg border border-gray-200 dark:border-[#303030] bg-gray-50 dark:bg-[#0f0f0f] p-4 text-sm text-gray-700 dark:text-gray-200">
+            <div className="rounded-lg border text-center  border-gray-200 dark:border-[#303030] bg-gray-50 dark:bg-[#0f0f0f] px-4 py-10 text-sm text-gray-700 dark:text-gray-200">
               Your order is currently <b>{statusText}</b>. Keys will be
               available once it's delivered.
             </div>
           ) : (
             <div className="space-y-3">
+              <div className="flex flex-col lg:flex-row lg:items-center gap-5 justify-between mb-3">
+                <h3 className="font-semibold text-gray-900 dark:text-white">
+                  Keys & Credentials
+                </h3>
+
+                {/* optional download button (only if delivered) */}
+                <button
+                  type="button"
+                  disabled={!isDelivered}
+                  className={[
+                    "px-4 h-10 rounded-full text-sm font-medium w-full lg:max-w-40 items-center gap-2",
+                    isDelivered
+                      ? "bg-emerald-500 text-white hover:opacity-95"
+                      : "bg-gray-200 text-gray-500 cursor-not-allowed dark:bg-[#1b1b1b] dark:text-gray-500",
+                  ].join(" ")}
+                >
+                  Download(CSV)
+                </button>
+              </div>
               {/* Example keys rendering:
                   Replace this with actual keys data source (order.credentials etc.) */}
               <div className="rounded-lg border border-gray-200 dark:border-[#303030] p-4">
