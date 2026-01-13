@@ -169,7 +169,7 @@ export default function MyReviews() {
       <div className="grid grid-cols-2 gap-2 mb-6 p-1 rounded-full bg-[#F3F4F6] dark:bg-[#1F1F1F] lg:flex lg:items-center lg:gap-2">
         <button
           onClick={() => setActiveTab("pending")}
-          className={`w-full text-center px-4 py-2 rounded-full text-sm font-semibold transition-colors ${
+          className={`w-full text-center px-2 lg:px-4 py-2 rounded-full text-xs lg:text-sm font-semibold transition-colors ${
             activeTab === "pending"
               ? "bg-[#12B47E] text-white shadow"
               : "bg-transparent text-[#6B7280] dark:text-[#E5E5E5] hover:bg-white dark:hover:bg-background-dark"
@@ -180,7 +180,7 @@ export default function MyReviews() {
 
         <button
           onClick={() => setActiveTab("completed")}
-          className={`w-full text-center px-4 py-2 rounded-full text-sm font-semibold transition-colors ${
+          className={`w-full text-center px-2 lg:px-4 py-2 rounded-full text-xs lg:text-sm font-semibold transition-colors ${
             activeTab === "completed"
               ? "bg-[#12B47E] text-white shadow"
               : "bg-transparent text-[#6B7280] dark:text-[#E5E5E5] hover:bg-white dark:hover:bg-background-dark"
