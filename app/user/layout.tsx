@@ -26,7 +26,7 @@ export default async function CustomerLayout({
         <UserSideNav />
         <div className="flex-1">
           <Header />
-          <main className="p-4 md:min-h-[calc(100vh-120px)] bg-background-light dark:bg-background-dark">
+          <main className="p-4 md:p-5 md:min-h-[calc(100vh-120px)] bg-background dark:bg-background-dark">
             {children}
           </main>
         </div>
