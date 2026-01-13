@@ -337,7 +337,7 @@ export default function DateRangeFilter({
         disabled={disabled}
         onClick={() => setOpen((v) => !v)}
         className={[
-          "min-w-50",
+          "w-full",
           "inline-flex items-center justify-between gap-2",
           "px-4 py-2 rounded-full border text-sm",
           "bg-white dark:bg-background-dark",

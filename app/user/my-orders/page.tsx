@@ -86,6 +86,7 @@ export default function MyOrders() {
                 onChange={setRange}
                 defaultLabel="All Time"
                 weekStartsOn={1}
+                className="min-w-50"
               />
             </div>
           </div>

@@ -41,7 +41,7 @@ export default function userDashboard() {
         </div>
 
         <div className="lg:col-span-2 bg-white dark:bg-background-dark p-5 rounded-xl border border-gray-200 dark:border-[#303030]">
-          <div className="flex justify-between items-center mb-4 flex-wrap gap-3">
+          <div className="flex justify-between items-center mb-4 gap-3">
             <div className="flex items-center gap-2">
               <TbAward className="w-6 h-6 text-primary" />
               <h3 className="text-xl font-bold text-gray-900 dark:text-[#FFFFFF]">
