@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
 import TopLoader from "@/components/shared/TopLoader";
+import { Toaster } from "react-hot-toast";
 
 import "./globals.css";
 
@@ -39,6 +40,9 @@ export default async function RootLayout({
           <TopLoader />
         </Suspense>
         {children}
+
+        {/* Global toast container */}
+        <Toaster />
       </body>
     </html>
   );

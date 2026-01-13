@@ -247,7 +247,7 @@ export default function TwoFAUi() {
               disabled={code.length !== 6 || verifying}
               className="mt-2"
             >
-              Verify code
+              Verify and enable 2FA
             </Button>
           </div>
         </div>
