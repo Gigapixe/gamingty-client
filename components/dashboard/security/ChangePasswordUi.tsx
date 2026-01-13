@@ -205,7 +205,7 @@ export default function ChangePasswordUi({ onChangePassword }: Props) {
           type="submit"
           disabled={!isFormValid}
           arrowIcon={true}
-          className="!px-0 !pl-4 !pr-1.5"
+          className="px-0! pl-4! pr-1.5!"
         >
           Update password
         </Button>

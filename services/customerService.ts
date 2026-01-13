@@ -52,29 +52,45 @@ export async function changePassword(
 }
 
 // /customer/2fa/enable
-export async function enable2FA() {
+export async function enable2FA(): Promise<{
+  success: boolean;
+  secret?: string;
+  qrCode?: string;
+  message?: string;
+}> {
   const url = `${API_BASE}/customer/2fa/enable`;
+  const token = await getToken();
   return apiFetch(url, {
     method: "POST",
-  });
+    token: token || undefined,
+  }) as Promise<{
+    success: boolean;
+    secret?: string;
+    qrCode?: string;
+    message?: string;
+  }>;
 }
 // /customer/2fa/verify-setup
-export async function verify2FA(code: string) {
+export async function verify2FA(
+  code: string
+): Promise<{ success: boolean; message?: string }> {
   const token = await getToken();
   const url = `${API_BASE}/customer/2fa/verify-setup`;
   return apiFetch(url, {
     method: "POST",
     body: { code },
     token: token || undefined,
-  });
+  }) as Promise<{ success: boolean; message?: string }>;
 }
 // /customer/2fa/disable
-export async function disable2FA(code: string) {
+export async function disable2FA(
+  code: string
+): Promise<{ success: boolean; message?: string }> {
   const token = await getToken();
   const url = `${API_BASE}/customer/2fa/disable`;
   return apiFetch(url, {
     method: "POST",
     body: { code },
     token: token || undefined,
-  });
+  }) as Promise<{ success: boolean; message?: string }>;
 }

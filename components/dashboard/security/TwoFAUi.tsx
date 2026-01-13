@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import Button from "@/components/ui/Button";
-import { FiAlertTriangle, FiArrowRight } from "react-icons/fi";
+import { FiAlertTriangle } from "react-icons/fi";
 import { enable2FA, verify2FA, disable2FA } from "@/services/customerService";
 import { useAuthStore } from "@/zustand/authStore";
 import toast from "react-hot-toast";
@@ -43,12 +43,33 @@ export default function TwoFAUi() {
     setEnableLoading(true);
     try {
       const response = await enable2FA();
-      if (response.success && response.secret && response.qrCode) {
-        setSetup({ secret: response.secret, qrCode: response.qrCode });
+      // Some APIs return payload in `response.data` (e.g., { success: true, data: { secret, qrCode, isEnabled } })
+      const payload: any =
+        response && (response as any).data ? (response as any).data : response;
+
+      if (
+        response &&
+        (response as any).success &&
+        payload?.secret &&
+        payload?.qrCode
+      ) {
+        // Show QR and secret so user can set up authenticator app
+        setSetup({ secret: payload.secret, qrCode: payload.qrCode });
+
+        // If backend already reports enabled, update UI and store
+        if (payload.isEnabled) {
+          setIs2FAEnabled(true);
+          useAuthStore.setState((s) => ({
+            user: s.user ? { ...s.user, isTwoFactorEnabled: true } : s.user,
+          }));
+        }
       } else {
-        toast.error(response.message || "Failed to start two-factor setup");
+        toast.error(
+          (response as any)?.message || "Failed to start two-factor setup"
+        );
       }
-    } catch (error) {
+    } catch (err: unknown) {
+      console.error(err);
       toast.error("Failed to start two-factor setup");
     } finally {
       setEnableLoading(false);
@@ -71,7 +92,8 @@ export default function TwoFAUi() {
       } else {
         toast.error(response.message || "Verification failed");
       }
-    } catch (error) {
+    } catch (err: unknown) {
+      console.error(err);
       toast.error("Verification failed");
     } finally {
       setVerifying(false);
@@ -100,7 +122,8 @@ export default function TwoFAUi() {
           response.message || "Failed to disable two-factor authentication"
         );
       }
-    } catch (error) {
+    } catch (err: unknown) {
+      console.error(err);
       toast.error("Failed to disable two-factor authentication");
     } finally {
       setDisableLoading(false);
@@ -125,7 +148,7 @@ export default function TwoFAUi() {
         <div>
           <p className="text-sm text-gray-600 dark:text-gray-400 mt-2">
             Enable two-factor authentication to add an extra layer of security
-            to your account. When 2FA is enabled, you'll need to enter a
+            to your account. When 2FA is enabled, you&apos;ll need to enter a
             verification code from your authenticator app when signing in.
           </p>
           <h1 className="font-medium mt-2 text-sm text-secondary">
@@ -138,9 +161,11 @@ export default function TwoFAUi() {
                 <FiAlertTriangle className="h-5 w-5 text-white" />
               </div>
               <div className="text-primary font-medium">
-                <h2>Important</h2>
+                <h2>Why use two-factor authentication?</h2>
                 <p className="text-xs mt-1">
-                  Keep your secret code secure and back it up.
+                  2FA adds a significant layer of security by requiring
+                  something you know (your password) and something you have
+                  (your phone).
                 </p>
               </div>
             </div>
@@ -178,7 +203,7 @@ export default function TwoFAUi() {
                 or scan the QR code.
               </p>
               <div className="flex items-center gap-2 mb-2">
-                <span className="bg-gray-800 text-white px-4 py-2 rounded-lg font-mono text-xs select-all">
+                <span className="bg-background-light dark:bg-gray-800 dark:text-white px-4 py-2 rounded-lg font-mono text-xs select-all">
                   {setup.secret}
                 </span>
                 <Button
@@ -191,10 +216,10 @@ export default function TwoFAUi() {
                 </Button>
               </div>
               <p className="text-xs">
-                If you can't scan the QR code, enter the secret manually.
+                If you can&apos;t scan the QR code, enter the secret manually.
               </p>
             </div>
-            <div className="flex-shrink-0 mt-4 md:mt-0 md:ml-8">
+            <div className="shrink-0 mt-4 md:mt-0 md:ml-8">
               <img
                 src={setup.qrCode}
                 alt="QR Code"
@@ -262,7 +287,7 @@ export default function TwoFAUi() {
             loading={enableLoading}
             disabled={enableLoading}
             arrowIcon={true}
-            className="!px-0 !pl-4 !pr-1.5"
+            className="px-0! pl-4! pr-1.5!"
           >
             Enable 2FA
           </Button>
