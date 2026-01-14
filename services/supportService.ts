@@ -16,3 +16,22 @@ export async function createSupportTicket(
     token: token || undefined,
   });
 }
+//get all tickets for user page, limit and status (optional)
+export async function getUserSupportTickets(
+  limit: number,
+  page: number,
+  status?: string
+) {
+  const token = await getToken();
+  let url = new URL(`${API_BASE}/ticket`);
+  url.searchParams.append("limit", limit.toString());
+  url.searchParams.append("page", page.toString());
+  if (status) {
+    url.searchParams.append("status", status);
+  }
+  const response = await apiFetch<any>(url.toString(), {
+    method: "GET",
+    token: token || undefined,
+  });
+  return response;
+}

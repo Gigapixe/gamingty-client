@@ -1,4 +1,4 @@
-export default function UpdateProfileIcon() {
+export default function UpdateProfile() {
   return (
     <div>
       <h1>update</h1>

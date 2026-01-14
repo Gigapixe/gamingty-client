@@ -15,7 +15,7 @@ export default function OpenTicket() {
           <Button
             btnType="primary"
             className="px-0! pl-4! pr-1.5!"
-            href="/customer/ticket-list"
+            href="/user/ticket-list"
           >
             View All Tickets
             <span className="text-primary bg-white p-1 rounded-full">
