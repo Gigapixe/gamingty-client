@@ -178,14 +178,6 @@ export default function WalletPage() {
 
   return (
     <section className="space-y-6">
-      <div className="flex items-center gap-2">
-        <WalletIcon />
-        <div>
-          <h1 className="text-xl font-bold">My Wallet</h1>
-          <p className="text-sm text-gray-500">Top-up &amp; Manage your funds</p>
-        </div>
-      </div>
-
       <div className="space-y-8">
         <TopUpSection
           currencySymbol={currencySymbol}

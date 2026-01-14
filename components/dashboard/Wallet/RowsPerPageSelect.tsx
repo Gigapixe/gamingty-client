@@ -16,7 +16,7 @@ export default function RowsPerPageSelect({ value, onChange, options }: Props) {
   }));
 
   return (
-    <div className="w-37.5">
+    <div className="w-auto">
       <Select
         value={String(value)}
         onChange={(val) => onChange(Number(val))}

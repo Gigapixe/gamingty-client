@@ -1,4 +1,3 @@
-
 "use client";
 
 import { MdOutlineArrowOutward } from "react-icons/md";
@@ -40,12 +39,12 @@ export default function TopUpSection({
     existingTopUpItem;
 
   return (
-    <div className="bg-[#FFF] dark:bg-[#141414] border border-[#DBDBDB] dark:border-[#303030] rounded-lg p-6">
+    <div className="bg-[#FFF] dark:bg-background-dark border border-[#DBDBDB] dark:border-[#303030] rounded-lg p-6">
       <div className="flex flex-wrap justify-between items-start gap-4">
         <div>
           <div className="flex items-center">
-            <WalletIcon color="#12B47E" className="mr-2 mt-2" size={30} />
-            <h2 className="text-4xl font-bold text-gray-800 dark:text-[#FFFFFF]">
+            <WalletIcon color="#12B47E" className="mr-2" size={30} />
+            <h2 className="text-2xl lg:text-3xl font-bold text-gray-800 dark:text-[#FFFFFF]">
               My Wallet
             </h2>
           </div>
@@ -54,11 +53,11 @@ export default function TopUpSection({
           </p>
         </div>
 
-        <div className="md:text-right bg-[#FAFAFA] dark:bg-[#161616] border border-[#DBDBDB] dark:border-[#303030] p-4 rounded-xl w-full sm:w-auto text-start">
+        <div className="text-center bg-[#FAFAFA] dark:bg-[#161616] border border-[#DBDBDB] dark:border-[#303030] p-4 rounded-xl w-full sm:w-auto ">
           <p className="text-lg text-gray-500 dark:text-[#E5E5E5]">
             Total Balance
           </p>
-          <p className="text-4xl font-bold text-emerald-500 -mt-3">
+          <p className="text-4xl font-bold text-primary mt-3">
             {currencySymbol}
             {balance.toFixed(2)}
           </p>
@@ -83,7 +82,15 @@ export default function TopUpSection({
           value={amount}
           onChange={(e) => onAmountChange(e.target.value)}
           placeholder="e.g., 20.00"
-          className="bg-[#FAFAFA] dark:bg-[#161616] border border-[#DBDBDB] dark:border-[#303030] rounded-md px-4 py-3 text-sm text-gray-700 dark:text-gray-300 mb-6 w-full focus:ring-1 focus:ring-emerald-500 focus:border-emerald-500"
+          className="
+    w-full px-4 py-3 text-sm mb-6 rounded-md
+    bg-[#FAFAFA] dark:bg-[#161616]
+    text-gray-700 dark:text-gray-300
+    border border-gray-300 dark:border-[#303030]
+    focus:outline-none
+    focus:border-primary
+    focus:ring-1 focus:ring-primary
+  "
         />
       </div>
 
