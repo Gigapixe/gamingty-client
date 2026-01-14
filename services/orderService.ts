@@ -167,31 +167,50 @@ export async function getOrderCredentials(
   });
 }
 
-export async function submitProductReview(reviewData: any, opts?: FetchOpts) {
+export async function submitProductReview(
+  reviewData: {
+    orderId: string;
+    productId: string;
+    rating: number;
+    comment?: string;
+  },
+  opts?: FetchOpts & { token?: string }
+) {
   const url = `${API_BASE}/order/review`;
+
   return apiFetch<any>(url, {
     method: "POST",
     body: reviewData,
+    token: opts?.token,
     cache: opts?.cache ?? "no-store",
     next: opts?.next,
   });
 }
 
-export async function getProductReviews(opts?: FetchOpts) {
+export async function getProductReviews(
+  opts?: FetchOpts & { token?: string }
+) {
   const url = `${API_BASE}/order/reviews`;
+
   return apiFetch<any>(url, {
+    token: opts?.token,
     cache: opts?.cache ?? "no-store",
     next: opts?.next,
   });
 }
 
-export async function getReviewableOrders(opts?: FetchOpts) {
+export async function getReviewableOrders(
+  opts?: FetchOpts & { token?: string }
+) {
   const url = `${API_BASE}/order/reviewable-orders`;
+
   return apiFetch<any>(url, {
+    token: opts?.token,
     cache: opts?.cache ?? "no-store",
     next: opts?.next,
   });
 }
+
 
 export async function getPaymentMethods(opts?: FetchOpts) {
   const url = `${API_BASE}/order/payment-methods`;
