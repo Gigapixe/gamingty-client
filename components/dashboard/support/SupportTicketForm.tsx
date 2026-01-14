@@ -3,8 +3,6 @@ import React, { useRef, useState } from "react";
 import Input from "@/components/ui/Input";
 import Button from "@/components/ui/Button";
 
-import Select from "@/components/ui/Select";
-
 import toast from "react-hot-toast";
 import { createSupportTicket } from "@/services/supportService";
 import ArrowIcon from "@/public/icons/ArrowIcon";
@@ -15,13 +13,13 @@ export default function SupportTicketForm() {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const MAX_DESCRIPTION = 1000;
-  const [priority, setPriority] = useState<"Low" | "Medium" | "High">("Medium");
-  const [attachments, setAttachments] = useState<string[]>([]);
+  const [priority, setPriority] = useState<"low" | "medium" | "high">("medium");
+  const [attachments, setAttachments] = useState<File[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
   const [dragging, setDragging] = useState(false);
-  const fileInputRef = useRef(null);
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   const validate = () => {
     if (!title.trim()) {
@@ -40,20 +38,23 @@ export default function SupportTicketForm() {
     return true;
   };
 
-  const handleFileChange = (e) => {
-    const files = Array.from(e.target.files);
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(e.target.files || []) as File[];
     setAttachments(files);
   };
 
-  const handleDragEvents = (e, isEntering) => {
+  const handleDragEvents = (
+    e: React.DragEvent<HTMLDivElement> | React.DragEvent<HTMLInputElement>,
+    isEntering: boolean
+  ) => {
     e.preventDefault();
     e.stopPropagation();
     setDragging(isEntering);
   };
 
-  const handleDrop = (e) => {
+  const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
     handleDragEvents(e, false);
-    const files = Array.from(e.dataTransfer.files);
+    const files = Array.from(e.dataTransfer.files) as File[];
     setAttachments(files);
   };
 
@@ -65,24 +66,27 @@ export default function SupportTicketForm() {
     setError(null);
     setSuccess(null);
 
-    const payload: any = {
-      title: title.trim(),
-      description: description.trim(),
-      priority,
-      status: "Open",
-      attachments: attachments,
-    };
+    // Build FormData to support file uploads
+    const formData = new FormData();
+    formData.append("title", title.trim());
+    formData.append("description", description.trim());
+    formData.append("priority", priority);
+    formData.append("status", "Open");
+    attachments.forEach((file) => {
+      formData.append("attachments", file);
+    });
 
     try {
-      await createSupportTicket(payload);
+      await createSupportTicket(formData);
       setSuccess(
         "Support ticket created. Our team will get back to you shortly."
       );
       toast.success("Support ticket created successfully.");
       setTitle("");
       setDescription("");
-      setPriority("Low");
+      setPriority("low");
       setAttachments([]);
+      if (fileInputRef.current) fileInputRef.current.value = "";
     } catch (err) {
       console.error(err);
       setError("Failed to submit ticket. Please try again later.");
@@ -145,7 +149,7 @@ export default function SupportTicketForm() {
             { value: "High", label: "High" },
           ]}
           onChange={(e) =>
-            setPriority(e.target.value as "Low" | "Medium" | "High")
+            setPriority(e.target.value as "low" | "medium" | "high")
           }
         />
       </div>
@@ -159,7 +163,7 @@ export default function SupportTicketForm() {
           onDragLeave={(e) => handleDragEvents(e, false)}
           onDragOver={(e) => e.preventDefault()}
           onDrop={handleDrop}
-          onClick={() => fileInputRef.current.click()}
+          onClick={() => fileInputRef.current?.click()}
           className={`border-2 border-dashed rounded-lg p-10 text-center cursor-pointer transition-colors
                   ${
                     dragging
