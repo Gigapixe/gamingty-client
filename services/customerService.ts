@@ -1,4 +1,5 @@
 import { apiFetch } from "./api";
+import { getToken } from "./getToken";
 
 const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL;
 
@@ -34,4 +35,62 @@ export async function verifyOTP(token: string, otp: string) {
     token,
     body: { otp },
   });
+}
+// /customer/change-password
+export async function changePassword(
+  email: string,
+  currentPassword: string,
+  newPassword: string
+) {
+  const token = await getToken();
+  const url = `${API_BASE}/customer/change-password`;
+  return apiFetch(url, {
+    method: "POST",
+    body: { email, currentPassword, newPassword },
+    token: token || undefined,
+  });
+}
+
+// /customer/2fa/enable
+export async function enable2FA(): Promise<{
+  success: boolean;
+  secret?: string;
+  qrCode?: string;
+  message?: string;
+}> {
+  const url = `${API_BASE}/customer/2fa/enable`;
+  const token = await getToken();
+  return apiFetch(url, {
+    method: "POST",
+    token: token || undefined,
+  }) as Promise<{
+    success: boolean;
+    secret?: string;
+    qrCode?: string;
+    message?: string;
+  }>;
+}
+// /customer/2fa/verify-setup
+export async function verify2FA(
+  code: string
+): Promise<{ success: boolean; message?: string }> {
+  const token = await getToken();
+  const url = `${API_BASE}/customer/2fa/verify-setup`;
+  return apiFetch(url, {
+    method: "POST",
+    body: { code },
+    token: token || undefined,
+  }) as Promise<{ success: boolean; message?: string }>;
+}
+// /customer/2fa/disable
+export async function disable2FA(
+  code: string
+): Promise<{ success: boolean; message?: string }> {
+  const token = await getToken();
+  const url = `${API_BASE}/customer/2fa/disable`;
+  return apiFetch(url, {
+    method: "POST",
+    body: { code },
+    token: token || undefined,
+  }) as Promise<{ success: boolean; message?: string }>;
 }

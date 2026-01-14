@@ -1,5 +1,6 @@
 import React from "react";
 import Link from "next/link";
+import { FiArrowRight } from "react-icons/fi";
 
 // Define the props interface
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
@@ -12,6 +13,7 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   loadingText?: string;
   disabled?: boolean;
   spinnerColor?: string;
+  arrowIcon?: boolean;
 }
 
 const Button: React.FC<ButtonProps> = ({
@@ -24,6 +26,7 @@ const Button: React.FC<ButtonProps> = ({
   loadingText = "Loading...",
   disabled = false,
   spinnerColor = "var(--color-text-light)",
+  arrowIcon = false,
   ...restProps
 }) => {
   // Spinner component
@@ -89,6 +92,11 @@ const Button: React.FC<ButtonProps> = ({
           <span className={contentClasses}>
             {loading && <Spinner />}
             {loading ? loadingText : children}
+            {!loading && arrowIcon && (
+              <span className="text-primary bg-white p-1 rounded-full">
+                <FiArrowRight />
+              </span>
+            )}
           </span>
         </a>
       );
@@ -109,6 +117,11 @@ const Button: React.FC<ButtonProps> = ({
             <span className={contentClasses}>
               {loading && <Spinner />}
               {loading ? loadingText : children}
+              {!loading && arrowIcon && (
+                <span className="text-primary bg-white p-1 rounded-full">
+                  <FiArrowRight />
+                </span>
+              )}
             </span>
           </button>
         </Link>
@@ -126,6 +139,11 @@ const Button: React.FC<ButtonProps> = ({
         <span className={contentClasses}>
           {loading && <Spinner />}
           {loading ? loadingText : children}
+          {!loading && arrowIcon && (
+            <span className="text-primary bg-white p-1 rounded-full">
+              <FiArrowRight />
+            </span>
+          )}
         </span>
       </button>
     );
@@ -144,6 +162,11 @@ const Button: React.FC<ButtonProps> = ({
         <span className={contentClasses}>
           {loading && <Spinner />}
           {loading ? loadingText : children}
+          {!loading && arrowIcon && (
+            <span className="text-primary bg-white p-1 rounded-full">
+              <FiArrowRight />
+            </span>
+          )}
         </span>
       </a>
     );
@@ -163,6 +186,11 @@ const Button: React.FC<ButtonProps> = ({
           <span className={contentClasses}>
             {loading && <Spinner />}
             {loading ? loadingText : children}
+            {!loading && arrowIcon && (
+              <span className="text-primary bg-white p-1 rounded-full">
+                <FiArrowRight />
+              </span>
+            )}
           </span>
         </button>
       </Link>
@@ -182,6 +210,11 @@ const Button: React.FC<ButtonProps> = ({
       <span className={contentClasses}>
         {loading && <Spinner />}
         {loading ? loadingText : children}
+        {!loading && arrowIcon && (
+          <span className="text-primary bg-white p-1 rounded-full">
+            <FiArrowRight />
+          </span>
+        )}
       </span>
     </button>
   );
