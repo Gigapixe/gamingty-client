@@ -65,19 +65,50 @@ export async function apiFetch<T>(
     next, // For revalidation in SSR/ISG
   });
 
-  if (!response.ok) {
-    // if (
-    //   (response.status === 401 || response.status === 403) &&
-    //   typeof window !== "undefined"
-    // ) {
-    //   // Token expired or unauthorized → clear cookie only
-    //   document.cookie = "flexiAuthToken=; Max-Age=0; path=/";
-    //   // Redirect to login page
-    //   window.location.href = "/login";
-    // }
-    // const error = await response.json().catch(() => ({ message: "API error" }));
-    // throw new Error(error.message || `HTTP error! Status: ${response.status}`);
+  const contentType = response.headers.get("content-type") || "";
+
+  // Try to parse JSON when appropriate, otherwise fall back to text
+  let parsedBody: any = null;
+  if (contentType.includes("application/json")) {
+    try {
+      parsedBody = await response.json();
+    } catch (err) {
+      parsedBody = null;
+    }
+  } else {
+    try {
+      parsedBody = await response.text();
+    } catch (err) {
+      parsedBody = null;
+    }
   }
 
-  return response.json() as Promise<T>;
+  if (!response.ok) {
+    // Optional: handle auth-specific behavior here
+    if (
+      (response.status === 401 || response.status === 403) &&
+      typeof window !== "undefined"
+    ) {
+      // For example, clear auth and redirect to login if desired
+      // document.cookie = "flexiAuthToken=; Max-Age=0; path=/";
+      // window.location.href = "/login";
+    }
+
+    const message =
+      (parsedBody && typeof parsedBody === "object" && parsedBody.message) ||
+      (typeof parsedBody === "string" && parsedBody) ||
+      `HTTP error! Status: ${response.status}`;
+
+    const error: any = new Error(message);
+    error.status = response.status;
+    error.body = parsedBody;
+    throw error;
+  }
+
+  // Return parsed JSON when available, otherwise return raw text or empty object
+  if (contentType.includes("application/json")) {
+    return parsedBody as Promise<T>;
+  }
+
+  return parsedBody as unknown as Promise<T>;
 }

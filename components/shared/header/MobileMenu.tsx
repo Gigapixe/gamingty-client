@@ -91,7 +91,7 @@ export default function MobileMenu({
           />
 
           <div className="fixed left-0 right-0 top-16 bg-background-light dark:bg-background-dark z-50 py-6 shadow-lg">
-            <div className="container mx-auto">
+            <div className="px-4">
               <div>
                 <h1 className="text-4xl font-bold mb-4">Quick Links</h1>
               </div>
