@@ -73,7 +73,7 @@ const OrdersTable: React.FC<RecentOrdersTableProps> = ({
                   onSelect(order._id);
                 }
               }}
-              className="bg-gray-50 dark:bg-background-dark rounded-xl p-4 shadow-sm group hover:bg-gray-100 dark:hover:bg-[#202020] transition-colors duration-200 border border-gray-200 dark:border-[#303030] cursor-pointer outline-none focus:ring-2 focus:ring-emerald-400/60"
+              className="bg-gray-50 dark:bg-background-dark rounded-xl p-4 shadow-sm group hover:bg-gray-100 dark:hover:bg-[#202020] transition-colors duration-200 border border-gray-200 dark:border-border-dark cursor-pointer outline-none focus:ring-2 focus:ring-emerald-400/60"
               aria-label={`Open order ${order.invoice}`}
             >
               <header className="flex justify-between items-center gap-4">
