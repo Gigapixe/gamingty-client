@@ -216,9 +216,9 @@ export default function TicketListPage() {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2">
           <FiMessageSquare className="text-2xl text-gray-700 dark:text-text-light" />
-          <h1 className="text-2xl font-bold text-gray-800 dark:text-text-light">
+          <h1 className="text-2xl font-semibold text-gray-800 dark:text-text-light">
             Support Tickets
           </h1>
         </div>

@@ -35,3 +35,36 @@ export async function getUserSupportTickets(
   });
   return response;
 }
+
+//get ticket by id
+export async function getSupportTicket(ticketId: string) {
+  const token = await getToken();
+  const response = `${API_BASE}/ticket/${ticketId}`;
+  return await apiFetch<any>(response, {
+    method: "GET",
+    token: token || undefined,
+  });
+}
+
+export async function getSupportTicketbyId(ticketId: string) {
+  const token = await getToken();
+  const response = `${API_BASE}/ticket/by-id/${ticketId}`;
+  return await apiFetch<any>(response, {
+    method: "GET",
+    token: token || undefined,
+  });
+}
+
+// Add response to ticket
+export async function addTicketResponse(
+  ticketId: string,
+  data: FormData | { message: string; attachments?: File[] }
+) {
+  const token = await getToken();
+  const response = `${API_BASE}/ticket/${ticketId}/respond`;
+  return await apiFetch<any>(response, {
+    method: "POST",
+    body: data,
+    token: token || undefined,
+  });
+}
