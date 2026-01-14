@@ -4,7 +4,12 @@ import React, { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 import dayjs from "dayjs";
-import { FiEye, FiFolderMinus, FiMessageSquare } from "react-icons/fi";
+import {
+  FiArrowRight,
+  FiEye,
+  FiFolderMinus,
+  FiMessageSquare,
+} from "react-icons/fi";
 import { MdArrowOutward } from "react-icons/md";
 import Link from "next/link";
 
@@ -12,6 +17,7 @@ import Link from "next/link";
 import ReusableTable from "@/components/table/ReusableTable";
 import { getUserSupportTickets } from "@/services/supportService";
 import { Ticket } from "@/types/ticket";
+import Button from "@/components/ui/Button";
 
 interface Column<T> {
   header: React.ReactNode;
@@ -147,10 +153,10 @@ export default function TicketListPage() {
       sortable: true,
       renderCell: (row) => (
         <span
-          className={`px-3 py-1 text-xs font-semibold rounded-full ${
-            row.priority === "High"
+          className={`px-3 py-1 text-xs font-semibold rounded-full capitalize ${
+            row.priority === "high"
               ? "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-300"
-              : row.priority === "Medium"
+              : row.priority === "medium"
               ? "bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-300"
               : "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300"
           }`}
@@ -166,12 +172,12 @@ export default function TicketListPage() {
       sortable: true,
       renderCell: (row) => (
         <span
-          className={`px-3 py-1 text-xs font-semibold rounded-full ${
-            row.status === "Open"
+          className={`px-3 py-1 text-xs font-semibold rounded-full capitalize ${
+            row.status === "open"
               ? "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300"
-              : row.status === "In Progress"
+              : row.status === "in progress"
               ? "bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-300"
-              : row.status === "Resolved"
+              : row.status === "resolved"
               ? "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300"
               : "bg-gray-100 text-gray-700 dark:bg-gray-700/50 dark:text-gray-300"
           }`}
@@ -216,15 +222,16 @@ export default function TicketListPage() {
             Support Tickets
           </h1>
         </div>
-        <button
-          onClick={() => router.push("/user/open-ticket")}
-          className="relative inline-flex items-center justify-center py-2.5 pl-6 pr-12 font-semibold bg-emerald-500 text-white rounded-full hover:bg-emerald-600 transition-colors"
+        <Button
+          href="/user/open-ticket"
+          btnType="primary"
+          className="px-0! pl-4! pr-1.5!"
         >
-          <span>Open New Ticket</span>
-          <div className="absolute right-2 rounded-full text-emerald-500 bg-white p-1">
-            <MdArrowOutward className="h-4 w-4" />
-          </div>
-        </button>
+          Open New Ticket
+          <span className="text-primary bg-white p-1 rounded-full">
+            <FiArrowRight className="-rotate-45" />
+          </span>
+        </Button>
       </div>
 
       <div className="rounded-xl bg-background dark:bg-background-dark-2 border border-border-light dark:border-border-dark shadow-sm">
@@ -238,10 +245,10 @@ export default function TicketListPage() {
             className="px-4 py-2 border border-border-light dark:border-border-dark rounded-lg text-sm bg-background dark:bg-background-dark text-text dark:text-text-light focus:ring-2 focus:ring-primary dark:focus:ring-primary-dark focus:outline-none"
           >
             <option value="">All Status</option>
-            <option value="Open">Open</option>
-            <option value="In Progress">In Progress</option>
-            <option value="Resolved">Resolved</option>
-            <option value="Closed">Closed</option>
+            <option value="open">Open</option>
+            <option value="in progress">In Progress</option>
+            <option value="resolved">Resolved</option>
+            <option value="closed">Closed</option>
           </select>
         </div>
 

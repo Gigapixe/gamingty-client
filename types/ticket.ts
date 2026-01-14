@@ -3,8 +3,8 @@ export interface Ticket {
   ticketId?: string;
   title: string;
   description: string;
-  priority: "Low" | "Medium" | "High";
-  status: "Open" | "In Progress" | "Resolved" | "Closed";
+  priority: "low" | "medium" | "high";
+  status: "open" | "in progress" | "resolved" | "closed";
   attachments?: string[];
   createdAt: string;
   updatedAt: string;
