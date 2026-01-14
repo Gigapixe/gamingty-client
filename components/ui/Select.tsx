@@ -180,7 +180,7 @@ export default function Select({
           "min-w-50 flex items-center justify-between gap-2",
           "px-4 py-2 rounded-full border text-sm",
           "bg-white dark:bg-background-dark",
-          "border-gray-200 dark:border-[#303030]",
+          "border-gray-200 dark:border-border-dark",
           "text-gray-800 dark:text-gray-100",
           "hover:bg-gray-50 dark:hover:bg-[#1c1c1c]",
           "disabled:opacity-60 disabled:cursor-not-allowed",
@@ -191,7 +191,13 @@ export default function Select({
         <span className="truncate">
           {typeof triggerText === "string" ? triggerText : triggerText}
         </span>
-        <span className={`text-gray-400 ${open ? "rotate-180 duration-300" : "duration-300"}`}><IoIosArrowDown/></span>
+        <span
+          className={`text-gray-400 ${
+            open ? "rotate-180 duration-300" : "duration-300"
+          }`}
+        >
+          <IoIosArrowDown />
+        </span>
       </button>
 
       {/* Menu */}
@@ -206,7 +212,7 @@ export default function Select({
             "w-full",
             "rounded-2xl border shadow-xl",
             "bg-white dark:bg-background-dark",
-            "border-gray-200 dark:border-[#303030]",
+            "border-gray-200 dark:border-border-dark",
             menuClassName,
           ].join(" ")}
         >
@@ -221,7 +227,7 @@ export default function Select({
                 className={[
                   "w-full rounded-xl border px-3 py-2 text-sm",
                   "bg-white dark:bg-[#0f0f0f]",
-                  "border-gray-200 dark:border-[#303030]",
+                  "border-gray-200 dark:border-border-dark",
                   "text-gray-900 dark:text-gray-100",
                   "outline-none focus:ring-2 focus:ring-emerald-400/40",
                 ].join(" ")}
