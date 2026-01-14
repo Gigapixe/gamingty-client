@@ -1,10 +1,8 @@
 "use client";
 
-import dayjs from "dayjs";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { BsPencilSquare } from "react-icons/bs";
 import { FiStar } from "react-icons/fi";
-import { MdArrowOutward } from "react-icons/md";
 
 import Pagination from "@/components/ui/Pagination";
 import type {
@@ -24,9 +22,10 @@ import ReviewableCard from "./ReviewableCard";
 import ReviewCardSkeleton from "./ReviewCardSkeleton";
 import ReviewableCardSkeleton from "./ReviewableCardSkeleton";
 
-const PAGE_SIZE = 12;
-type Tab = "pending" | "completed";
+// ✅ use your Select
+import Select, { type SelectOption } from "@/components/ui/Select"; // adjust path if needed
 
+type Tab = "pending" | "completed";
 const FALLBACK_IMG = "/assets/wallet.jpeg";
 
 export default function MyReviews() {
@@ -42,29 +41,48 @@ export default function MyReviews() {
 
   const [page, setPage] = useState(1);
 
+  // ✅ page size (rows/page)
+  const [pageSize, setPageSize] = useState(12);
+
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedItem, setSelectedItem] = useState<ReviewableItem | null>(null);
 
   const { token } = useAuthStore();
 
-  const fetchAllData = async () => {
+  // ✅ request guard: only latest request can update state
+  const requestIdRef = useRef(0);
+
+  const hasAnyData = reviews.length > 0 || reviewableProducts.length > 0;
+
+  const fetchAllData = async (opts?: { silent?: boolean }) => {
+    const currentRequestId = ++requestIdRef.current;
+
     try {
-      setLoading(true);
       setError(null);
 
+      // ✅ if token not ready, do NOT trigger loading flicker
       if (!token) {
+        if (currentRequestId !== requestIdRef.current) return;
+        setLoading(false);
         setReviews([]);
         setReviewableProducts([]);
         return;
       }
 
-      const reviewsRes = (await getProductReviews({
-        token,
-      })) as ApiListResponse<Review>;
+      // ✅ if silent refresh, don't show skeleton again (prevents flicker)
+      if (!(opts?.silent && hasAnyData)) {
+        setLoading(true);
+      }
 
-      const reviewableOrdersRes = (await getReviewableOrders({
-        token,
-      })) as ApiListResponse<ReviewableOrder>;
+      const [reviewsRes, reviewableOrdersRes] = await Promise.all([
+        getProductReviews({ token }) as Promise<ApiListResponse<Review>>,
+        getReviewableOrders({ token }) as Promise<
+          ApiListResponse<ReviewableOrder>
+        >,
+      ]);
+
+      // ✅ ignore stale responses
+      if (currentRequestId !== requestIdRef.current) return;
 
       const safeReviews = Array.isArray(reviewsRes?.data)
         ? reviewsRes.data
@@ -80,7 +98,7 @@ export default function MyReviews() {
           product: {
             _id: product._id,
             title: product.title,
-            image: product.image, // string or undefined
+            image: product.image,
             price: product.price,
           },
         }))
@@ -90,29 +108,33 @@ export default function MyReviews() {
       setReviewableProducts(flattened);
     } catch (e: any) {
       console.error(e);
+      if (currentRequestId !== requestIdRef.current) return;
       setError(e?.message ?? "Failed to fetch review data");
     } finally {
+      if (currentRequestId !== requestIdRef.current) return;
       setLoading(false);
     }
   };
 
+  // ✅ fetch when token changes (hydration-safe + guarded)
   useEffect(() => {
     fetchAllData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [token]);
 
+  // ✅ reset to page 1 when tab or page size changes
   useEffect(() => {
     setPage(1);
-  }, [activeTab]);
+  }, [activeTab, pageSize]);
 
   const sourceData = activeTab === "pending" ? reviewableProducts : reviews;
   const total = sourceData.length;
 
   const paginatedData = useMemo(() => {
-    const startIndex = (page - 1) * PAGE_SIZE;
-    const endIndex = startIndex + PAGE_SIZE;
+    const startIndex = (page - 1) * pageSize;
+    const endIndex = startIndex + pageSize;
     return sourceData.slice(startIndex, endIndex);
-  }, [sourceData, page]);
+  }, [sourceData, page, pageSize]);
 
   const openReviewModal = (item: ReviewableItem) => {
     setSelectedItem(item);
@@ -122,7 +144,9 @@ export default function MyReviews() {
   const handleReviewSuccess = async () => {
     setIsModalOpen(false);
     setSelectedItem(null);
-    await fetchAllData();
+
+    // ✅ refresh without flicker
+    await fetchAllData({ silent: true });
   };
 
   const renderEmptyState = (title: string, message: string) => (
@@ -137,13 +161,11 @@ export default function MyReviews() {
     </div>
   );
 
-  if (loading) {
-    return (
-      <section aria-busy="true" className="py-6">
-        <div className="w-full h-28 bg-gray-50 dark:bg-gray-800 animate-pulse rounded-xl border border-gray-200 dark:border-[#303030]" />
-      </section>
-    );
-  }
+  const rowOptions: SelectOption[] = [
+    { value: "12", label: "12 rows/page" },
+    { value: "24", label: "24 rows/page" },
+    { value: "36", label: "36 rows/page" },
+  ];
 
   if (error) {
     return (
@@ -156,12 +178,24 @@ export default function MyReviews() {
   return (
     <div className="bg-[#FFF] dark:bg-[#161616] p-5 rounded-xl shadow-sm border border-[#DBDBDB] dark:border-[#303030]">
       {/* Header */}
-      <div className="flex flex-wrap justify-between items-center mb-6 border-b-2 border-gray-100 dark:border-[#303030] pb-4">
+      <div className="flex flex-wrap justify-between items-center mb-6 border-b-2 border-gray-100 dark:border-[#303030] pb-4 gap-3">
         <div className="flex items-center gap-3">
           <BsPencilSquare className="text-xl text-[#12B47E]" />
           <h2 className="text-2xl font-semibold text-[#161616] dark:text-[#FFFFFF]">
             Product Reviews
           </h2>
+        </div>
+
+        {/* ✅ rows/page with your Select */}
+        <div>
+          <Select
+            value={String(pageSize)}
+            onChange={(val) => setPageSize(Number(val))}
+            options={rowOptions}
+            searchable={false}
+            placeholder="Rows/page"
+            className="w-full"
+          />
         </div>
       </div>
 
@@ -194,13 +228,13 @@ export default function MyReviews() {
       {loading ? (
         activeTab === "pending" ? (
           <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 2xl:grid-cols-7 gap-4">
-            {Array.from({ length: PAGE_SIZE }).map((_, i) => (
+            {Array.from({ length: pageSize }).map((_, i) => (
               <ReviewableCardSkeleton key={i} />
             ))}
           </div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-            {Array.from({ length: PAGE_SIZE }).map((_, i) => (
+            {Array.from({ length: pageSize }).map((_, i) => (
               <ReviewCardSkeleton key={i} />
             ))}
           </div>
@@ -238,10 +272,10 @@ export default function MyReviews() {
       )}
 
       {/* Pagination */}
-      {total > 0 && (
+      {!loading && total > 0 && (
         <Pagination
           page={page}
-          pageSize={PAGE_SIZE}
+          pageSize={pageSize}
           total={total}
           onPageChange={setPage}
           className="pt-6"
