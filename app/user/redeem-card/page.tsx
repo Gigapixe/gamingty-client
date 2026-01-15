@@ -1,9 +1,6 @@
+import RedeemCardClient from "@/components/dashboard/Redeem/RedeemCardClient";
 
 
-const Redeem = () => {
-  return (
-    <div>Redeem</div>
-  )
+export default function RedeemPage() {
+  return <RedeemCardClient />;
 }
-
-export default Redeem

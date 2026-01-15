@@ -1,4 +1,4 @@
-const GiftCardIcon = ({ fill = "white", className = "" }) => {
+const GiftCardIcon = ({ fill = "currentColor", className = "" }) => {
   return (
     <svg
       width={41}
