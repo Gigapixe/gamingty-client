@@ -408,7 +408,7 @@ export default function AccountDetails() {
                   setSelectedState("");
                 }}
                 disabled={loading}
-                className="mt-1"
+                className="rounded-full"
               />
             </div>
             <div className="flex flex-col mt-2">
@@ -424,7 +424,7 @@ export default function AccountDetails() {
                     setAddress({ ...address, state: v });
                   }}
                   disabled={loading}
-                  className="mt-0.5"
+                  className="mt-0.5 rounded-full"
                 />
               ) : (
                 <Input
