@@ -94,3 +94,25 @@ export async function disable2FA(
     token: token || undefined,
   }) as Promise<{ success: boolean; message?: string }>;
 }
+
+//update profile
+export async function updateProfile(id: string, profileData: any) {
+  const token = await getToken();
+  const url = `${API_BASE}/customer/${id}`;
+  return apiFetch(url, {
+    method: "PUT",
+    body: profileData,
+    token: token || undefined,
+  });
+}
+
+// updateCustomerImage body should be an object like { image: "image_data_url_or_path" }
+export async function updateCustomerImage(id: string, body: any) {
+  const token = await getToken();
+  const url = `${API_BASE}/customer/${id}/image`;
+  return apiFetch(url, {
+    method: "PUT",
+    body,
+    token: token || undefined,
+  });
+}

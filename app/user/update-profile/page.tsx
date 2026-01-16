@@ -1,7 +1,9 @@
+import AccountDetails from "@/components/dashboard/profile/AccountDetails";
+
 export default function UpdateProfile() {
   return (
     <div>
-      <h1>update</h1>
+      <AccountDetails />
     </div>
   );
 }

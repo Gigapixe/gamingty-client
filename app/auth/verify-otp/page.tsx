@@ -103,8 +103,7 @@ export default function VerifyOtpPage() {
 
       if (res?.status === "success" && res?.token) {
         // Response contains user data directly, not nested
-        const { token, status, ...userData } = res;
-        setAuth(userData, token);
+        setAuth(res);
         clearTempAuth();
         // Replace history so back button doesn't take users back to verify page
         router.replace("/");
