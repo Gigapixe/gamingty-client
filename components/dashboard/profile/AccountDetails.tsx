@@ -28,6 +28,7 @@ export default function AccountDetails() {
   const [address, setAddress] = useState({
     address: "",
     city: "",
+    state: "",
     dob: "",
     image: null as string | null,
     country: "",
@@ -70,6 +71,7 @@ export default function AccountDetails() {
       setAddress({
         address: authUser.address || "",
         city: authUser.city || "",
+        state: (authUser as any).state || "",
         dob: authUser.dob || "",
         image: authUser.image || null,
         country: authUser.country || "",
@@ -150,6 +152,7 @@ export default function AccountDetails() {
     setAddress({
       address: currentUser?.address || "",
       city: currentUser?.city || "",
+      state: currentUser?.state || "",
       dob: currentUser?.dob || "",
       image: currentUser?.image || null,
       country: currentUser?.country || "",
@@ -157,13 +160,6 @@ export default function AccountDetails() {
     });
     setError(null);
     setSuccess(null);
-  };
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setAddress({ ...address, [e.target.name]: e.target.value });
-
-    // For country select, ensure only valid code is set
-    // (handled in CountrySelect)
   };
 
   const handleSave = async () => {
@@ -185,17 +181,18 @@ export default function AccountDetails() {
         dob: (formatDateForSubmission(address.dob) ?? address.dob) || undefined,
         image: address.image || undefined,
         country: selectedCountryName,
-        state: selectedState || address.city,
+        state: selectedState || address.state,
         zip: address.zip,
       };
 
       const res: any = await updateProfile(id, payload);
 
-      // If server returns updated user, use it. Otherwise merge changes locally
-      const updatedUser = res?.data || { ...(authUser as any), ...payload };
+      // Merge returned fields into existing authenticated user so we don't remove other details
+      const updatedData = res?.data || {};
+      const mergedUser = { ...(authUser as any), ...updatedData };
 
-      setAuth({ ...(updatedUser as any), token: token ?? undefined } as any);
-      setCurrentUser(updatedUser as any);
+      setAuth({ ...(mergedUser as any), token: token ?? undefined } as any);
+      setCurrentUser(mergedUser as any);
 
       toast.success("Address updated successfully!");
       setEditMode(false);
@@ -347,9 +344,7 @@ export default function AccountDetails() {
           </div>
           <div>
             <p className="text-gray-500">Id</p>
-            <p className="font-medium mt-1">
-              {currentUser?._id ?? String(currentUser?.userId ?? "")}
-            </p>
+            <p className="font-medium mt-1">{currentUser?.userId}</p>
           </div>
         </div>
       </div>
@@ -382,6 +377,17 @@ export default function AccountDetails() {
               disabled={loading}
               className="mt-1"
             />
+            <Input
+              id="city"
+              name="city"
+              label="City"
+              value={address.city}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                setAddress({ ...address, city: e.target.value })
+              }
+              disabled={loading}
+              className="mt-1"
+            />
 
             <div className="flex flex-col mt-2">
               <label htmlFor="country" className="text-sm font-medium mb-1">
@@ -405,7 +411,6 @@ export default function AccountDetails() {
                 className="mt-1"
               />
             </div>
-
             <div className="flex flex-col mt-2">
               <label htmlFor="state" className="text-sm font-medium mb-1">
                 State / Region
@@ -421,18 +426,6 @@ export default function AccountDetails() {
                 className="mt-0.5"
               />
             </div>
-
-            <Input
-              id="zip"
-              name="zip"
-              label="ZIP Code"
-              value={address.zip}
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                setAddress({ ...address, zip: e.target.value })
-              }
-              disabled={loading}
-              className="mt-1"
-            />
 
             <div className="flex flex-col mt-2">
               <label htmlFor="dob" className="text-sm font-medium mb-1">
@@ -452,6 +445,17 @@ export default function AccountDetails() {
                 max={new Date().toISOString().slice(0, 10)}
               />
             </div>
+            <Input
+              id="zip"
+              name="zip"
+              label="ZIP Code"
+              value={address.zip}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                setAddress({ ...address, zip: e.target.value })
+              }
+              disabled={loading}
+              className="mt-1"
+            />
           </div>
         ) : (
           <div className="grid md:grid-cols-2 gap-x-8 gap-y-4 text-sm mt-2">
@@ -459,6 +463,12 @@ export default function AccountDetails() {
               <p className="text-gray-500">Street</p>
               <p className="font-medium mt-1">
                 {currentUser?.address ? currentUser.address : "N/A"}
+              </p>
+            </div>
+            <div>
+              <p className="text-gray-500">City</p>
+              <p className="font-medium mt-1">
+                {currentUser?.city ? currentUser.city : "N/A"}
               </p>
             </div>
             <div>
@@ -488,15 +498,15 @@ export default function AccountDetails() {
               </p>
             </div>
             <div>
-              <p className="text-gray-500">ZIP Code</p>
-              <p className="font-medium mt-1">
-                {currentUser?.zip ? currentUser.zip : "N/A"}
-              </p>
-            </div>
-            <div>
               <p className="text-gray-500">Date of birth</p>
               <p className="font-medium mt-1">
                 {currentUser?.dob ? formatIsoToAsian(currentUser.dob) : "N/A"}
+              </p>
+            </div>
+            <div>
+              <p className="text-gray-500">ZIP Code</p>
+              <p className="font-medium mt-1">
+                {currentUser?.zip ? currentUser.zip : "N/A"}
               </p>
             </div>
           </div>

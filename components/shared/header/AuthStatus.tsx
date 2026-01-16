@@ -94,9 +94,9 @@ export default function AuthStatus() {
           <Image
             src={user.image}
             alt={user?.name || user?.email || "User"}
-            width={36}
-            height={36}
-            className="rounded-full object-cover"
+            width={406}
+            height={406}
+            className="rounded-full object-cover h-9 w-9"
           />
         ) : (
           <div className="w-9 h-9 rounded-full bg-emerald-500 text-white flex items-center justify-center font-medium">
