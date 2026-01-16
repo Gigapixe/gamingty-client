@@ -5,8 +5,6 @@ import { useRouter } from "next/navigation";
 import Input from "@/components/ui/Input";
 import Button from "@/components/ui/Button";
 import { customerLogin } from "@/services/customerService";
-
-import { LoginResponse } from "@/types/auth";
 import { useAuthStore } from "@/zustand/authStore";
 
 export default function LoginForm() {
