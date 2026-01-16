@@ -415,16 +415,30 @@ export default function AccountDetails() {
               <label htmlFor="state" className="text-sm font-medium mb-1">
                 State / Region
               </label>
-              <StateSelect
-                countryCode={selectedCountry || undefined}
-                value={selectedState}
-                onChange={(v) => {
-                  setSelectedState(v);
-                  setAddress({ ...address, city: v });
-                }}
-                disabled={loading}
-                className="mt-0.5"
-              />
+              {countryStatesList && countryStatesList.length > 0 ? (
+                <StateSelect
+                  countryCode={selectedCountry || undefined}
+                  value={selectedState}
+                  onChange={(v) => {
+                    setSelectedState(v);
+                    setAddress({ ...address, state: v });
+                  }}
+                  disabled={loading}
+                  className="mt-0.5"
+                />
+              ) : (
+                <Input
+                  id="state"
+                  name="state"
+                  label="State / Region"
+                  value={address.state}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                    setAddress({ ...address, state: e.target.value })
+                  }
+                  disabled={loading}
+                  className="mt-1"
+                />
+              )}
             </div>
 
             <div className="flex flex-col mt-2">
@@ -494,7 +508,7 @@ export default function AccountDetails() {
             <div>
               <p className="text-gray-500">State / Region</p>
               <p className="font-medium mt-1">
-                {currentUser?.city ? currentUser.city : "N/A"}
+                {currentUser?.state ? currentUser.state : "N/A"}
               </p>
             </div>
             <div>
