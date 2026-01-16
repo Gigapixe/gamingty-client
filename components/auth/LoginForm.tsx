@@ -5,8 +5,6 @@ import { useRouter } from "next/navigation";
 import Input from "@/components/ui/Input";
 import Button from "@/components/ui/Button";
 import { customerLogin } from "@/services/customerService";
-
-import { LoginResponse } from "@/types/auth";
 import { useAuthStore } from "@/zustand/authStore";
 
 export default function LoginForm() {
@@ -38,8 +36,7 @@ export default function LoginForm() {
         router.push("/auth/verify-otp");
       } else if (res?.status === "success" && res?.token) {
         // Response contains user data directly, not nested
-        const { token, status, ...userData } = res;
-        setAuth(userData, token);
+        setAuth(res);
         router.push("/");
       } else {
         setError(res?.message || "Login failed");

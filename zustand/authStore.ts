@@ -28,12 +28,16 @@ export const useAuthStore = create<AuthStoreState>()(
       tempEmail: null,
       _hasHydrated: false,
       setHasHydrated: (state: boolean) => set({ _hasHydrated: state }),
-      setAuth: (user: User, token: string) => {
-        setCookie("authToken", token, 7);
+      setAuth: (payload: any) => {
+        // Payload from API contains token and user fields at top-level
+        const { token, status, ...user } = payload || {};
+        if (token) {
+          setCookie("authToken", token, 7);
+        }
         set({
-          user,
-          token,
-          isAuthenticated: true,
+          user: user as unknown as User,
+          token: token ?? null,
+          isAuthenticated: !!token,
           tempToken: null,
           tempEmail: null,
         });

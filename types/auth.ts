@@ -45,7 +45,8 @@ export interface AuthState {
   isAuthenticated: boolean;
   tempToken: string | null; // For OTP flow
   tempEmail: string | null; // For OTP flow
-  setAuth: (user: User, token: string) => void;
+  // Accept the API payload directly (response contains user fields at top level plus token)
+  setAuth: (payload: VerifyOTPResponse) => void;
   setTempAuth: (email: string, token: string) => void;
   clearTempAuth: () => void;
   logout: () => void;
