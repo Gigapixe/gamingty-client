@@ -5,13 +5,14 @@ import { FiChevronRight } from "react-icons/fi";
 import StatusBadge from "../ui/StatusBadge";
 
 export type OrderStatus =
-  | "Pending"
-  | "Processing"
-  | "Delivered"
-  | "Failed"
-  | "Cancelled"
-  | "On Hold"
-  | "Refunded";
+  | ""
+  | "PENDING"
+  | "PROCESSING"
+  | "DELIVERED"
+  | "FAILED"
+  | "CANCELLED"
+  | "ON_HOLD"
+  | "REFUNDED";
 
 export type RecentOrder = {
   _id: string;
