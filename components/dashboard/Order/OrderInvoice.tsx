@@ -9,6 +9,7 @@ import { useAuthStore } from "@/zustand/authStore";
 import { getOrderById } from "@/services/orderService";
 import { Order } from "@/types/order";
 import DownloadInvoicePdfButton from "./DownloadInvoicePdfButton";
+import InvoiceActions from "./InvoiceActions";
 
 function formatDate(d?: string) {
   if (!d) return "-";
@@ -83,8 +84,8 @@ export default function OrderInvoice({ id }: IDParams) {
   return (
     <div className="p-4 sm:p-6">
       {/* Top message bar */}
-      <div className="no-print mb-4 rounded-lg border border-emerald-600/20 bg-emerald-600/10 px-4 py-3 text-sm text-emerald-200">
-        <span className="text-emerald-300 font-medium">
+      <div className="no-print mb-4 rounded-lg border border-gray-300 dark:border-primary/20 dark:bg-primary/10 px-4 py-3 text-sm text-primary/80 dark:text-primary/50">
+        <span className="text-primary font-medium">
           {order?.user_info?.name ?? "Customer"}
         </span>
         {", You have successfully placed your order."}
@@ -93,29 +94,29 @@ export default function OrderInvoice({ id }: IDParams) {
       {/* ✅ invoice area to convert into PDF */}
       <div
         ref={invoiceRef}
-        className="print-card overflow-hidden rounded-2xl border border-gray-700 bg-[#253041] shadow-2xl"
+        className="print-card overflow-hidden rounded-2xl border border-gray-700 dark:bg-background-dark shadow-2xl"
       >
         {/* Header */}
         <div className="p-6 sm:p-8">
           <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
             <div>
-              <h1 className="text-xl sm:text-2xl font-bold text-white tracking-wide">
+              <h1 className="text-xl sm:text-2xl font-bold dark:text-white tracking-wide">
                 INVOICE
               </h1>
-              <div className="mt-2 text-xs text-gray-300">
+              <div className="mt-2 text-xs dark:text-gray-300">
                 Status :{" "}
                 <span className="text-emerald-400">{order.status ?? "—"}</span>
               </div>
             </div>
 
             <div className="text-right">
-              <div className="text-white font-semibold tracking-wide">
+              <div className="dark:text-white font-semibold tracking-wide">
                 GAMINGTY
               </div>
-              <div className="text-[10px] text-gray-300 mt-1">
+              <div className="text-[10px] dark:text-gray-300 mt-1">
                 FLEXITECH LLC FZ
               </div>
-              <div className="mt-3 text-[10px] leading-5 text-gray-300">
+              <div className="mt-3 text-[10px] leading-5 dark:text-gray-300">
                 The Meydan Hotel, Grandstand, 6th floor,
                 <br />
                 Meydan Road, Nad Al Sheba, Dubai, UAE
@@ -125,33 +126,33 @@ export default function OrderInvoice({ id }: IDParams) {
             </div>
           </div>
 
-          <div className="mt-6 border-t border-white/10" />
+          <div className="mt-6 border-t dark:border-white/10" />
 
           {/* Meta row */}
           <div className="mt-6 grid grid-cols-1 gap-6 sm:grid-cols-3">
             <div>
-              <div className="text-[11px] font-semibold text-gray-200">
+              <div className="text-[11px] font-semibold dark:text-gray-200">
                 DATE
               </div>
-              <div className="mt-1 text-[11px] text-gray-300">
+              <div className="mt-1 text-[11px] dark:text-gray-300">
                 {formatDate(order.createdAt)}
               </div>
             </div>
 
             <div className="text-center">
-              <div className="text-[11px] font-semibold text-gray-200">
+              <div className="text-[11px] font-semibold dark:text-gray-200">
                 ORDER NO.
               </div>
-              <div className="mt-1 text-[11px] text-gray-300">
+              <div className="mt-1 text-[11px] dark:text-gray-300">
                 #{order.invoice ?? order._id}
               </div>
             </div>
 
             <div className="text-right">
-              <div className="text-[11px] font-semibold text-gray-200">
+              <div className="text-[11px] font-semibold dark:text-gray-200">
                 ORDER TO.
               </div>
-              <div className="mt-1 text-[11px] text-gray-300 leading-5">
+              <div className="mt-1 text-[11px] dark:text-gray-300 leading-5">
                 {order?.user_info?.name ?? "-"}
                 <br />
                 {order?.user_info?.email ?? "-"}
@@ -166,8 +167,8 @@ export default function OrderInvoice({ id }: IDParams) {
 
         {/* Items */}
         <div className="px-6 sm:px-8 pb-6">
-          <div className="rounded-xl border border-white/10 overflow-hidden">
-            <div className="grid grid-cols-12 bg-white/10 px-4 py-3 text-[11px] font-semibold text-gray-200">
+          <div className="rounded-xl border dark:border-white/10 overflow-hidden">
+            <div className="grid grid-cols-12 bg-gray-200 dark:bg-white/10 px-4 py-3 text-[11px] font-semibold dark:text-gray-200">
               <div className="col-span-1">#</div>
               <div className="col-span-7">ITEM</div>
               <div className="col-span-2 text-center">QUANTITY</div>
@@ -178,14 +179,14 @@ export default function OrderInvoice({ id }: IDParams) {
               {order.cart?.map((it, idx) => (
                 <div
                   key={it._id ?? idx}
-                  className="grid grid-cols-12 px-4 py-4 text-[11px] text-gray-200"
+                  className="grid grid-cols-12 px-4 py-4 text-[11px] dark:text-gray-200"
                 >
-                  <div className="col-span-1 text-gray-400">{idx + 1}</div>
+                  <div className="col-span-1 dark:text-gray-400">{idx + 1}</div>
                   <div className="col-span-7">{it.title}</div>
-                  <div className="col-span-2 text-center font-semibold text-white">
+                  <div className="col-span-2 text-center font-semibold dark:text-white">
                     {it.quantity}
                   </div>
-                  <div className="col-span-2 text-right font-semibold text-white">
+                  <div className="col-span-2 text-right font-semibold dark:text-white">
                     {formatMoney(it.price)}
                   </div>
                 </div>
@@ -196,14 +197,14 @@ export default function OrderInvoice({ id }: IDParams) {
 
         {/* Summary */}
         <div className="px-6 sm:px-8 pb-8">
-          <div className="mt-4 border-t border-white/10" />
+          <div className="mt-4 border-t dark:border-white/10" />
 
           <div className="mt-6 grid grid-cols-1 gap-8 sm:grid-cols-3">
             <div>
-              <div className="text-[11px] font-semibold text-gray-200">
+              <div className="text-[11px] font-semibold dark:text-gray-200">
                 PAYMENT METHOD
               </div>
-              <div className="mt-2 flex items-center gap-2 text-[11px] text-gray-300">
+              <div className="mt-2 flex items-center gap-2 text-[11px] dark:text-gray-300">
                 {order.paymentMethodImage ? (
                   <Image
                     src={order.paymentMethodImage}
@@ -218,16 +219,16 @@ export default function OrderInvoice({ id }: IDParams) {
             </div>
 
             <div className="sm:text-center">
-              <div className="text-[11px] font-semibold text-gray-200">
+              <div className="text-[11px] font-semibold dark:text-gray-200">
                 DISCOUNT
               </div>
-              <div className="mt-2 text-[11px] text-gray-300">
+              <div className="mt-2 text-[11px] dark:text-gray-300">
                 {formatMoney(order.discount ?? 0)}
               </div>
             </div>
 
             <div className="sm:text-right">
-              <div className="text-[11px] font-semibold text-gray-200">
+              <div className="text-[11px] font-semibold dark:text-gray-200">
                 TOTAL AMOUNT
               </div>
               <div className="mt-2 text-xl font-extrabold text-rose-400">
@@ -245,14 +246,7 @@ export default function OrderInvoice({ id }: IDParams) {
           filename={`invoice-${order?.invoice ?? order?._id}.pdf`}
         />
 
-        <button
-          type="button"
-          onClick={onPrint}
-          className="inline-flex w-full sm:w-auto items-center justify-center gap-2 rounded-xl bg-emerald-600 px-5 py-3 text-sm font-semibold text-white hover:opacity-95"
-        >
-          <IoPrintOutline />
-          Print
-        </button>
+        <InvoiceActions order={order} />
       </div>
     </div>
   );

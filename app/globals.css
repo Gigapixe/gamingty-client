@@ -305,17 +305,12 @@ button {
 
 /* globals.css */
 
+
 @media print {
-  body {
-    background: #ffffff !important;
+  .barcode-card {
+    break-after: page;
   }
-
-  .no-print {
-    display: none !important;
-  }
-
-  .print-card {
-    box-shadow: none !important;
-    border: 1px solid #e5e7eb !important;
+  .barcode-card:last-child {
+    break-after: auto;
   }
 }
