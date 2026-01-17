@@ -1,10 +1,11 @@
 import OrderInvoice from "@/components/dashboard/Order/OrderInvoice";
 
-type PageProps = {
-  params: Promise<{ id: string }>;
-};
+export type paramsType = Promise<{ id: string }>;
+type Props = {
+    params: paramsType;
+  };
 
-export default async function InvoicePage({ params }: PageProps) {
+export default async function InvoicePage({ params }: Props) {
   const { id } = await params;
 
   return (
