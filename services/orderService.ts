@@ -154,15 +154,16 @@ export async function getOrderById(id: string | number, opts?: FetchOpts) {
 
 export async function getOrderCredentials(
   id: string | number,
-  opts?: FetchOpts,
+  opts?: { token?: string; cache?: RequestCache; next?: { revalidate?: number | false } }
 ) {
-  // keeping your original endpoint path
   const url = `${API_BASE}/orders/credentials/${id}`;
   return apiFetch<any>(url, {
+    token: opts?.token,
     cache: opts?.cache ?? "no-store",
     next: opts?.next,
   });
 }
+
 
 export async function submitProductReview(
   reviewData: {
