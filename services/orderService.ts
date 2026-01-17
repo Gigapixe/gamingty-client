@@ -8,7 +8,7 @@ type FetchOpts = {
 };
 
 const toRecordHeaders = (
-  h?: HeadersInit
+  h?: HeadersInit,
 ): Record<string, string> | undefined => {
   if (!h) return undefined;
   if (h instanceof Headers) return Object.fromEntries(h.entries());
@@ -40,7 +40,7 @@ const buildQuery = (params: Record<string, any> = {}) => {
 export async function addOrder(
   body: any,
   headers?: HeadersInit,
-  opts?: FetchOpts
+  opts?: FetchOpts,
 ) {
   const url = `${API_BASE}/order/add`;
 
@@ -65,7 +65,7 @@ export async function createPaymentIntent(body: any, opts?: FetchOpts) {
 
 export async function getOrderStats(
   params: { startDate?: Date | string; endDate?: Date | string } = {},
-  opts?: FetchOpts & { token?: string }
+  opts?: FetchOpts & { token?: string },
 ) {
   const url = `${API_BASE}/order/stats${buildQuery(params)}`;
 
@@ -76,9 +76,7 @@ export async function getOrderStats(
   });
 }
 
-export async function getRecentOrders(
-  opts?: FetchOpts & { token?: string }
-) {
+export async function getRecentOrders(opts?: FetchOpts & { token?: string }) {
   const url = `${API_BASE}/order/recent`;
   return apiFetch<any>(url, {
     token: opts?.token,
@@ -87,14 +85,13 @@ export async function getRecentOrders(
   });
 }
 
-
 export async function getTopProducts(
   params: {
     startDate?: Date | string;
     endDate?: Date | string;
     limit?: number | string;
   } = {},
-  opts?: FetchOpts & { token?: string }
+  opts?: FetchOpts & { token?: string },
 ) {
   const url = `${API_BASE}/order/top-products${buildQuery(params)}`;
   return apiFetch<any>(url, {
@@ -106,7 +103,7 @@ export async function getTopProducts(
 
 export async function getOrderOverview(
   params: { startDate?: Date | string; endDate?: Date | string } = {},
-  opts?: FetchOpts & { token?: string }
+  opts?: FetchOpts & { token?: string },
 ) {
   const url = `${API_BASE}/order/overview${buildQuery(params)}`;
 
@@ -123,7 +120,7 @@ export async function getOrdersPaginated(
     token?: string;
     cache?: RequestCache;
     next?: { revalidate?: number | false };
-  }
+  },
 ) {
   const query = new URLSearchParams();
 
@@ -157,7 +154,7 @@ export async function getOrderById(id: string | number, opts?: FetchOpts) {
 
 export async function getOrderCredentials(
   id: string | number,
-  opts?: FetchOpts
+  opts?: FetchOpts,
 ) {
   // keeping your original endpoint path
   const url = `${API_BASE}/orders/credentials/${id}`;
@@ -174,7 +171,7 @@ export async function submitProductReview(
     rating: number;
     comment?: string;
   },
-  opts?: FetchOpts & { token?: string }
+  opts?: FetchOpts & { token?: string },
 ) {
   const url = `${API_BASE}/order/review`;
 
@@ -187,9 +184,7 @@ export async function submitProductReview(
   });
 }
 
-export async function getProductReviews(
-  opts?: FetchOpts & { token?: string }
-) {
+export async function getProductReviews(opts?: FetchOpts & { token?: string }) {
   const url = `${API_BASE}/order/reviews`;
 
   return apiFetch<any>(url, {
@@ -200,7 +195,7 @@ export async function getProductReviews(
 }
 
 export async function getReviewableOrders(
-  opts?: FetchOpts & { token?: string }
+  opts?: FetchOpts & { token?: string },
 ) {
   const url = `${API_BASE}/order/reviewable-orders`;
 
@@ -211,13 +206,13 @@ export async function getReviewableOrders(
   });
 }
 
-
-export async function getPaymentMethods(opts?: FetchOpts) {
+export async function getPaymentMethods(opts?: { token?: string }) {
   const url = `${API_BASE}/order/payment-methods`;
-  return apiFetch<any>(url, {
-    cache: opts?.cache ?? "no-store",
-    next: opts?.next,
+  const res = await apiFetch<any>(url, {
+    token: opts?.token,
+    cache: "no-store",
   });
+  return res?.data; // return just data
 }
 
 // ===== SSG wrappers (force-cache) =====
@@ -225,7 +220,7 @@ export async function getPaymentMethods(opts?: FetchOpts) {
 export const addOrderSSG = (
   body: any,
   headers?: HeadersInit,
-  opts?: FetchOpts
+  opts?: FetchOpts,
 ) => addOrder(body, headers, { cache: "force-cache", next: opts?.next });
 
 export const createPaymentIntentSSG = (body: any, opts?: FetchOpts) =>
@@ -233,7 +228,7 @@ export const createPaymentIntentSSG = (body: any, opts?: FetchOpts) =>
 
 export const getOrderStatsSSG = (
   params: { startDate?: Date | string; endDate?: Date | string } = {},
-  opts?: FetchOpts
+  opts?: FetchOpts,
 ) => getOrderStats(params, { cache: "force-cache", next: opts?.next });
 
 export const getRecentOrdersSSG = (opts?: FetchOpts) =>
@@ -245,17 +240,17 @@ export const getTopProductsSSG = (
     endDate?: Date | string;
     limit?: number | string;
   } = {},
-  opts?: FetchOpts
+  opts?: FetchOpts,
 ) => getTopProducts(params, { cache: "force-cache", next: opts?.next });
 
 export const getOrderOverviewSSG = (
   params: { startDate?: Date | string; endDate?: Date | string } = {},
-  opts?: FetchOpts
+  opts?: FetchOpts,
 ) => getOrderOverview(params, { cache: "force-cache", next: opts?.next });
 
 export const getOrdersPaginatedSSG = (
   params: Record<string, any> = {},
-  opts?: FetchOpts
+  opts?: FetchOpts,
 ) => getOrdersPaginated(params, { cache: "force-cache", next: opts?.next });
 
 export const getOrderByIdSSG = (id: string | number, opts?: FetchOpts) =>
@@ -273,5 +268,4 @@ export const getProductReviewsSSG = (opts?: FetchOpts) =>
 export const getReviewableOrdersSSG = (opts?: FetchOpts) =>
   getReviewableOrders({ cache: "force-cache", next: opts?.next });
 
-export const getPaymentMethodsSSG = (opts?: FetchOpts) =>
-  getPaymentMethods({ cache: "force-cache", next: opts?.next });
+export const getPaymentMethodsSSG = (opts?: FetchOpts) => getPaymentMethods();

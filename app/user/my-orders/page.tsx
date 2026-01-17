@@ -4,8 +4,11 @@ import AllOrders from "@/components/dashboard/Order/AllOrders";
 import DateRangeFilter, { DateRange } from "@/components/ui/DateRangeFilter";
 import Select, { SelectOption } from "@/components/ui/Select";
 import OrderIcon from "@/public/icons/user/OrderIcon";
+import { getPaymentMethods } from "@/services/orderService";
+import { useAuthStore } from "@/zustand/authStore";
 import { useSearchParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import toast from "react-hot-toast";
 import { IoSearchOutline } from "react-icons/io5";
 
 const statusOptions: SelectOption[] = [
@@ -19,21 +22,50 @@ const statusOptions: SelectOption[] = [
   { value: "REFUNDED", label: "Refunded" },
 ];
 
-const paymentOptions: SelectOption[] = [
-  { value: "", label: "All Payment Methods" },
-  { value: "card", label: "Card payment U..." },
-  { value: "cryptomus", label: "Cryptomus" },
-  { value: "binance", label: "Binance Pay" },
-];
-
+type PaymentMethod = {
+  name: string;
+  image: string;
+  slug: string;
+};
 
 export default function MyOrders() {
   const searchParams = useSearchParams();
-
+  const { token } = useAuthStore();
   const [range, setRange] = useState<DateRange>({ from: null, to: null });
   const [payment, setPayment] = useState("");
   const [status, setStatus] = useState("");
   const [search, setSearch] = useState("");
+  const [payments, setPayments] = useState<PaymentMethod[]>([]);
+
+  useEffect(() => {
+    if (!token) {
+      setPayments([]);
+      return;
+    }
+
+    let cancelled = false;
+
+    (async () => {
+      try {
+        const payload = await getPaymentMethods({ token });
+
+        const methods =
+          payload?.data?.paymentMethods ??
+          payload?.data?.methods ??
+          payload ??
+          [];
+
+        if (!cancelled) setPayments(Array.isArray(methods) ? methods : []);
+      } catch (e: any) {
+        if (!cancelled)
+          toast.error(e?.message ?? "Failed to load payment methods");
+      }
+    })();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [token]);
 
   useEffect(() => {
     const statusFromUrl = searchParams.get("status") ?? "";
@@ -44,6 +76,17 @@ export default function MyOrders() {
     setPayment(paymentFromUrl);
     setSearch(searchFromUrl);
   }, [searchParams]);
+
+  const paymentOptions: SelectOption[] = useMemo(
+    () => [
+      { value: "", label: "All Payment Methods" },
+      ...payments.map((p) => ({
+        value: p.slug,
+        label: p.name,
+      })),
+    ],
+    [payments],
+  );
 
   return (
     <div>
@@ -118,4 +161,3 @@ export default function MyOrders() {
     </div>
   );
 }
-
