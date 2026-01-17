@@ -14,6 +14,15 @@ export type OrderStatus =
   | "ON_HOLD"
   | "REFUNDED";
 
+type ICart={
+  image:string;
+  price:string | number;
+  title:string;
+  slug:string;
+  quantity:number;
+  isGiftCard:boolean
+}
+
 export type RecentOrder = {
   _id: string;
   invoice: string | number;
@@ -21,6 +30,7 @@ export type RecentOrder = {
   paymentMethod: string;
   status: OrderStatus | string;
   createdAt: string; // ISO string
+  cart:ICart
 };
 
 type RecentOrdersTableProps = {

@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import React, { useMemo, useState } from "react";
 import { IoChevronBackOutline, IoKeyOutline } from "react-icons/io5";
 
@@ -26,10 +27,8 @@ export const OrderDetails: React.FC<OrderDetailsProps> = ({
     setShowKeys(!showKeys);
   };
 
-  console.log(order)
-
   return (
-    <div className="space-y-4 bg-white dark:bg-background-dark p-4 rounded-lg border border-gray-200 dark:border-[#303030]">
+    <div className="space-y-4 bg-white dark:bg-background-dark p-4 rounded-lg border border-gray-200 dark:border-gray-700">
       {/* Back */}
       <button
         type="button"
@@ -41,7 +40,7 @@ export const OrderDetails: React.FC<OrderDetailsProps> = ({
       </button>
 
       {/* Header Card */}
-      <div className="rounded-xl border border-gray-200 dark:border-[#303030] bg-white dark:bg-[#111] p-4">
+      <div className="rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-[#111] p-4">
         <div className="flex flex-wrap items-center gap-3">
           <div className="font-semibold text-gray-900 dark:text-white">
             Order #{order?.invoice ?? order?._id}
@@ -72,17 +71,28 @@ export const OrderDetails: React.FC<OrderDetailsProps> = ({
       </div>
 
       {/* Product Card + View Keys */}
-      <div className="rounded-xl border border-gray-200 dark:border-[#303030] bg-white dark:bg-[#111] p-4 flex flex-col lg:flex-row lg:items-center justify-between gap-4">
-        <div className="min-w-0">
-          <div className="font-medium text-gray-900 dark:text-white truncate">
-            {order?.cart?.[0]?.title ?? "Order Items"}
+      <div className="rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-[#111] p-4 flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+        <div className="min-w-0 flex gap-2 items-center">
+          <div>
+            <Image
+              width={1000}
+              height={1000}
+              className="w-16 h-16"
+              alt={order?.cart?.[0]?.title}
+              src={order?.cart?.[0]?.image ?? "Order Image"}
+            />
           </div>
-          <div className="text-sm text-gray-500 dark:text-gray-400">
-            Price: USD ${Number(order?.total ?? 0).toFixed(2)}{" "}
-            {order?.cart?.[0]?.quantity ? `| x${order.cart[0].quantity}` : ""}
-          </div>
-          <div className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-            Type: {order?.cart?.[0]?.type ?? "-"}
+          <div className="flex flex-col gap-1">
+            <div className="font-medium text-gray-900 dark:text-white truncate">
+              {order?.cart?.[0]?.title ?? "Order Items"}
+            </div>
+            <div className="text-xs text-gray-500 dark:text-gray-400">
+              Price: USD ${Number(order?.total ?? 0).toFixed(2)}{" "}
+              {order?.cart?.[0]?.quantity ? `| x${order.cart[0].quantity}` : ""}
+            </div>
+            <div className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+              Type: {order?.cart?.[0]?.type ?? "-"}
+            </div>
           </div>
         </div>
 
@@ -108,9 +118,9 @@ export const OrderDetails: React.FC<OrderDetailsProps> = ({
 
       {/* Keys Section (only after clicking View Keys) */}
       {showKeys && (
-        <div className="rounded-xl border border-gray-200 dark:border-[#303030] bg-white dark:bg-[#111] p-4">
+        <div className="rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-[#111] p-4">
           {!isDelivered ? (
-            <div className="rounded-lg border text-center  border-gray-200 dark:border-[#303030] bg-gray-50 dark:bg-[#0f0f0f] px-4 py-10 text-sm text-gray-700 dark:text-gray-200">
+            <div className="rounded-lg border text-center  border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-[#0f0f0f] px-4 py-10 text-sm text-gray-700 dark:text-gray-200">
               Your order is currently <b>{statusText}</b>. Keys will be
               available once it's delivered.
             </div>
@@ -137,7 +147,7 @@ export const OrderDetails: React.FC<OrderDetailsProps> = ({
               </div>
               {/* Example keys rendering:
                   Replace this with actual keys data source (order.credentials etc.) */}
-              <div className="rounded-lg border border-gray-200 dark:border-[#303030] p-4">
+              <div className="rounded-lg border border-gray-200 dark:border-gray-700 p-4">
                 <div className="text-xs text-gray-500 dark:text-gray-400 mb-1">
                   Redeem Code
                 </div>
