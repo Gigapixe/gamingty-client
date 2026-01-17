@@ -14,6 +14,7 @@ import { useAuthStore } from "@/zustand/authStore";
 import { getOrderCredentials } from "@/services/orderService";
 import { MdOutlinePayment } from "react-icons/md";
 import DownloadIcon from "@/public/icons/DownloadIcon";
+import Link from "next/link";
 
 type CredentialItem = {
   _id: string;
@@ -42,7 +43,7 @@ type OrderCredentialsResponse = {
 type OrderDetailsProps = {
   order: any;
   onBack: () => void;
-  onViewInvoice?: (order: any) => void; // optional hook if you want
+  onViewInvoice?: (order: any) => void; 
 };
 
 export const OrderDetails: React.FC<OrderDetailsProps> = ({
@@ -236,13 +237,13 @@ export const OrderDetails: React.FC<OrderDetailsProps> = ({
             {showKeys ? "Hide Keys" : "View Keys"}
           </button>
 
-          <button
+         <Link href={`/user/order/invoice/${order?._id}`}> <button
             type="button"
             onClick={() => onViewInvoice?.(order)}
             className="px-4 h-10 rounded-full border border-gray-300 dark:border-[#444] text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-[#1b1b1b] w-full lg:w-auto"
           >
             View Invoice
-          </button>
+          </button></Link>
         </div>
       </div>
 

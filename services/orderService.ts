@@ -144,9 +144,17 @@ export async function getOrdersPaginated(
   });
 }
 
-export async function getOrderById(id: string | number, opts?: FetchOpts) {
+export async function getOrderById(
+  id: string | number,
+  opts?: {
+    token?: string;
+    cache?: RequestCache;
+    next?: { revalidate?: number | false };
+  },
+) {
   const url = `${API_BASE}/order/${id}`;
   return apiFetch<any>(url, {
+    token: opts?.token,
     cache: opts?.cache ?? "no-store",
     next: opts?.next,
   });
@@ -154,7 +162,11 @@ export async function getOrderById(id: string | number, opts?: FetchOpts) {
 
 export async function getOrderCredentials(
   id: string | number,
-  opts?: { token?: string; cache?: RequestCache; next?: { revalidate?: number | false } }
+  opts?: {
+    token?: string;
+    cache?: RequestCache;
+    next?: { revalidate?: number | false };
+  },
 ) {
   const url = `${API_BASE}/orders/credentials/${id}`;
   return apiFetch<any>(url, {
@@ -163,7 +175,6 @@ export async function getOrderCredentials(
     next: opts?.next,
   });
 }
-
 
 export async function submitProductReview(
   reviewData: {

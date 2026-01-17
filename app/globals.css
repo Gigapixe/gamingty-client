@@ -300,3 +300,22 @@ button {
 .dark .thin-scrollbar::-webkit-scrollbar-thumb {
   background-color: var(--color-primary-dark);
 }
+
+
+
+/* globals.css */
+
+@media print {
+  body {
+    background: #ffffff !important;
+  }
+
+  .no-print {
+    display: none !important;
+  }
+
+  .print-card {
+    box-shadow: none !important;
+    border: 1px solid #e5e7eb !important;
+  }
+}

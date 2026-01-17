@@ -69,6 +69,7 @@ const OrdersTable: React.FC<RecentOrdersTableProps> = ({
   onSelect,
   moneyCurrency = "USD",
 }) => {
+  
   return (
     <section aria-label="Recent orders">
       <ul className="space-y-4">
