@@ -13,6 +13,7 @@ import { toast } from "react-hot-toast";
 import { useAuthStore } from "@/zustand/authStore";
 import { getOrderCredentials } from "@/services/orderService";
 import { MdOutlinePayment } from "react-icons/md";
+import DownloadIcon from "@/public/icons/DownloadIcon";
 
 type CredentialItem = {
   _id: string;
@@ -280,7 +281,7 @@ export const OrderDetails: React.FC<OrderDetailsProps> = ({
                       : "bg-gray-200 text-gray-500 cursor-not-allowed dark:bg-[#1b1b1b] dark:text-gray-500",
                   ].join(" ")}
                 >
-                  <IoDownloadOutline />
+                  <DownloadIcon />
                   Download All (CSV)
                 </button>
               </div>
