@@ -27,8 +27,8 @@ export default async function CustomerLayout({
         <UserSideNav />
         <div className="flex-1">
           <Header />
-          {/* Dashboard Navigation Toggle - Shows under header */}
-          <div className="sticky top-0 z-30 bg-background dark:bg-background-dark px-4 pt-4 md:px-5 md:pt-5 pb-3">
+          {/* Dashboard Navigation Toggle - Shows under header (hidden on lg and above) */}
+          <div className="sticky top-0 z-30 bg-background dark:bg-background-dark px-4 pt-4 md:px-5 md:pt-5 pb-3 lg:hidden">
             <DashNavToggle />
           </div>
           <main className="px-4 pb-4 md:px-5 md:pb-5 md:min-h-[calc(100vh-200px)] bg-background dark:bg-background-dark">

@@ -15,10 +15,7 @@ interface DashNavMenuProps {
   onClose: () => void;
 }
 
-export default function DashNavMenu({
-  isOpen,
-  onClose,
-}: DashNavMenuProps) {
+export default function DashNavMenu({ isOpen, onClose }: DashNavMenuProps) {
   const [showMore, setShowMore] = useState(false);
   const pathname = usePathname();
   const router = useRouter();
@@ -60,7 +57,7 @@ export default function DashNavMenu({
             onClose={onClose}
             onLogout={handleLogout}
           />
-          
+
           {/* Toggle See More */}
           {navItems.length > 5 && (
             <button
