@@ -5,13 +5,23 @@ import { FiChevronRight } from "react-icons/fi";
 import StatusBadge from "../ui/StatusBadge";
 
 export type OrderStatus =
-  | "Pending"
-  | "Processing"
-  | "Delivered"
-  | "Failed"
-  | "Cancelled"
-  | "On Hold"
-  | "Refunded";
+  | ""
+  | "PENDING"
+  | "PROCESSING"
+  | "DELIVERED"
+  | "FAILED"
+  | "CANCELLED"
+  | "ON_HOLD"
+  | "REFUNDED";
+
+type ICart={
+  image:string;
+  price:string | number;
+  title:string;
+  slug:string;
+  quantity:number;
+  isGiftCard:boolean
+}
 
 export type RecentOrder = {
   _id: string;
@@ -20,6 +30,7 @@ export type RecentOrder = {
   paymentMethod: string;
   status: OrderStatus | string;
   createdAt: string; // ISO string
+  cart:ICart
 };
 
 type RecentOrdersTableProps = {
@@ -58,6 +69,7 @@ const OrdersTable: React.FC<RecentOrdersTableProps> = ({
   onSelect,
   moneyCurrency = "USD",
 }) => {
+  
   return (
     <section aria-label="Recent orders">
       <ul className="space-y-4">

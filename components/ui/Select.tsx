@@ -237,7 +237,7 @@ export default function Select({
 
           {/* Options */}
           <div
-            className="py-1 overflow-auto"
+            className="py-1 overflow-auto thin-scrollbar"
             style={{ maxHeight: maxMenuHeightPx }}
           >
             {filtered.length === 0 ? (

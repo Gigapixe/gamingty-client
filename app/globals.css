@@ -300,3 +300,17 @@ button {
 .dark .thin-scrollbar::-webkit-scrollbar-thumb {
   background-color: var(--color-primary-dark);
 }
+
+
+
+/* globals.css */
+
+
+@media print {
+  .barcode-card {
+    break-after: page;
+  }
+  .barcode-card:last-child {
+    break-after: auto;
+  }
+}
