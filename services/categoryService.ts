@@ -1,4 +1,5 @@
 import { apiFetch } from "./api";
+import type { Category, ApiResponse } from "@/types/category";
 
 const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL;
 
@@ -7,7 +8,7 @@ export async function getAllCategories(opts?: {
   next?: { revalidate?: number | false };
 }) {
   const response = `${API_BASE}/category/show/catalog`;
-  return await apiFetch<any>(response, {
+  return await apiFetch<ApiResponse<Category[]>>(response, {
     cache: opts?.cache ?? "no-store",
     next: opts?.next,
   });
@@ -18,7 +19,7 @@ export async function getCategoryParents(opts?: {
   next?: { revalidate?: number | false };
 }) {
   const response = `${API_BASE}/category/parent`;
-  return await apiFetch<any>(response, {
+  return await apiFetch<ApiResponse<Category[]>>(response, {
     cache: opts?.cache ?? "no-store",
     next: opts?.next,
   });
@@ -29,9 +30,18 @@ export async function getShowingCatalogCategorys(opts?: {
   next?: { revalidate?: number | false };
 }) {
   const response = `${API_BASE}/category/popular`;
-  return await apiFetch<any>(response, {
+  return await apiFetch<ApiResponse<Category[]>>(response, {
     cache: opts?.cache ?? "no-store",
     next: opts?.next,
+  });
+}
+export async function getCategoryBySlug(slug?: string) {
+  const url = slug
+    ? `${API_BASE}/category/get-category-by-parent-slug?slug=${slug}`
+    : `${API_BASE}/category/get-category-by-parent-slug`;
+
+  return await apiFetch<ApiResponse<Category[]>>(url, {
+    cache: "no-cache",
   });
 }
 

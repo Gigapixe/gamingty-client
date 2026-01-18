@@ -4,7 +4,7 @@ const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL;
 
 export async function getPageBySlug(
   slug: string,
-  opts?: { cache?: RequestCache; next?: { revalidate?: number | false } }
+  opts?: { cache?: RequestCache; next?: { revalidate?: number | false } },
 ) {
   const response = `${API_BASE}/pages/${slug}`;
   return await apiFetch<any>(response, {
@@ -26,7 +26,7 @@ export async function getAllPages(opts?: {
 
 export const getPageBySlugSSG = (
   slug: string,
-  opts?: { next?: { revalidate?: number | false } }
+  opts?: { next?: { revalidate?: number | false } },
 ) => getPageBySlug(slug, { cache: "force-cache", next: opts?.next });
 
 export const getAllPagesSSG = (opts?: {

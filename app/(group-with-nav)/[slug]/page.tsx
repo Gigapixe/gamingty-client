@@ -3,6 +3,11 @@ import { getPageBySlugSSG, getAllPagesSSG } from "@/services/pageService";
 import { notFound } from "next/navigation";
 
 export async function generateStaticParams() {
+  const apiBase = process.env.NEXT_PUBLIC_API_BASE_URL;
+  if (!apiBase) {
+    return [];
+  }
+
   try {
     const pagesResponse = await getAllPagesSSG();
     const pages = pagesResponse?.data || [];
@@ -11,7 +16,9 @@ export async function generateStaticParams() {
       slug: page.slug,
     }));
   } catch (error) {
-    console.error("Error generating static params:", error);
+    if (process.env.NODE_ENV !== "production") {
+      console.error("Error generating static params:", error);
+    }
     return [];
   }
 }
