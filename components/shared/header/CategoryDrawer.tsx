@@ -6,13 +6,7 @@ import { useCategoryStore } from "@/zustand/store";
 import { getAllCategories } from "@/services/categoryService";
 import CloseButton from "@/components/ui/CloseButton";
 
-type Category = {
-  _id: string;
-  slug?: string;
-  name?: { en?: string; [k: string]: string | undefined };
-  icon?: string | null;
-  children?: Category[];
-};
+import type { Category } from "@/types/category";
 
 interface CategoryDrawerProps {
   initialTree?: Category[];
@@ -24,7 +18,7 @@ export default function CategoryDrawer({ initialTree }: CategoryDrawerProps) {
   const router = useRouter();
 
   const [tree, setTree] = useState<Category[] | null>(
-    initialTree && initialTree.length > 0 ? initialTree : null
+    initialTree && initialTree.length > 0 ? initialTree : null,
   );
   const [nodes, setNodes] = useState<Category[]>(tree ?? []); // current visible nodes
   const [stack, setStack] = useState<Category[][]>([]); // navigation stack of previous node lists
@@ -117,7 +111,7 @@ export default function CategoryDrawer({ initialTree }: CategoryDrawerProps) {
 
     // wait a tick then animate (double rAF for reliability)
     requestAnimationFrame(() =>
-      requestAnimationFrame(() => setAnimateOn(true))
+      requestAnimationFrame(() => setAnimateOn(true)),
     );
 
     setTimeout(() => {
@@ -143,7 +137,7 @@ export default function CategoryDrawer({ initialTree }: CategoryDrawerProps) {
 
     // wait a tick then animate (double rAF for reliability)
     requestAnimationFrame(() =>
-      requestAnimationFrame(() => setAnimateOn(true))
+      requestAnimationFrame(() => setAnimateOn(true)),
     );
 
     setTimeout(() => {
@@ -310,8 +304,8 @@ export default function CategoryDrawer({ initialTree }: CategoryDrawerProps) {
                         ? "-translate-x-full"
                         : "translate-x-0"
                       : animateOn
-                      ? "translate-x-full"
-                      : "translate-x-0"
+                        ? "translate-x-full"
+                        : "translate-x-0"
                   }`}
                 >
                   <ul className="">
@@ -361,8 +355,8 @@ export default function CategoryDrawer({ initialTree }: CategoryDrawerProps) {
                         ? "translate-x-0"
                         : "translate-x-full"
                       : animateOn
-                      ? "translate-x-0"
-                      : "-translate-x-full"
+                        ? "translate-x-0"
+                        : "-translate-x-full"
                   }`}
                 >
                   <ul className="">
