@@ -17,14 +17,23 @@ import { Suspense } from "react";
 export default async function Home() {
   const data = await getAllBannersSSG();
   const res = await getCategoryParentsSSG();
-  const categoriesCatalog = await getShowingCatalogCategorysSSG();
+
+  // Normalize the catalog response: use .data (not the ApiResponse object) and
+  // convert any null icon values to undefined so they match the expected Category type.
+  const categoriesCatalogRes = await getShowingCatalogCategorysSSG();
+  const categoriesCatalogRaw = categoriesCatalogRes?.data ?? [];
+  const categoriesCatalog = categoriesCatalogRaw.map((c: any) => ({
+    ...c,
+    icon: c.icon ?? undefined,
+  }));
+
   const raw = res?.data || [];
 
   const values = raw.map((item: any) => ({
     id: item._id as string,
     name: item.name?.en || item.slug || "",
     slug: item.slug,
-    image: item.icon ?? null,
+    image: item.icon ?? undefined,
   }));
 
   return (
