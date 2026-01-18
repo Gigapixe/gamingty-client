@@ -17,3 +17,7 @@ export interface ApiResponse<T> {
   success?: boolean;
   message?: string;
 }
+
+export interface CategoryCardProps {
+  category: Category;
+}
