@@ -74,7 +74,7 @@ export default function CategoryPage({
 
   return (
     <>
-      <div className="w-full relative mb-6 h-[250px] lg:h-[350px]">
+      <div className="w-full relative mb-6 h-62.5 lg:h-87.5">
         <Image
           src={bannerImage || "/images/category-banner.png"}
           alt="Category Banner"
@@ -98,7 +98,7 @@ export default function CategoryPage({
                 {idx > 0 && <span>{">"}</span>}
                 <Link
                   href={`/product-category/${crumb.slug}`}
-                  className="hover:text-primary capitalize block truncate max-w-[100px] md:max-w-full"
+                  className="hover:text-primary capitalize block truncate max-w-25 md:max-w-full"
                   title={crumb.name}
                 >
                   <TranslatedName name={crumb.name} />
@@ -145,7 +145,7 @@ export default function CategoryPage({
                   {idx > 0 && <span>{">"}</span>}
                   <Link
                     href={`/product-category/${crumb.slug}`}
-                    className="hover:text-primary capitalize block truncate max-w-[100px]"
+                    className="hover:text-primary capitalize block truncate max-w-25"
                     title={crumb.name}
                   >
                     <TranslatedName name={crumb.name} />
@@ -163,7 +163,7 @@ export default function CategoryPage({
                   <span>{">"}</span>
                   <Link
                     href={`/product-category/${crumb.slug}`}
-                    className="hover:text-primary max-w-[100px] truncate lg:max-w-full capitalize"
+                    className="hover:text-primary max-w-25 truncate lg:max-w-full capitalize"
                     title={crumb.name}
                   >
                     <TranslatedName name={crumb.name} />
